@@ -1,0 +1,125 @@
+{
+  "summary": {
+    "run_id": 1,
+    "sheet": "Passport Skill Records",
+    "header_row": 4,
+    "data_rows": 60,
+    "ignored_note_rows": 15,
+    "blank_rows": 919,
+    "rows_valid": 60,
+    "rows_held": 0,
+    "rows_invalid": 0,
+    "students_in_sheet": 18,
+    "students_with_valid_rows": 18,
+    "awards_new": 60,
+    "awards_unchanged": 0,
+    "awards_changed_after_accept": 0,
+    "students_created": 18,
+    "passports_created": 18,
+    "versions_generated": 18,
+    "generation_failures": 0,
+    "issuance_mode": "blockchain",
+    "issued_registered": 18,
+    "issued_unregistered_demo": 0,
+    "awaiting_registration": 0,
+    "issuance_failures": 0,
+    "preserved_existing_synced": 0,
+    "stored_pdf_problems": [],
+    "notes": [
+      "No 'Verification Status' column in the sheet. Following the workbook's own note, every complete A–P row is treated as an already-confirmed award. Passport Sync Status is never used as approval."
+    ],
+    "cells_written": 148,
+    "workbook_copy": "/tmp/bdp-e2e-cZTlXi/exports/BTU AI Skills Digital Passport Hackathon_Test Data - synced run 1.xlsx"
+  },
+  "workbook": {
+    "sheet": "Passport Skill Records",
+    "header_row": 4,
+    "columns": {
+      "Student ID": "A",
+      "First Name": "B",
+      "Last Name": "C",
+      "BTU Email (Test)": "D",
+      "Program": "E",
+      "Education Level": "F",
+      "Passport ID (Existing)": "G",
+      "First Issued (Existing)": "H",
+      "Student Status": "I",
+      "Record ID": "J",
+      "Skill ID": "K",
+      "Skill Name": "L",
+      "Skill Category": "M",
+      "Badge/Stamp Code": "N",
+      "Skill Description": "O",
+      "Date Earned": "P",
+      "Passport Sync Status": "Q",
+      "Synced Passport Version": "R",
+      "Synced At (UTC)": "S",
+      "Sync Error / Notes": "T"
+    },
+    "confirmation_column": null,
+    "ignored_rows": [
+      {
+        "row": 67,
+        "why": "explanatory text, not a record: 'TECHNICAL NOTES / INTEGRATION CONTRACT'"
+      },
+      {
+        "row": 68,
+        "why": "explanatory text, not a record: 'All identities, institutional emails, awards, issuance dates'"
+      },
+      {
+        "row": 69,
+        "why": "explanatory text, not a record: 'Skill awards in A-P are already institutionally verified; no'"
+      },
+      {
+        "row": 70,
+        "why": "explanatory text, not a record: 'One Record ID = one award event. Student ID is stable across'"
+      },
+      {
+        "row": 71,
+        "why": "explanatory text, not a record: 'Badge/Stamp Code in N is derived from category M. Three stam'"
+      },
+      {
+        "row": 72,
+        "why": "explanatory text, not a record: 'SYNCED means PDF issuance and blockchain verification are si'"
+      },
+      {
+        "row": 73,
+        "why": "explanatory text, not a record: 'The service must own a durable issuance ledger, versioning, '"
+      },
+      {
+        "row": 74,
+        "why": "explanatory text, not a record: 'On initial issuance, create a persistent Passport ID and wri'"
+      },
+      {
+        "row": 75,
+        "why": "explanatory text, not a record: 'Q-T are system-managed fields. Restrict human edits in the l'"
+      },
+      {
+        "row": 76,
+        "why": "explanatory text, not a record: 'Do not trust spreadsheet status alone for cryptographic veri'"
+      },
+      {
+        "row": 77,
+        "why": "explanatory text, not a record: 'Test emails use example.org; replace only through an authori'"
+      },
+      {
+        "row": 78,
+        "why": "explanatory text, not a record: 'COMPLETENESS RULE: A-M and O-Q must be populated on every re'"
+      },
+      {
+        "row": 79,
+        "why": "explanatory text, not a record: 'R and S are intentionally blank for NOT SYNCED records becau'"
+      },
+      {
+        "row": 80,
+        "why": "explanatory text, not a record: 'T is intentionally blank where no synchronization failure oc'"
+      },
+      {
+        "row": 81,
+        "why": "explanatory text, not a record: 'All Passport IDs, First Issued dates and sync results are sy'"
+      }
+    ]
+  },
+  "issues": [],
+  "preserved_synced_values": []
+}

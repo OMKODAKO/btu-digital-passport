@@ -1,0 +1,321 @@
+
+> btu-student-portal@0.1.0 test
+> node --test --test-concurrency=1 tests/*.test.mjs
+
+TAP version 13
+# Subtest: steps 1-4: sign in (test password, BTU Google sign-in not built), other domains refused, own record, straight to the dashboard
+ok 1 - steps 1-4: sign in (test password, BTU Google sign-in not built), other domains refused, own record, straight to the dashboard
+  ---
+  duration_ms: 22778.273843
+  type: 'test'
+  ...
+# Subtest: step 5: the existing multi-page PDF appears and downloads
+ok 2 - step 5: the existing multi-page PDF appears and downloads
+  ---
+  duration_ms: 917.459142
+  type: 'test'
+  ...
+# Subtest: steps 6-12: a new CONFIRMED skill in the source sheet becomes V2, registered on-chain, then current
+ok 3 - steps 6-12: a new CONFIRMED skill in the source sheet becomes V2, registered on-chain, then current
+  ---
+  duration_ms: 5799.374268
+  type: 'test'
+  ...
+# Subtest: step 13: the exact PDF passes public verification without login
+ok 4 - step 13: the exact PDF passes public verification without login
+  ---
+  duration_ms: 101.874684
+  type: 'test'
+  ...
+# Subtest: step 14: a modified PDF fails the integrity check
+ok 5 - step 14: a modified PDF fails the integrity check
+  ---
+  duration_ms: 949.445341
+  type: 'test'
+  ...
+# Subtest: step 15: the previous version is authentic as a historical version and marked superseded
+ok 6 - step 15: the previous version is authentic as a historical version and marked superseded
+  ---
+  duration_ms: 50.243651
+  type: 'test'
+  ...
+# Subtest: step 16: re-running synchronization changes nothing
+ok 7 - step 16: re-running synchronization changes nothing
+  ---
+  duration_ms: 4835.634903
+  type: 'test'
+  ...
+# Subtest: 1. test student 1 can sign in and sees their own PDF
+ok 8 - 1. test student 1 can sign in and sees their own PDF
+  ---
+  duration_ms: 1368.77473
+  type: 'test'
+  ...
+# Subtest: 2. test student 2 can sign in and sees their own PDF
+ok 9 - 2. test student 2 can sign in and sees their own PDF
+  ---
+  duration_ms: 451.531515
+  type: 'test'
+  ...
+# Subtest: 3. an incorrect password is rejected
+ok 10 - 3. an incorrect password is rejected
+  ---
+  duration_ms: 539.045902
+  type: 'test'
+  ...
+# Subtest: 4. an unknown email is rejected
+ok 11 - 4. an unknown email is rejected
+  ---
+  duration_ms: 873.358887
+  type: 'test'
+  ...
+# Subtest: 5. student 1 cannot reach student 2's PDF by changing the URL or request
+ok 12 - 5. student 1 cannot reach student 2's PDF by changing the URL or request
+  ---
+  duration_ms: 564.828515
+  type: 'test'
+  ...
+# Subtest: 6. signing out blocks further access, even with the old cookie
+ok 13 - 6. signing out blocks further access, even with the old cookie
+  ---
+  duration_ms: 527.639189
+  type: 'test'
+  ...
+# Subtest: 7. a missing passport or missing PDF gives a clear message, never another document
+ok 14 - 7. a missing passport or missing PDF gives a clear message, never another document
+  ---
+  duration_ms: 983.055141
+  type: 'test'
+  ...
+# Subtest: extra: every seeded account sees only its own passport
+ok 15 - extra: every seeded account sees only its own passport
+  ---
+  duration_ms: 8528.468051
+  type: 'test'
+  ...
+# Subtest: extra: no password hashes or server paths in the browser bundle
+ok 16 - extra: no password hashes or server paths in the browser bundle
+  ---
+  duration_ms: 8.458643
+  type: 'test'
+  ...
+# Subtest: importing the real workbook over the stage 1 data adds 60 skills and no new versions
+ok 17 - importing the real workbook over the stage 1 data adds 60 skills and no new versions
+  ---
+  duration_ms: 3190.594863
+  type: 'test'
+  ...
+# Subtest: a new skill makes V3, which waits for blockchain registration while V2 stays valid
+ok 18 - a new skill makes V3, which waits for blockchain registration while V2 stays valid
+  ---
+  duration_ms: 2812.239472
+  type: 'test'
+  ...
+# Subtest: issued (local-demo mode) V3 shows on that student's dashboard only
+ok 19 - issued (local-demo mode) V3 shows on that student's dashboard only
+  ---
+  duration_ms: 2490.529393
+  type: 'test'
+  ...
+# Subtest: a failed update is shown as failed, and the previous PDF stays current
+ok 20 - a failed update is shown as failed, and the previous PDF stays current
+  ---
+  duration_ms: 4523.4932
+  type: 'test'
+  ...
+# Subtest: a workbook student without a login can't sign in until a login is created for them
+ok 21 - a workbook student without a login can't sign in until a login is created for them
+  ---
+  duration_ms: 4470.422483
+  type: 'test'
+  ...
+# Subtest: a new passport's first version waits for registration and nothing is served before it is issued
+ok 22 - a new passport's first version waits for registration and nothing is served before it is issued
+  ---
+  duration_ms: 3534.229351
+  type: 'test'
+  ...
+# Subtest: a new version is registered on-chain, confirmed, read back, then shown as current
+ok 23 - a new version is registered on-chain, confirmed, read back, then shown as current
+  ---
+  duration_ms: 26935.89254
+  type: 'test'
+  ...
+# Subtest: the page is public: no login, no cookies, and the QR route pre-fills the code
+ok 24 - the page is public: no login, no cookies, and the QR route pre-fills the code
+  ---
+  duration_ms: 24112.626407
+  type: 'test'
+  ...
+# Subtest: 1. the exact issued PDF passes every check, but a TEST issuer is never shown as BTU
+ok 25 - 1. the exact issued PDF passes every check, but a TEST issuer is never shown as BTU
+  ---
+  duration_ms: 158.124608
+  type: 'test'
+  ...
+# Subtest: 1b. (local fixture) with a registry and issuer configured as OFFICIAL, the same checks give Authentic
+ok 26 - 1b. (local fixture) with a registry and issuer configured as OFFICIAL, the same checks give Authentic
+  ---
+  duration_ms: 4123.619443
+  type: 'test'
+  ...
+# Subtest: 2. a modified PDF fails the file-integrity check
+ok 27 - 2. a modified PDF fails the file-integrity check
+  ---
+  duration_ms: 58.431361
+  type: 'test'
+  ...
+# Subtest: 3. an unknown verification code is rejected, and a malformed one is refused
+ok 28 - 3. an unknown verification code is rejected, and a malformed one is refused
+  ---
+  duration_ms: 63.435001
+  type: 'test'
+  ...
+# Subtest: 4. a superseded PDF is authentic as a historical version, never shown as current
+ok 29 - 4. a superseded PDF is authentic as a historical version, never shown as current
+  ---
+  duration_ms: 30.179579
+  type: 'test'
+  ...
+# Subtest: 5. a record from an issuer BTU does not list does not pass as BTU
+ok 30 - 5. a record from an issuer BTU does not list does not pass as BTU
+  ---
+  duration_ms: 4237.777803
+  type: 'test'
+  ...
+# Subtest: uploads are validated: size limit and PDF type
+ok 31 - uploads are validated: size limit and PDF type
+  ---
+  duration_ms: 137.467771
+  type: 'test'
+  ...
+# Subtest: the verifier's contract interface matches the compiled contract
+ok 32 - the verifier's contract interface matches the compiled contract
+  ---
+  duration_ms: 0.782814
+  type: 'test'
+  ...
+# Subtest: screenshots of the page (only when SCREENSHOT_DIR is set)
+ok 33 - screenshots of the page (only when SCREENSHOT_DIR is set) # SKIP
+  ---
+  duration_ms: 0.160148
+  type: 'test'
+  ...
+# Subtest: 6. when the blockchain is unreachable the result is honestly unavailable, never authentic
+ok 34 - 6. when the blockchain is unreachable the result is honestly unavailable, never authentic
+  ---
+  duration_ms: 1165.502318
+  type: 'test'
+  ...
+# Subtest: a student lands on their passport page with every required item
+ok 35 - a student lands on their passport page with every required item
+  ---
+  duration_ms: 28039.489781
+  type: 'test'
+  ...
+# Subtest: an older, unregistered version is shown as superseded and never as authentic
+ok 36 - an older, unregistered version is shown as superseded and never as authentic
+  ---
+  duration_ms: 692.546886
+  type: 'test'
+  ...
+# Subtest: student-to-passport isolation: student 2 never sees student 1's passport
+ok 37 - student-to-passport isolation: student 2 never sees student 1's passport
+  ---
+  duration_ms: 474.723126
+  type: 'test'
+  ...
+# Subtest: direct URL access without signing in is refused everywhere
+ok 38 - direct URL access without signing in is refused everywhere
+  ---
+  duration_ms: 105.370475
+  type: 'test'
+  ...
+# Subtest: a student can't get into the admin area by any request
+ok 39 - a student can't get into the admin area by any request
+  ---
+  duration_ms: 1428.36392
+  type: 'test'
+  ...
+# Subtest: staff accounts can't use the student dashboard, and student sign-in refuses them
+ok 40 - staff accounts can't use the student dashboard, and student sign-in refuses them
+  ---
+  duration_ms: 888.375785
+  type: 'test'
+  ...
+# Subtest: staff search works only with approved identifiers
+ok 41 - staff search works only with approved identifiers
+  ---
+  duration_ms: 542.062095
+  type: 'test'
+  ...
+# Subtest: the student record shows versions, live chain status, sheet rows and their problems
+ok 42 - the student record shows versions, live chain status, sheet rows and their problems
+  ---
+  duration_ms: 539.335732
+  type: 'test'
+  ...
+# Subtest: import problems: invalid Student IDs and duplicate records are listed as the import found them
+ok 43 - import problems: invalid Student IDs and duplicate records are listed as the import found them
+  ---
+  duration_ms: 507.5189
+  type: 'test'
+  ...
+# Subtest: a VIEWER can look but can't retry, and the denied attempt is audited
+ok 44 - a VIEWER can look but can't retry, and the denied attempt is audited
+  ---
+  duration_ms: 484.599354
+  type: 'test'
+  ...
+# Subtest: a cross-site retry post is refused
+ok 45 - a cross-site retry post is refused
+  ---
+  duration_ms: 471.11152
+  type: 'test'
+  ...
+# Subtest: failed update recovery: generation fails, the old version stays, a staff retry fixes it
+ok 46 - failed update recovery: generation fails, the old version stays, a staff retry fixes it
+  ---
+  duration_ms: 6851.995928
+  type: 'test'
+  ...
+# Subtest: a retry whose registration fails keeps the current version and can be retried again
+ok 47 - a retry whose registration fails keeps the current version and can be retried again
+  ---
+  duration_ms: 7477.051308
+  type: 'test'
+  ...
+# Subtest: held and rejected skills stay as they are: no admin route can confirm a skill
+ok 48 - held and rejected skills stay as they are: no admin route can confirm a skill
+  ---
+  duration_ms: 481.981486
+  type: 'test'
+  ...
+# Subtest: the audit log records issuance and staff actions, can't be edited, and holds no secrets
+ok 49 - the audit log records issuance and staff actions, can't be edited, and holds no secrets
+  ---
+  duration_ms: 480.600233
+  type: 'test'
+  ...
+# Subtest: screenshots of the dashboard and admin pages (only when SCREENSHOT_DIR is set)
+ok 50 - screenshots of the dashboard and admin pages (only when SCREENSHOT_DIR is set) # SKIP
+  ---
+  duration_ms: 0.1704
+  type: 'test'
+  ...
+# Subtest: signing out of the admin area ends the staff session
+ok 51 - signing out of the admin area ends the staff session
+  ---
+  duration_ms: 446.154074
+  type: 'test'
+  ...
+1..51
+# tests 51
+# suites 0
+# pass 49
+# fail 0
+# cancelled 0
+# skipped 2
+# todo 0
+# duration_ms 200929.49958
+EXIT 0

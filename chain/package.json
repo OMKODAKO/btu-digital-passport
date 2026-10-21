@@ -1,0 +1,13 @@
+{
+  "name": "btu-passport-chain",
+  "private": true,
+  "description": "PassportRegistry contract, its compiler and a local EVM devnet for tests",
+  "scripts": {
+    "compile": "node compile.mjs",
+    "devnet": "hardhat node --hostname 127.0.0.1 --port 8545"
+  },
+  "devDependencies": {
+    "hardhat": "2.29.1",
+    "solc": "0.8.28"
+  }
+}

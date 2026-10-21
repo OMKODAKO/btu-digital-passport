@@ -1,0 +1,18 @@
+node_modules/
+.next/
+next-env.d.ts
+*.tsbuildinfo
+# Local database, stored PDFs and generated test passwords. Never commit these.
+data/
+.env
+.env.local
+public/pdf.worker.min.mjs
+__pycache__/
+chain/cache/
+chain/artifacts/
+data-demo/
+
+# Local demos (test keys, databases, passwords) and local tooling. Never commit these.
+data-*/
+.venv/
+.DS_Store

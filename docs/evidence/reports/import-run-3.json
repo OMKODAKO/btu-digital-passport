@@ -1,0 +1,677 @@
+{
+  "summary": {
+    "run_id": 3,
+    "sheet": "Passport Skill Records",
+    "header_row": 4,
+    "data_rows": 65,
+    "ignored_note_rows": 15,
+    "blank_rows": 919,
+    "rows_valid": 57,
+    "rows_held": 1,
+    "rows_invalid": 7,
+    "students_in_sheet": 20,
+    "students_with_valid_rows": 17,
+    "awards_new": 0,
+    "awards_unchanged": 57,
+    "awards_changed_after_accept": 0,
+    "students_created": 0,
+    "passports_created": 0,
+    "versions_generated": 0,
+    "generation_failures": 0,
+    "issuance_mode": "blockchain",
+    "issued_registered": 1,
+    "issued_unregistered_demo": 0,
+    "awaiting_registration": 0,
+    "issuance_failures": 0,
+    "preserved_existing_synced": 0,
+    "stored_pdf_problems": [],
+    "notes": [],
+    "cells_written": 162,
+    "workbook_copy": "/tmp/bdp-e2e-cZTlXi/exports/with-new-skill - synced run 3.xlsx"
+  },
+  "workbook": {
+    "sheet": "Passport Skill Records",
+    "header_row": 4,
+    "columns": {
+      "Student ID": "A",
+      "First Name": "B",
+      "Last Name": "C",
+      "BTU Email (Test)": "D",
+      "Program": "E",
+      "Education Level": "F",
+      "Passport ID (Existing)": "G",
+      "First Issued (Existing)": "H",
+      "Student Status": "I",
+      "Record ID": "J",
+      "Skill ID": "K",
+      "Skill Name": "L",
+      "Skill Category": "M",
+      "Badge/Stamp Code": "N",
+      "Skill Description": "O",
+      "Date Earned": "P",
+      "Passport Sync Status": "Q",
+      "Synced Passport Version": "R",
+      "Synced At (UTC)": "S",
+      "Sync Error / Notes": "T",
+      "Verification Status": "U"
+    },
+    "confirmation_column": "Verification Status",
+    "ignored_rows": [
+      {
+        "row": 72,
+        "why": "explanatory text, not a record: 'TECHNICAL NOTES / INTEGRATION CONTRACT'"
+      },
+      {
+        "row": 73,
+        "why": "explanatory text, not a record: 'All identities, institutional emails, awards, issuance dates'"
+      },
+      {
+        "row": 74,
+        "why": "explanatory text, not a record: 'Skill awards in A-P are already institutionally verified; no'"
+      },
+      {
+        "row": 75,
+        "why": "explanatory text, not a record: 'One Record ID = one award event. Student ID is stable across'"
+      },
+      {
+        "row": 76,
+        "why": "explanatory text, not a record: 'Badge/Stamp Code in N is derived from category M. Three stam'"
+      },
+      {
+        "row": 77,
+        "why": "explanatory text, not a record: 'SYNCED means PDF issuance and blockchain verification are si'"
+      },
+      {
+        "row": 78,
+        "why": "explanatory text, not a record: 'The service must own a durable issuance ledger, versioning, '"
+      },
+      {
+        "row": 79,
+        "why": "explanatory text, not a record: 'On initial issuance, create a persistent Passport ID and wri'"
+      },
+      {
+        "row": 80,
+        "why": "explanatory text, not a record: 'Q-T are system-managed fields. Restrict human edits in the l'"
+      },
+      {
+        "row": 81,
+        "why": "explanatory text, not a record: 'Do not trust spreadsheet status alone for cryptographic veri'"
+      },
+      {
+        "row": 82,
+        "why": "explanatory text, not a record: 'Test emails use example.org; replace only through an authori'"
+      },
+      {
+        "row": 83,
+        "why": "explanatory text, not a record: 'COMPLETENESS RULE: A-M and O-Q must be populated on every re'"
+      },
+      {
+        "row": 84,
+        "why": "explanatory text, not a record: 'R and S are intentionally blank for NOT SYNCED records becau'"
+      },
+      {
+        "row": 85,
+        "why": "explanatory text, not a record: 'T is intentionally blank where no synchronization failure oc'"
+      },
+      {
+        "row": 86,
+        "why": "explanatory text, not a record: 'All Passport IDs, First Issued dates and sync results are sy'"
+      }
+    ]
+  },
+  "issues": [
+    {
+      "sheet_row": 5,
+      "record_id": "REC-0001",
+      "student_code": "BTU-T-0001",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-001 for category 'AI Skill'"
+    },
+    {
+      "sheet_row": 6,
+      "record_id": "REC-0002",
+      "student_code": "BTU-T-0002",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-001 for category 'AI Skill'"
+    },
+    {
+      "sheet_row": 7,
+      "record_id": "REC-0003",
+      "student_code": "BTU-T-0003",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-002 for category 'AI Applied Skill'"
+    },
+    {
+      "sheet_row": 8,
+      "record_id": "REC-0004",
+      "student_code": "BTU-T-0004",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-001 for category 'AI Skill'"
+    },
+    {
+      "sheet_row": 9,
+      "record_id": "REC-0049",
+      "student_code": "BTU-T-0021",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-001 for category 'AI Skill'"
+    },
+    {
+      "sheet_row": 10,
+      "record_id": "REC-0005",
+      "student_code": "BTU-T-0005",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-001 for category 'AI Skill'"
+    },
+    {
+      "sheet_row": 11,
+      "record_id": "REC-0006",
+      "student_code": "BTU-T-0006",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-002 for category 'AI Applied Skill'"
+    },
+    {
+      "sheet_row": 12,
+      "record_id": "REC-0007",
+      "student_code": "BTU-T-0007",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-002 for category 'AI Applied Skill'"
+    },
+    {
+      "sheet_row": 13,
+      "record_id": "REC-0008",
+      "student_code": "BTU-T-0008",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-002 for category 'AI Applied Skill'"
+    },
+    {
+      "sheet_row": 14,
+      "record_id": "REC-0050",
+      "student_code": "BTU-T-0022",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-002 for category 'AI Applied Skill'"
+    },
+    {
+      "sheet_row": 15,
+      "record_id": "REC-0009",
+      "student_code": "BTU-T-0009",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-001 for category 'AI Skill'"
+    },
+    {
+      "sheet_row": 16,
+      "record_id": "REC-0010",
+      "student_code": "BTU-T-0010",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-003 for category 'AI Advanced Skill'"
+    },
+    {
+      "sheet_row": 17,
+      "record_id": "REC-0011",
+      "student_code": "BTU-T-0011",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-002 for category 'AI Applied Skill'"
+    },
+    {
+      "sheet_row": 18,
+      "record_id": "REC-0012",
+      "student_code": "BTU-T-0012",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-001 for category 'AI Skill'"
+    },
+    {
+      "sheet_row": 19,
+      "record_id": "REC-0051",
+      "student_code": "BTU-T-0023",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-002 for category 'AI Applied Skill'"
+    },
+    {
+      "sheet_row": 20,
+      "record_id": "REC-0013",
+      "student_code": "BTU-T-0013",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-002 for category 'AI Applied Skill'"
+    },
+    {
+      "sheet_row": 21,
+      "record_id": "REC-0014",
+      "student_code": "BTU-T-0014",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-002 for category 'AI Applied Skill'"
+    },
+    {
+      "sheet_row": 22,
+      "record_id": "REC-0015",
+      "student_code": "BTU-T-0001",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-002 for category 'AI Applied Skill'"
+    },
+    {
+      "sheet_row": 23,
+      "record_id": "REC-0016",
+      "student_code": "BTU-T-0002",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-003 for category 'AI Advanced Skill'"
+    },
+    {
+      "sheet_row": 24,
+      "record_id": "REC-0052",
+      "student_code": "BTU-T-0024",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-001 for category 'AI Skill'"
+    },
+    {
+      "sheet_row": 25,
+      "record_id": "REC-0017",
+      "student_code": "BTU-T-0004",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-003 for category 'AI Advanced Skill'"
+    },
+    {
+      "sheet_row": 26,
+      "record_id": "REC-0018",
+      "student_code": "BTU-T-0003",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-001 for category 'AI Skill'"
+    },
+    {
+      "sheet_row": 27,
+      "record_id": "REC-0019",
+      "student_code": "BTU-T-0005",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-002 for category 'AI Applied Skill'"
+    },
+    {
+      "sheet_row": 28,
+      "record_id": "REC-0020",
+      "student_code": "BTU-T-0006",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-002 for category 'AI Applied Skill'"
+    },
+    {
+      "sheet_row": 29,
+      "record_id": "REC-0053",
+      "student_code": "BTU-T-0007",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-001 for category 'AI Skill'"
+    },
+    {
+      "sheet_row": 30,
+      "record_id": "REC-0021",
+      "student_code": "BTU-T-0007",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-002 for category 'AI Applied Skill'"
+    },
+    {
+      "sheet_row": 31,
+      "record_id": "REC-0022",
+      "student_code": "BTU-T-0008",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-003 for category 'AI Advanced Skill'"
+    },
+    {
+      "sheet_row": 32,
+      "record_id": "REC-0023",
+      "student_code": "BTU-T-0009",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-001 for category 'AI Skill'"
+    },
+    {
+      "sheet_row": 33,
+      "record_id": "REC-0024",
+      "student_code": "BTU-T-0010",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-003 for category 'AI Advanced Skill'"
+    },
+    {
+      "sheet_row": 34,
+      "record_id": "REC-0054",
+      "student_code": "BTU-T-0012",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-001 for category 'AI Skill'"
+    },
+    {
+      "sheet_row": 35,
+      "record_id": "REC-0025",
+      "student_code": "BTU-T-0011",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-001 for category 'AI Skill'"
+    },
+    {
+      "sheet_row": 36,
+      "record_id": "REC-0026",
+      "student_code": "BTU-T-0012",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-003 for category 'AI Advanced Skill'"
+    },
+    {
+      "sheet_row": 37,
+      "record_id": "REC-0027",
+      "student_code": "BTU-T-0013",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-001 for category 'AI Skill'"
+    },
+    {
+      "sheet_row": 38,
+      "record_id": "REC-0028",
+      "student_code": "BTU-T-0014",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-002 for category 'AI Applied Skill'"
+    },
+    {
+      "sheet_row": 39,
+      "record_id": "REC-0055",
+      "student_code": "BTU-T-0003",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-003 for category 'AI Advanced Skill'"
+    },
+    {
+      "sheet_row": 40,
+      "record_id": "REC-0029",
+      "student_code": "BTU-T-0001",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-002 for category 'AI Applied Skill'"
+    },
+    {
+      "sheet_row": 41,
+      "record_id": "REC-0030",
+      "student_code": "BTU-T-0002",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-001 for category 'AI Skill'"
+    },
+    {
+      "sheet_row": 42,
+      "record_id": "REC-0031",
+      "student_code": "BTU-T-0003",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-001 for category 'AI Skill'"
+    },
+    {
+      "sheet_row": 43,
+      "record_id": "REC-0032",
+      "student_code": "BTU-T-0004",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-003 for category 'AI Advanced Skill'"
+    },
+    {
+      "sheet_row": 44,
+      "record_id": "REC-0056",
+      "student_code": "BTU-T-0008",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-001 for category 'AI Skill'"
+    },
+    {
+      "sheet_row": 45,
+      "record_id": "REC-0033",
+      "student_code": "BTU-T-0005",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-001 for category 'AI Skill'"
+    },
+    {
+      "sheet_row": 46,
+      "record_id": "REC-0034",
+      "student_code": "BTU-T-0006",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-003 for category 'AI Advanced Skill'"
+    },
+    {
+      "sheet_row": 47,
+      "record_id": "REC-0035",
+      "student_code": "BTU-T-0007",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-002 for category 'AI Applied Skill'"
+    },
+    {
+      "sheet_row": 48,
+      "record_id": "REC-0036",
+      "student_code": "BTU-T-0008",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-003 for category 'AI Advanced Skill'"
+    },
+    {
+      "sheet_row": 49,
+      "record_id": "REC-0057",
+      "student_code": "BTU-T-0013",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-003 for category 'AI Advanced Skill'"
+    },
+    {
+      "sheet_row": 50,
+      "record_id": "REC-0037",
+      "student_code": "BTU-T-0009",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-002 for category 'AI Applied Skill'"
+    },
+    {
+      "sheet_row": 51,
+      "record_id": "REC-0038",
+      "student_code": "BTU-T-0010",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-003 for category 'AI Advanced Skill'"
+    },
+    {
+      "sheet_row": 52,
+      "record_id": "REC-0039",
+      "student_code": "BTU-T-0011",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-001 for category 'AI Skill'"
+    },
+    {
+      "sheet_row": 53,
+      "record_id": "REC-0040",
+      "student_code": "BTU-T-0012",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-003 for category 'AI Advanced Skill'"
+    },
+    {
+      "sheet_row": 54,
+      "record_id": "REC-0058",
+      "student_code": "BTU-T-0007",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-002 for category 'AI Applied Skill'"
+    },
+    {
+      "sheet_row": 55,
+      "record_id": "REC-0041",
+      "student_code": "BTU-T-0013",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-002 for category 'AI Applied Skill'"
+    },
+    {
+      "sheet_row": 56,
+      "record_id": "REC-0042",
+      "student_code": "BTU-T-0014",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-001 for category 'AI Skill'"
+    },
+    {
+      "sheet_row": 57,
+      "record_id": "REC-0043",
+      "student_code": "BTU-T-0001",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-002 for category 'AI Applied Skill'"
+    },
+    {
+      "sheet_row": 58,
+      "record_id": "REC-0044",
+      "student_code": "BTU-T-0002",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-003 for category 'AI Advanced Skill'"
+    },
+    {
+      "sheet_row": 59,
+      "record_id": "REC-0059",
+      "student_code": "BTU-T-0003",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-003 for category 'AI Advanced Skill'"
+    },
+    {
+      "sheet_row": 60,
+      "record_id": "REC-0045",
+      "student_code": "BTU-T-0006",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-001 for category 'AI Skill'"
+    },
+    {
+      "sheet_row": 61,
+      "record_id": "REC-0046",
+      "student_code": "BTU-T-0007",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-001 for category 'AI Skill'"
+    },
+    {
+      "sheet_row": 62,
+      "record_id": "REC-0047",
+      "student_code": "BTU-T-0008",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-003 for category 'AI Advanced Skill'"
+    },
+    {
+      "sheet_row": 63,
+      "record_id": "REC-0048",
+      "student_code": "BTU-T-0003",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-002 for category 'AI Applied Skill'"
+    },
+    {
+      "sheet_row": 64,
+      "record_id": "REC-0060",
+      "student_code": "BTU-T-0008",
+      "severity": "WARNING",
+      "code": "BADGE_FROM_FORMULA",
+      "message": "Badge/Stamp Code formula not calculated; used BDG-AI-001 for category 'AI Skill'"
+    },
+    {
+      "sheet_row": 66,
+      "record_id": "REC-0902",
+      "student_code": "BTU-T-0002",
+      "severity": "HOLD",
+      "code": "NOT_CONFIRMED",
+      "message": "Verification Status is PENDING; only CONFIRMED records reach a passport"
+    },
+    {
+      "sheet_row": 67,
+      "record_id": "REC-0903",
+      "student_code": "BTU-T-0004",
+      "severity": "HOLD",
+      "code": "NOT_CONFIRMED",
+      "message": "Verification Status is REJECTED; only CONFIRMED records reach a passport"
+    },
+    {
+      "sheet_row": 68,
+      "record_id": "REC-0904",
+      "student_code": "BTU-T-00X1",
+      "severity": "ERROR",
+      "code": "INVALID_STUDENT_ID",
+      "message": "Student ID 'BTU-T-00X1' does not match the Student ID format ^BTU-T-\\d{4,}$"
+    },
+    {
+      "sheet_row": 6,
+      "record_id": "REC-0002",
+      "student_code": "BTU-T-0002",
+      "severity": "ERROR",
+      "code": "EMAIL_CONFLICT",
+      "message": "Email btu-t-0002@example.org is used by more than one Student ID: ['BTU-T-0002', 'BTU-T-0999']"
+    },
+    {
+      "sheet_row": 23,
+      "record_id": "REC-0016",
+      "student_code": "BTU-T-0002",
+      "severity": "ERROR",
+      "code": "EMAIL_CONFLICT",
+      "message": "Email btu-t-0002@example.org is used by more than one Student ID: ['BTU-T-0002', 'BTU-T-0999']"
+    },
+    {
+      "sheet_row": 41,
+      "record_id": "REC-0030",
+      "student_code": "BTU-T-0002",
+      "severity": "ERROR",
+      "code": "EMAIL_CONFLICT",
+      "message": "Email btu-t-0002@example.org is used by more than one Student ID: ['BTU-T-0002', 'BTU-T-0999']"
+    },
+    {
+      "sheet_row": 58,
+      "record_id": "REC-0044",
+      "student_code": "BTU-T-0002",
+      "severity": "ERROR",
+      "code": "EMAIL_CONFLICT",
+      "message": "Email btu-t-0002@example.org is used by more than one Student ID: ['BTU-T-0002', 'BTU-T-0999']"
+    },
+    {
+      "sheet_row": 66,
+      "record_id": "REC-0902",
+      "student_code": "BTU-T-0002",
+      "severity": "ERROR",
+      "code": "EMAIL_CONFLICT",
+      "message": "Email btu-t-0002@example.org is used by more than one Student ID: ['BTU-T-0002', 'BTU-T-0999']"
+    },
+    {
+      "sheet_row": 69,
+      "record_id": "REC-0905",
+      "student_code": "BTU-T-0999",
+      "severity": "ERROR",
+      "code": "EMAIL_CONFLICT",
+      "message": "Email btu-t-0002@example.org is used by more than one Student ID: ['BTU-T-0002', 'BTU-T-0999']"
+    }
+  ],
+  "preserved_synced_values": []
+}

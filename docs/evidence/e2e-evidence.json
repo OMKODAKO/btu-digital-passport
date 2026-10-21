@@ -1,0 +1,237 @@
+[
+  {
+    "step": "setup",
+    "result": "PASS",
+    "note": "fresh database; registry deployed; TEST issuer authorised; 18 passports V1 issued and registered",
+    "registry": "0x44DFa367d0E75742D35cBCB35f96E4d61C613139",
+    "issuer": "0x80eeDD22D0E92b814E8A16910f2D9eb31595a375"
+  },
+  {
+    "step": 1,
+    "result": "BLOCKED",
+    "equivalent": "PASS",
+    "note": "test-password sign-in for btu-t-0001@example.org succeeded; Google sign-in not built"
+  },
+  {
+    "step": 2,
+    "result": "BLOCKED",
+    "equivalent": "PASS",
+    "note": "emails outside STUDENT_EMAIL_DOMAINS are refused even with a correct password; Google hosted-domain check not built"
+  },
+  {
+    "step": 3,
+    "result": "PASS",
+    "note": "btu-t-0001@example.org → Student ID BTU-T-0001 → Passport BTU-AI-000125"
+  },
+  {
+    "step": 4,
+    "result": "PASS",
+    "note": "login answers 303 → /dashboard"
+  },
+  {
+    "step": 5,
+    "result": "PASS",
+    "pages": 4,
+    "sha256": "1666a41254c2b77a48b7cfe306f91db7a850feaa23a940f93d16a76a2cdd1ff0",
+    "code": "BTU-7S2T-3DCT-HJQ5"
+  },
+  {
+    "step": 6,
+    "result": "BLOCKED",
+    "equivalent": "PASS",
+    "note": "row added to a COPY of the Excel workbook (Google Sheets reader not built)",
+    "added": [
+      {
+        "sheet_row": 65,
+        "record_id": "REC-0901",
+        "student_id": "BTU-T-0001",
+        "skill": "Prompt Engineering Fundamentals",
+        "verification_status": "CONFIRMED"
+      },
+      {
+        "sheet_row": 66,
+        "record_id": "REC-0902",
+        "student_id": "BTU-T-0002",
+        "skill": "AI Literacy",
+        "verification_status": "PENDING"
+      },
+      {
+        "sheet_row": 67,
+        "record_id": "REC-0903",
+        "student_id": "BTU-T-0004",
+        "skill": "AI Literacy",
+        "verification_status": "REJECTED"
+      },
+      {
+        "sheet_row": 68,
+        "record_id": "REC-0904",
+        "student_id": "BTU-T-00X1",
+        "skill": "AI Literacy",
+        "verification_status": "CONFIRMED"
+      },
+      {
+        "sheet_row": 69,
+        "record_id": "REC-0905",
+        "student_id": "BTU-T-0999",
+        "skill": "AI Literacy",
+        "verification_status": "CONFIRMED"
+      }
+    ]
+  },
+  {
+    "step": 7,
+    "result": "PASS",
+    "note": "REC-0901 (CONFIRMED) accepted for BTU-T-0001 only; PENDING/REJECTED held; bad Student IDs rejected",
+    "issues": [
+      {
+        "sheet_row": 66,
+        "record_id": "REC-0902",
+        "student_code": "BTU-T-0002",
+        "severity": "HOLD",
+        "code": "NOT_CONFIRMED",
+        "message": "Verification Status is PENDING; only CONFIRMED records reach a passport"
+      },
+      {
+        "sheet_row": 67,
+        "record_id": "REC-0903",
+        "student_code": "BTU-T-0004",
+        "severity": "HOLD",
+        "code": "NOT_CONFIRMED",
+        "message": "Verification Status is REJECTED; only CONFIRMED records reach a passport"
+      },
+      {
+        "sheet_row": 68,
+        "record_id": "REC-0904",
+        "student_code": "BTU-T-00X1",
+        "severity": "ERROR",
+        "code": "INVALID_STUDENT_ID",
+        "message": "Student ID 'BTU-T-00X1' does not match the Student ID format ^BTU-T-\\d{4,}$"
+      },
+      {
+        "sheet_row": 6,
+        "record_id": "REC-0002",
+        "student_code": "BTU-T-0002",
+        "severity": "ERROR",
+        "code": "EMAIL_CONFLICT",
+        "message": "Email btu-t-0002@example.org is used by more than one Student ID: ['BTU-T-0002', 'BTU-T-0999']"
+      },
+      {
+        "sheet_row": 23,
+        "record_id": "REC-0016",
+        "student_code": "BTU-T-0002",
+        "severity": "ERROR",
+        "code": "EMAIL_CONFLICT",
+        "message": "Email btu-t-0002@example.org is used by more than one Student ID: ['BTU-T-0002', 'BTU-T-0999']"
+      },
+      {
+        "sheet_row": 41,
+        "record_id": "REC-0030",
+        "student_code": "BTU-T-0002",
+        "severity": "ERROR",
+        "code": "EMAIL_CONFLICT",
+        "message": "Email btu-t-0002@example.org is used by more than one Student ID: ['BTU-T-0002', 'BTU-T-0999']"
+      },
+      {
+        "sheet_row": 58,
+        "record_id": "REC-0044",
+        "student_code": "BTU-T-0002",
+        "severity": "ERROR",
+        "code": "EMAIL_CONFLICT",
+        "message": "Email btu-t-0002@example.org is used by more than one Student ID: ['BTU-T-0002', 'BTU-T-0999']"
+      },
+      {
+        "sheet_row": 66,
+        "record_id": "REC-0902",
+        "student_code": "BTU-T-0002",
+        "severity": "ERROR",
+        "code": "EMAIL_CONFLICT",
+        "message": "Email btu-t-0002@example.org is used by more than one Student ID: ['BTU-T-0002', 'BTU-T-0999']"
+      },
+      {
+        "sheet_row": 69,
+        "record_id": "REC-0905",
+        "student_code": "BTU-T-0999",
+        "severity": "ERROR",
+        "code": "EMAIL_CONFLICT",
+        "message": "Email btu-t-0002@example.org is used by more than one Student ID: ['BTU-T-0002', 'BTU-T-0999']"
+      }
+    ]
+  },
+  {
+    "step": 11,
+    "result": "PASS",
+    "note": "V2 waited (V1 current) until registration succeeded; then V2 CURRENT, V1 SUPERSEDED"
+  },
+  {
+    "step": 8,
+    "result": "PASS",
+    "passportId": "BTU-AI-000125",
+    "firstIssued": "2026-09-15",
+    "v1Code": "BTU-7S2T-3DCT-HJQ5",
+    "v2Code": "BTU-4RC8-R9V4-8PVM"
+  },
+  {
+    "step": 9,
+    "result": "PASS",
+    "sha256": "6e723955edb9493f3ee2d1f23f4e6f62fcd6266a34be683c0b30e6deb3dcea05"
+  },
+  {
+    "step": 10,
+    "result": "PASS",
+    "txHash": "0x492e5864ac547ab1c41e80dadee39d056fc0f0115d0239f50de9caa9ff7ab1c9",
+    "block": 21,
+    "from": "0x80eedd22d0e92b814e8a16910f2d9eb31595a375",
+    "registry": "0x44DFa367d0E75742D35cBCB35f96E4d61C613139",
+    "issuerLabel": "BTU hackathon TEST issuer",
+    "note": "issuer is a TEST issuer authorised by the registry admin and named in a TEST trust anchor; no BTU authorisation"
+  },
+  {
+    "step": 12,
+    "result": "PASS",
+    "note": "dashboard shows V2 as current with V1 in history; download is V2"
+  },
+  {
+    "step": 13,
+    "result": "PASS",
+    "checks": {
+      "record": "FOUND",
+      "chain": "CONFIRMED",
+      "file": "MATCH",
+      "version": "CURRENT",
+      "issuer": "TEST_ISSUER"
+    },
+    "overall": "TEST_ISSUER_ONLY",
+    "note": "document checks pass; issuer is a TEST issuer, so it is never called an official BTU issuance"
+  },
+  {
+    "step": 14,
+    "result": "PASS",
+    "modifiedSha256": "8bdbeaec8aabbb5bc07d87153edd7aa05e8b3c81e4966a149b9477714d64275f",
+    "note": "edited cover text and a one-byte flip both give MISMATCH / NOT_VERIFIED; unknown code gives NOT_FOUND"
+  },
+  {
+    "step": 15,
+    "result": "PASS",
+    "checks": {
+      "record": "FOUND",
+      "file": "MATCH",
+      "version": "SUPERSEDED",
+      "issuer": "TEST_ISSUER"
+    }
+  },
+  {
+    "step": 16,
+    "result": "PASS",
+    "before": {
+      "a": 61,
+      "v": 19,
+      "c": 19
+    },
+    "after": {
+      "a": 61,
+      "v": 19,
+      "c": 19
+    },
+    "note": "two more runs: 0 new awards, 0 versions, 0 transactions"
+  }
+]

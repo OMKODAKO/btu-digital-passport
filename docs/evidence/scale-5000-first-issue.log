@@ -1,0 +1,8 @@
+5000 synthetic students, 15000 rows -> /home/user/scale/s5000.xlsx
+5000 synthetic students, 20000 rows -> /home/user/scale/s5000b.xlsx
+  rows: 15000 records, 0 note rows ignored, 0 blank
+  valid 15000, held 0, invalid 0; students with valid rows 5000
+  awards: 15000 new, 0 unchanged, 0 edited after acceptance (kept as accepted)
+  passports created 5000, versions generated 5000, generation failures 0
+  issuance (blockchain mode): 5000 issued with blockchain registration, 0 issued unregistered (local demo), 0 waiting for registration, 0 issuance failures
+RUN s5000 elapsed_s 1867

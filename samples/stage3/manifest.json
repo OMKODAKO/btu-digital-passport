@@ -1,0 +1,107 @@
+[
+  {
+    "file": "01-first-issue-V1.pdf",
+    "passport_id": "BTU-AI-900001",
+    "version": "V1",
+    "first_issued": "2026-09-01",
+    "issued_at": "2026-09-01T10:00:00Z",
+    "verification_code": "BTU-GJY1-QHT6-PYKM",
+    "skills": 3,
+    "sha256": "c4860f060c576a65c223abd663c0f441c6289461b785c34a1df3363970644c4b",
+    "check": {
+      "pages": 4,
+      "cells_checked": 15,
+      "continuation_pages": 0,
+      "continued_records": []
+    },
+    "note": "synthetic sample; not issued, not registered on any blockchain"
+  },
+  {
+    "file": "02-update-V2.pdf",
+    "passport_id": "BTU-AI-900001",
+    "version": "V2",
+    "first_issued": "2026-09-01",
+    "issued_at": "2026-10-15T10:00:00Z",
+    "verification_code": "BTU-F3N1-VEA7-J9VF",
+    "skills": 5,
+    "sha256": "3b2c4ce35dca9fb720edaec0f3b89d8650d8fba3e7703d01ed91f4cffcaad273",
+    "check": {
+      "pages": 4,
+      "cells_checked": 25,
+      "continuation_pages": 0,
+      "continued_records": []
+    },
+    "note": "synthetic sample; not issued, not registered on any blockchain"
+  },
+  {
+    "file": "03-many-skills-23.pdf",
+    "passport_id": "BTU-AI-900002",
+    "version": "V1",
+    "first_issued": "2026-09-01",
+    "issued_at": "2026-10-21T10:00:00Z",
+    "verification_code": "BTU-4VAV-126T-G6RN",
+    "skills": 23,
+    "sha256": "5d56bbb7922ac0f5f0a144ddc596a0b2a3b0a7163fe6ea53a7a058e457eef7f9",
+    "check": {
+      "pages": 10,
+      "cells_checked": 115,
+      "continuation_pages": 0,
+      "continued_records": []
+    },
+    "note": "synthetic sample; not issued, not registered on any blockchain"
+  },
+  {
+    "file": "04-long-descriptions.pdf",
+    "passport_id": "BTU-AI-900003",
+    "version": "V1",
+    "first_issued": "2026-09-01",
+    "issued_at": "2026-10-21T10:00:00Z",
+    "verification_code": "BTU-9073-PFTM-S13V",
+    "skills": 6,
+    "sha256": "244a434c48824888ee8d8682cebc03a68b012fa24a1aa1b76e539e56286278ec",
+    "check": {
+      "pages": 6,
+      "cells_checked": 28,
+      "continuation_pages": 1,
+      "continued_records": [
+        "REC-S002",
+        "REC-S005"
+      ]
+    },
+    "note": "synthetic sample; not issued, not registered on any blockchain"
+  },
+  {
+    "file": "05-no-skills-yet.pdf",
+    "passport_id": "BTU-AI-900004",
+    "version": "V1",
+    "first_issued": "2026-10-01",
+    "issued_at": "2026-10-21T10:00:00Z",
+    "verification_code": "BTU-0VDG-0BEQ-GNEM",
+    "skills": 0,
+    "sha256": "8f41883b2cd4f2933371cd3e7c9fe74d3f8b5673c5d09e964034f04953cd52ae",
+    "check": {
+      "pages": 4,
+      "cells_checked": 0,
+      "continuation_pages": 0,
+      "continued_records": []
+    },
+    "note": "synthetic sample; not issued, not registered on any blockchain"
+  },
+  {
+    "file": "06-georgian-name.pdf",
+    "passport_id": "BTU-AI-900005",
+    "version": "V1",
+    "first_issued": "2026-09-01",
+    "issued_at": "2026-10-21T10:00:00Z",
+    "verification_code": "BTU-134K-55SE-Z1N2",
+    "skills": 4,
+    "sha256": "6cafa60daa2c66b35eb1b5123e8e8ec5a5e70b2a7fba16729623e36f1126c9b4",
+    "check": {
+      "pages": 4,
+      "cells_checked": 20,
+      "continuation_pages": 0,
+      "continued_records": []
+    },
+    "note": "synthetic sample; not issued, not registered on any blockchain"
+  }
+]

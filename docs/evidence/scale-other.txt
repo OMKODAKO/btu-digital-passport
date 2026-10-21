@@ -1,0 +1,6 @@
+Synthetic students, one worker, SQLite, local Hardhat devnet (1 confirmation), shared 4-core cloud container, 2026-10-21.
+500 students first issue: 181 s; 500 updates: 224 s; no-change re-run: 4.8 s.
+5,000 students first issue: 1,867 s (log: scale-5000-first-issue.log). The 5,000-update phase was stopped at Merabi's request.
+Verifier load (scripts/scale/load_verify.mjs, 1,000 requests with PDF upload, concurrency 20, import running beside it):
+{"requests":1000,"concurrency":20,"ok":1000,"bad":0,"seconds":12.6,"per_second":79.2,"p50_ms":227,"p95_ms":413,"max_ms":878}
+Gas per register(): 184,740 (3 receipts sampled).

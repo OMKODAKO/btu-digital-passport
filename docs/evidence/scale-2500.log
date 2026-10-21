@@ -1,0 +1,23 @@
+2500 synthetic students, 7500 rows -> /home/user/scale/s2500.xlsx
+2500 synthetic students, 10000 rows -> /home/user/scale/s2500b.xlsx
+  rows: 7500 records, 0 note rows ignored, 0 blank
+  valid 7500, held 0, invalid 0; students with valid rows 2500
+  awards: 7500 new, 0 unchanged, 0 edited after acceptance (kept as accepted)
+  passports created 2500, versions generated 2500, generation failures 0
+  issuance (blockchain mode): 2500 issued with blockchain registration, 0 issued unregistered (local demo), 0 waiting for registration, 0 issuance failures
+RUN s2500 elapsed_s 898
+  rows: 10000 records, 0 note rows ignored, 0 blank
+  valid 10000, held 0, invalid 0; students with valid rows 2500
+  awards: 2500 new, 7500 unchanged, 0 edited after acceptance (kept as accepted)
+  passports created 0, versions generated 2500, generation failures 0
+  issuance (blockchain mode): 2500 issued with blockchain registration, 0 issued unregistered (local demo), 0 waiting for registration, 0 issuance failures
+RUN s2500b elapsed_s 1123
+  rows: 10000 records, 0 note rows ignored, 0 blank
+  valid 10000, held 0, invalid 0; students with valid rows 2500
+  awards: 0 new, 10000 unchanged, 0 edited after acceptance (kept as accepted)
+  passports created 0, versions generated 0, generation failures 0
+  issuance (blockchain mode): 0 issued with blockchain registration, 0 issued unregistered (local demo), 0 waiting for registration, 0 issuance failures
+RUN s2500b elapsed_s 41
+1.1G	/home/user/scale/data2500/storage
+24M	/home/user/scale/data2500/portal.db
+DONE

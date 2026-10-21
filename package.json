@@ -1,0 +1,43 @@
+{
+  "name": "btu-student-portal",
+  "version": "0.1.0",
+  "private": true,
+  "description": "BTU AI Skills Digital Passport: workbook sync, PDF generation, blockchain registration, public verification, student dashboard and admin area (hackathon MVP)",
+  "scripts": {
+    "predev": "node scripts/copy-pdf-worker.mjs",
+    "dev": "next dev",
+    "prebuild": "node scripts/copy-pdf-worker.mjs",
+    "build": "next build",
+    "start": "next start",
+    "seed": "tsx scripts/seed.ts",
+    "migrate": "tsx scripts/migrate.ts",
+    "create-login": "tsx scripts/create-login.ts",
+    "import": "python3 -m worker import --xlsx",
+    "test": "node --test --test-concurrency=1 tests/*.test.mjs",
+    "test:worker": "python3 -m unittest discover -s worker/tests -t . -v",
+    "create-staff": "tsx scripts/create-staff.ts",
+    "retry": "python3 -m worker retry",
+    "test:e2e": "node --test tests/e2e.test.mjs",
+    "demo:setup": "bash scripts/demo-setup.sh",
+    "demo:start": "bash -c 'set -a; . \"${DEMO_DIR:-data-demo}/demo.env\"; set +a; exec next start'",
+    "demo:add-skill": "bash scripts/demo-add-skill.sh"
+  },
+  "dependencies": {
+    "better-sqlite3": "12.11.1",
+    "next": "16.4.2",
+    "pdfjs-dist": "5.4.296",
+    "qrcode": "1.5.4",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "viem": "2.57.4"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^22.10.0",
+    "@types/qrcode": "1.5.5",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "tsx": "4.23.15",
+    "typescript": "^5.7.0"
+  }
+}
