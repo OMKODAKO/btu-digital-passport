@@ -84,6 +84,8 @@ a { color: var(--brand); }
 .verdict.bad { border-color: var(--error-ink); }
 .checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
 .checks li { display: grid; grid-template-columns: 24px 1fr; gap: 8px; align-items: start; }
+.check-group { margin: 14px 0 6px; font-size: 0.8em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted, #666); }
+.check-group:first-child { margin-top: 0; }
 .mark { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; font-size: 0.8rem; font-weight: 700; color: #fff; }
 .mark.ok { background: var(--ok); }
 .mark.bad { background: var(--error-ink); }

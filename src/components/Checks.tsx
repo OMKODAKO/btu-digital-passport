@@ -19,6 +19,9 @@ export const HEADLINES: Record<VerificationResult["overall"], { title: string; t
  * names the test issuer in the same sentence.
  */
 export function headline(r: VerificationResult): { title: string; tone: "ok" | "warn" | "bad" } {
+  // A real code with a wrong file must not read as half-verified: the uploaded document itself failed.
+  if (r.file === "MISMATCH")
+    return { title: "Not verified: the uploaded PDF is NOT this passport (it was changed, or it is a different document)", tone: "bad" };
   if (r.overall !== "TEST_ISSUER_ONLY") return HEADLINES[r.overall];
   const test = "issued by BTU's hackathon TEST issuer, not yet an official BTU issuance";
   if (r.file === "MATCH" && r.version === "CURRENT")
@@ -96,10 +99,10 @@ export function lines(r: VerificationResult, stored = false): Line[] {
   ];
 }
 
-export default function Checks({ result, stored = false }: { result: VerificationResult; stored?: boolean }) {
+function CheckList({ items }: { items: Line[] }) {
   return (
     <ul className="checks">
-      {lines(result, stored).map((l) => (
+      {items.map((l) => (
         <li key={l.label} data-check={l.label} data-state={l.state}>
           <span className={`mark ${l.good === true ? "ok" : l.good === false ? "bad" : "warn"}`} aria-hidden>
             {l.good === true ? "✓" : l.good === false ? "✗" : "!"}
@@ -111,5 +114,23 @@ export default function Checks({ result, stored = false }: { result: Verificatio
         </li>
       ))}
     </ul>
+  );
+}
+
+export default function Checks({ result, stored = false }: { result: VerificationResult; stored?: boolean }) {
+  const all = lines(result, stored);
+  const file = all.filter((l) => l.label === "File integrity");
+  const code = all.filter((l) => l.label !== "File integrity");
+  if (stored || result.file === "NOT_PROVIDED") return <CheckList items={all} />;
+  // Two separate questions: is the uploaded file genuine, and does the code belong to a real passport?
+  return (
+    <>
+      <p className="check-group">Your uploaded file</p>
+      <CheckList items={file} />
+      <p className="check-group">
+        The verification code{result.code ? ` ${result.code}` : ""}: these checks are about the code&apos;s record, not your file
+      </p>
+      <CheckList items={code} />
+    </>
   );
 }
