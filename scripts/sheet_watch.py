@@ -48,6 +48,15 @@ def download(url: str, dest: Path) -> bytes:
     return data
 
 
+def content_digest(path: Path) -> str:
+    """Hash of the cell values only: Google's export bytes differ on every download even when nothing changed."""
+    ws = openpyxl.load_workbook(path, data_only=True)[SHEET]
+    h = hashlib.sha256()
+    for row in ws.iter_rows(values_only=True):
+        h.update(repr(row).encode())
+    return h.hexdigest()
+
+
 def fill_demo_rows(path: Path) -> list[str]:
     """DEMO HELPER: a row with a First and Last Name but no Student ID gets the next BTU-T number, a test
     email, a Record ID, today's date and (if left empty) the AI Literacy skill copied from an existing row.
@@ -146,7 +155,7 @@ def main() -> None:
     while True:
         try:
             raw = download(url, work / "downloaded.xlsx")
-            digest = hashlib.sha256(raw).hexdigest()
+            digest = content_digest(work / "downloaded.xlsx")
             if digest != last:
                 last = digest
                 copy = work / "latest.xlsx"
