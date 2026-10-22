@@ -71,7 +71,7 @@ unset PASSPORT_ADMIN_PRIVATE_KEY
 set -a; . "$DEMO_DIR/demo.env"; set +a
 
 npm run --silent migrate >/dev/null
-python3 -m worker import --xlsx "$WORKBOOK"
+python3 -m worker import --xlsx "$WORKBOOK" ${IMPORT_FLAGS:-}
 python3 - "$DEMO_DIR/portal.db" >"$DEMO_DIR/emails.txt" <<'EOF'
 import sqlite3, sys
 for (e,) in sqlite3.connect(sys.argv[1]).execute("SELECT email FROM students ORDER BY student_id"):
