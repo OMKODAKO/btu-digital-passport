@@ -137,6 +137,11 @@ def banner(name: str, email: str, pw: str, port: str) -> None:
     print(f"  Email:     \033[1m{email}\033[0m")
     print(f"  Password:  \033[1m{pw}\033[0m")
     print(f"\033[1;32m{bar}\033[0m\n", flush=True)
+    if sys.platform == "darwin":  # a popup on screen too, so the presenter sees it without the terminal
+        msg = f"{name}\n\nhttp://localhost:{port}/login\nEmail: {email}\nPassword: {pw}".replace('"', "'")
+        subprocess.Popen(["osascript", "-e",
+                          f'display dialog "{msg}" with title "New passport ready" buttons {{"OK"}} default button 1'],
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
 def main() -> None:
