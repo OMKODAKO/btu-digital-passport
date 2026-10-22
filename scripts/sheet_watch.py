@@ -57,9 +57,12 @@ def content_digest(path: Path) -> str:
     return h.hexdigest()
 
 
-def fill_demo_rows(path: Path) -> list[str]:
+def fill_demo_rows(path: Path, db_path: Path | None = None) -> list[str]:
     """DEMO HELPER: a row with a First and Last Name but no Student ID gets the next BTU-T number, a test
-    email (unless one was typed), a Record ID, today's date and (if left empty) the AI Literacy skill copied from an existing row.
+    email (unless one was typed), a Record ID, today's date and (if left empty) the AI Literacy skill.
+    A skill named like one already in the sheet takes that skill's ID, category and description, so one
+    Skill ID never gets two definitions. If the skill on a row changes after it was issued, the row gets a new
+    Record ID: the new skill is added in the next version (issued skills are never rewritten).
     Rows that already have a Student ID are left exactly as BTU typed them."""
     wb = openpyxl.load_workbook(path)
     ws = wb[SHEET]
@@ -73,8 +76,14 @@ def fill_demo_rows(path: Path) -> list[str]:
     skills = {}
     for r in rows:
         name = val(r, "Skill Name")
-        if name and val(r, "Skill ID") and name not in skills:
+        if name and val(r, "Skill ID") and val(r, "Student ID") and name not in skills:
             skills[name] = {k: val(r, k) for k in ("Skill ID", "Skill Category", "Skill Description")}
+    db = sqlite3.connect(db_path) if db_path and db_path.exists() else None
+    awards = {}   # record_id -> (student_id, skill_name)
+    if db:
+        awards = {rec: (sid, name) for rec, sid, name in db.execute(
+            "SELECT a.record_id, s.student_id, a.skill_name FROM skill_awards a JOIN students s ON s.id = a.student_fk")}
+    used = set(recs) | {int(m.group(1)) for k in awards if (m := re.fullmatch(r"REC-(\d+)", k))}
 
     filled = []
     next_id, next_rec = max(nums, default=0) + 1, max(recs, default=0) + 1
@@ -89,15 +98,33 @@ def fill_demo_rows(path: Path) -> list[str]:
         set_("Program", val(r, "Program") or "Hackathon Jury Demo")
         set_("Education Level", val(r, "Education Level") or "Bachelor's")
         set_("Student Status", val(r, "Student Status") or "Active")
-        set_("Record ID", f"REC-{next_rec:04d}")
-        skill = val(r, "Skill Name") or "AI Literacy"
+        skill = str(val(r, "Skill Name") or "AI Literacy").strip()
         set_("Skill Name", skill)
-        for k, v in skills.get(skill, {}).items():
-            if not val(r, k):
+        note = ""
+        if skill in skills:
+            for k, v in skills[skill].items():
+                if val(r, k) and str(val(r, k)).strip() != str(v).strip():
+                    note += f" ({k} set to the catalog's '{v}')"
                 set_(k, v)
+        else:  # a skill not in the sheet yet: give it its own ID; category must be one of the three
+            set_("Skill ID", "SKL-D" + hashlib.sha1(skill.lower().encode()).hexdigest()[:5].upper())
+            if val(r, "Skill Category") not in BADGES:
+                set_("Skill Category", "AI Skill")
+            set_("Skill Description", val(r, "Skill Description") or skill)
+        rec = f"REC-{next_rec:04d}"
+        if rec in awards and awards[rec] != (sid, skill):
+            same = [k for k, v in awards.items() if v == (sid, skill)]
+            if same:
+                rec = same[0]
+            else:
+                n = max(used) + 1
+                used.add(n)
+                rec = f"REC-{n:04d}"
+            note += f" (new skill -> new record {rec})"
+        set_("Record ID", rec)
         set_("Badge/Stamp Code", BADGES.get(val(r, "Skill Category"), "CHECK CATEGORY"))
         set_("Date Earned", val(r, "Date Earned") or dt.date.today().isoformat())
-        filled.append(f"{first} {last} -> {sid}")
+        filled.append(f"{first} {last} -> {sid}{note}")
         next_id, next_rec = next_id + 1, next_rec + 1
     if filled:
         wb.save(path)
@@ -226,7 +253,7 @@ def main() -> None:
                 last = digest
                 copy = work / "latest.xlsx"
                 copy.write_bytes(raw)
-                for f in fill_demo_rows(copy):
+                for f in fill_demo_rows(copy, demo_dir / "portal.db"):
                     print(f"  filled demo row: {f}", flush=True)
                 print(f"[{time.strftime('%H:%M:%S')}] sheet changed, importing ...", flush=True)
                 snap = snapshot(copy)
