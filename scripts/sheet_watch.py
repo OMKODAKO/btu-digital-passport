@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import hashlib
+import json
 import os
 import re
 import sqlite3
@@ -73,16 +74,19 @@ def fill_demo_rows(path: Path, db_path: Path | None = None) -> list[str]:
 
     nums = [int(m.group(1)) for r in rows if (m := re.fullmatch(r"BTU-T-(\d+)", str(val(r, "Student ID") or "")))]
     recs = [int(m.group(1)) for r in rows if (m := re.fullmatch(r"REC-(\d+)", str(val(r, "Record ID") or "")))]
-    skills = {}
-    for r in rows:
-        name = val(r, "Skill Name")
-        if name and val(r, "Skill ID") and val(r, "Student ID") and name not in skills:
-            skills[name] = {k: val(r, k) for k in ("Skill ID", "Skill Category", "Skill Description")}
     db = sqlite3.connect(db_path) if db_path and db_path.exists() else None
     awards = {}   # record_id -> (student_id, skill_name)
     if db:
         awards = {rec: (sid, name) for rec, sid, name in db.execute(
             "SELECT a.record_id, s.student_id, a.skill_name FROM skill_awards a JOIN students s ON s.id = a.student_fk")}
+    skills = {}
+    for r in rows:
+        name = val(r, "Skill Name")
+        rec = val(r, "Record ID")
+        if rec in awards and awards[rec][1] != str(name or "").strip():
+            continue  # this row's skill was just edited; its Skill ID still belongs to the old skill
+        if name and val(r, "Skill ID") and val(r, "Student ID") and name not in skills:
+            skills[name] = {k: val(r, k) for k in ("Skill ID", "Skill Category", "Skill Description")}
     used = set(recs) | {int(m.group(1)) for k in awards if (m := re.fullmatch(r"REC-(\d+)", k))}
     by_email = {}  # email -> Student ID already in the system: one person, one Student ID
     if db:
@@ -97,6 +101,28 @@ def fill_demo_rows(path: Path, db_path: Path | None = None) -> list[str]:
             profile[sid] = dict(zip(PROFILE, vals))
 
     filled = []
+    taken = set(recs)  # Record IDs on rows of this sheet, plus those handed out below
+    for r in rows:
+        rec, sid, skill = val(r, "Record ID"), val(r, "Student ID"), str(val(r, "Skill Name") or "").strip()
+        if not (rec and sid and skill) or rec not in awards or awards[rec] == (sid, skill):
+            continue
+        if awards[rec][0] != sid:
+            continue  # a Record ID that belongs to someone else is for the import to report, not to fix here
+        set_ = lambda name, v, r=r: ws.cell(r, col(name), v)
+        if skill in skills:
+            for k, v in skills[skill].items():
+                set_(k, v)
+        set_("Badge/Stamp Code", BADGES.get(val(r, "Skill Category"), "CHECK CATEGORY"))
+        same = [k for k, v in awards.items() if v == (sid, skill)]
+        if same:
+            new_rec = same[0]
+        else:
+            n = max(used | taken) + 1
+            used.add(n)
+            taken.add(n)
+            new_rec = f"REC-{n:04d}"
+        set_("Record ID", new_rec)
+        filled.append(f"{val(r, 'First Name')} {val(r, 'Last Name')} ({sid}): skill changed to {skill} -> {new_rec}")
     next_id, next_rec = max(nums, default=0) + 1, max(recs, default=0) + 1
     sheet_ids = {str(val(r, "BTU Email (Test)") or "").strip().lower(): val(r, "Student ID") for r in rows
                  if val(r, "Student ID") and val(r, "BTU Email (Test)")}
@@ -135,15 +161,15 @@ def fill_demo_rows(path: Path, db_path: Path | None = None) -> list[str]:
                 set_("Skill Category", "AI Skill")
             set_("Skill Description", val(r, "Skill Description") or skill)
         rec = f"REC-{next_rec:04d}"
-        if rec in awards and awards[rec] != (sid, skill):
-            same = [k for k, v in awards.items() if v == (sid, skill)]
-            if same:
-                rec = same[0]
-            else:
-                n = max(used) + 1
-                used.add(n)
-                rec = f"REC-{n:04d}"
-            note += f" (new skill -> new record {rec})"
+        same = [k for k, v in awards.items() if v == (sid, skill)]
+        if same:  # this person already holds this skill under a Record ID: keep using it
+            rec = same[0]
+        elif rec in awards or next_rec in taken:  # the next number is someone else's: take a free one
+            n = max(used | taken) + 1
+            rec = f"REC-{n:04d}"
+            note += f" (new record {rec})"
+        taken.add(int(rec[4:]))
+        used.add(int(rec[4:]))
         set_("Record ID", rec)
         set_("Badge/Stamp Code", BADGES.get(val(r, "Skill Category"), "CHECK CATEGORY"))
         set_("Date Earned", val(r, "Date Earned") or dt.date.today().isoformat())
@@ -207,6 +233,67 @@ def sync_credential_emails(demo_dir: Path) -> None:
     if len(stale) == 1 and len(missing) == 1:
         lines = [f"{missing[0]}\t{l.split(chr(9))[1]}" if l is stale[0] else l for l in lines]
         f.write_text("\n".join(lines) + "\n")
+
+
+def stamp_official(synced: Path, db_path: Path) -> None:
+    """Fill what the system knows into the processed copy, like the other rows: Passport ID and First Issued
+    for every student with a passport, and Q–R (SYNCED, version) for every row in their current version."""
+    db = sqlite3.connect(db_path)
+    passports = {sid: (pid, first) for sid, pid, first in db.execute(
+        "SELECT s.student_id, p.passport_id, p.first_issued_on FROM passports p JOIN students s ON s.id = p.student_fk")}
+    current = {rec: (sid, ver) for rec, sid, ver in db.execute(
+        """SELECT x.record_id, s.student_id, v.version_no FROM passports p JOIN students s ON s.id = p.student_fk
+           JOIN passport_versions v ON v.passport_fk = p.id AND v.status = 'CURRENT'
+           JOIN version_source_records x ON x.version_fk = v.id""")}
+    wb = openpyxl.load_workbook(synced)
+    ws = wb[SHEET]
+    head = {str(c.value).strip(): c.column for c in ws[HEADER_ROW] if c.value}
+    now = time.strftime("%Y-%m-%d %H:%M UTC", time.gmtime())
+    for r in range(HEADER_ROW + 1, ws.max_row + 1):
+        sid, rec = ws.cell(r, head["Student ID"]).value, ws.cell(r, head["Record ID"]).value
+        if sid in passports:
+            for name, v in zip(("Passport ID (Existing)", "First Issued (Existing)"), passports[sid]):
+                if not ws.cell(r, head[name]).value:
+                    ws.cell(r, head[name], v)
+        if rec in current and current[rec][0] == sid:
+            ver = f"V{current[rec][1]}"
+            if ws.cell(r, head["Synced Passport Version"]).value != ver:
+                ws.cell(r, head["Passport Sync Status"], "SYNCED")
+                ws.cell(r, head["Synced Passport Version"], ver)
+                ws.cell(r, head["Synced At (UTC)"], now)
+    wb.save(synced)
+
+
+def sheet_changes(downloaded: Path, synced: Path) -> list[dict]:
+    """Cells (A–T) where the processed copy differs from the Google Sheet: the values to write back."""
+    a = openpyxl.load_workbook(downloaded)[SHEET]
+    b = openpyxl.load_workbook(synced)[SHEET]
+    out = []
+    for r in range(HEADER_ROW + 1, b.max_row + 1):
+        for c in range(1, 21):
+            old, new = a.cell(r, c).value, b.cell(r, c).value
+            norm = lambda v: v.date().isoformat() if isinstance(v, dt.datetime) else (
+                v.isoformat() if isinstance(v, dt.date) else ("" if v is None else str(v)))
+            if norm(old) != norm(new) and not (isinstance(old, str) and old.startswith("=")):
+                out.append({"row": r, "col": c, "value": norm(new)})
+    return out
+
+
+def write_back(url: str, token: str, cells: list[dict]) -> str:
+    req = urllib.request.Request(url, data=json.dumps({"token": token, "cells": cells}).encode(),
+                                 headers={"Content-Type": "application/json"}, method="POST")
+    with urllib.request.urlopen(req, timeout=60) as r:  # Apps Script answers through a redirect
+        return r.read().decode()[:200]
+
+
+def demo_env_file(path: Path) -> dict:
+    out = {}
+    if path.exists():
+        for line in path.read_text().splitlines():
+            if "=" in line and not line.lstrip().startswith("#"):
+                k, v = line.split("=", 1)
+                out[k.strip()] = v.strip().strip('"')
+    return out
 
 
 def demo_env(demo_dir: Path) -> dict:
@@ -284,14 +371,23 @@ def main() -> None:
                     print(f"  \033[1;33mEDIT\033[0m {line}", flush=True)
                 prev = snap
                 before = current_versions(demo_dir)
+                synced = work / "synced.xlsx"
                 r = subprocess.run([sys.executable, "-m", "worker", "import", "--xlsx", str(copy),
-                                    "--assign-new-passport-ids", "--apply-edits", "--no-write-back"],
+                                    "--assign-new-passport-ids", "--apply-edits", "--output", str(synced)],
                                    cwd=ROOT, env=env, capture_output=True, text=True)
                 for line in r.stdout.splitlines():
                     if any(w in line for w in ("passports created", "issuance", "ERROR", "HOLD")):
                         print("  " + line.strip(), flush=True)
                 if r.returncode != 0:
                     print(r.stderr[-1500:], flush=True)
+                writer = demo_env_file(demo_dir / "sheet-writer.env")
+                if r.returncode == 0 and writer.get("SHEET_WRITER_URL") and synced.exists():
+                    stamp_official(synced, demo_dir / "portal.db")
+                    cells = sheet_changes(work / "downloaded.xlsx", synced)
+                    if cells:
+                        rows_ = sorted({c["row"] for c in cells})
+                        print(f"  writing {len(cells)} cell(s) back to the Google Sheet (rows {', '.join(map(str, rows_))}): "
+                              + write_back(writer["SHEET_WRITER_URL"], writer["SHEET_WRITER_TOKEN"], cells), flush=True)
                 sync_credential_emails(demo_dir)
                 for name, email, pw in new_logins(demo_dir, env):
                     banner(name, email, pw, os.environ.get("PORT", "3000"))
