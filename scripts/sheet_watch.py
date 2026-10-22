@@ -59,7 +59,7 @@ def content_digest(path: Path) -> str:
 
 def fill_demo_rows(path: Path) -> list[str]:
     """DEMO HELPER: a row with a First and Last Name but no Student ID gets the next BTU-T number, a test
-    email, a Record ID, today's date and (if left empty) the AI Literacy skill copied from an existing row.
+    email (unless one was typed), a Record ID, today's date and (if left empty) the AI Literacy skill copied from an existing row.
     Rows that already have a Student ID are left exactly as BTU typed them."""
     wb = openpyxl.load_workbook(path)
     ws = wb[SHEET]
@@ -85,7 +85,7 @@ def fill_demo_rows(path: Path) -> list[str]:
         sid = f"BTU-T-{next_id:04d}"
         set_ = lambda name, v: ws.cell(r, col(name), v)
         set_("Student ID", sid)
-        set_("BTU Email (Test)", f"{sid.lower()}@example.org")
+        set_("BTU Email (Test)", val(r, "BTU Email (Test)") or f"{sid.lower()}@example.org")
         set_("Program", val(r, "Program") or "Hackathon Jury Demo")
         set_("Education Level", val(r, "Education Level") or "Bachelor's")
         set_("Student Status", val(r, "Student Status") or "Active")
