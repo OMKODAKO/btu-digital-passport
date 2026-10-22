@@ -47,6 +47,9 @@ export default async function LoginPage({
         <p className="fine">
           Checking someone&apos;s passport? <a href="/verify">Verify a passport</a> (no account needed).
         </p>
+        <p className="fine">
+          BTU staff? <a href="/admin/login">Sign in to the admin area</a> (staff accounts don&apos;t work on this page).
+        </p>
       </div>
     </main>
   );
