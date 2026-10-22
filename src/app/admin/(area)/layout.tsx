@@ -9,37 +9,34 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const staff = await requireStaff();
   const real = (getDb().prepare("SELECT COUNT(*) AS n FROM students WHERE source NOT IN ('BTU_TEST_DATA', 'SEED_SYNTHETIC')").get() as { n: number }).n;
   return (
-    <div className="shell">
-      <aside className="sidebar">
-        <p className="sidebar-title">Staff area</p>
-        <nav className="sidebar-nav adminnav">
-          <a href="/admin">Overview</a>
-          <a href="/admin/students">Find a student</a>
-          <a href="/admin/issues">Import problems</a>
-          <a href="/admin/audit">Audit log</a>
-          <a href="/verify">Public verification</a>
-        </nav>
-        <form method="post" action="/api/admin/logout" className="sidebar-who">
+    <main className="page wide">
+      <header className="topbar">
+        <div>
+          <p className="eyebrow">BTU AI Skills Digital Passport · staff</p>
+          <nav className="adminnav">
+            <a href="/admin">Overview</a>
+            <a href="/admin/students">Find a student</a>
+            <a href="/admin/issues">Import problems</a>
+            <a href="/admin/audit">Audit log</a>
+          </nav>
+        </div>
+        <form method="post" action="/api/admin/logout" className="who">
           <span className="muted">
-            {staff.displayName}
-            <br />
-            <span data-testid="staff-role">{staff.role}</span>
+            {staff.displayName} · <span data-testid="staff-role">{staff.role}</span>
             {staff.isDemo && " · demo account"}
           </span>
           <button type="submit" className="button">
             Sign out
           </button>
         </form>
-      </aside>
-      <main className="shell-main">
-        {real === 0 && (
-          <p className="alert info" data-testid="demo-banner">
-            Demo environment: every record here is BTU hackathon test data or synthetic demo data, not real institutional
-            data. Passports are registered on the public Ethereum Sepolia test network by a test issuer.
-          </p>
-        )}
-        {children}
-      </main>
-    </div>
+      </header>
+      {real === 0 && (
+        <p className="alert info" data-testid="demo-banner">
+          Demo environment: every record here is BTU hackathon test data or synthetic demo data, not real institutional
+          data. The blockchain is a local test network and the issuer is a test issuer.
+        </p>
+      )}
+      {children}
+    </main>
   );
 }

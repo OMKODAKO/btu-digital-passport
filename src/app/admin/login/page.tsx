@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import Hero from "@/components/Hero";
 import { getCurrentStaff } from "@/lib/auth/staff";
 
 export const metadata = { title: "BTU passport admin: sign in" };
@@ -15,9 +14,7 @@ export default async function AdminLogin({ searchParams }: { searchParams: Promi
   const { error, signedout } = await searchParams;
   const message = error ? (ERRORS[error] ?? ERRORS.invalid) : null;
   return (
-    <main>
-      <Hero title="Passport Administration" sub="BTU staff" />
-      <div className="center-card">
+    <main className="center">
       <div className="card login">
         <p className="eyebrow">BTU staff</p>
         <h1>Passport administration</h1>
@@ -42,7 +39,6 @@ export default async function AdminLogin({ searchParams }: { searchParams: Promi
           </button>
         </form>
         <p className="fine">Prototype: demo staff accounts only. BTU single sign-on for staff isn&apos;t connected yet.</p>
-      </div>
       </div>
     </main>
   );

@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import Hero from "@/components/Hero";
 import { getCurrentStudent } from "@/lib/auth/session";
 
 const ERRORS: Record<string, string> = {
@@ -18,9 +17,7 @@ export default async function LoginPage({
   const message = error ? (ERRORS[error] ?? ERRORS.invalid) : null;
 
   return (
-    <main>
-      <Hero title="AI Skills Digital Passport" sub="ციფრული პასპორტი · Students" />
-      <div className="center-card">
+    <main className="center">
       <div className="card login">
         <p className="eyebrow">BTU</p>
         <h1>AI Skills Digital Passport</h1>
@@ -53,7 +50,6 @@ export default async function LoginPage({
         <p className="fine">
           BTU staff? <a href="/admin/login">Sign in to the admin area</a> (staff accounts don&apos;t work on this page).
         </p>
-      </div>
       </div>
     </main>
   );
