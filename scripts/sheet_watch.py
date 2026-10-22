@@ -221,6 +221,46 @@ def describe_edits(old: dict, new: dict) -> list[str]:
     return lines
 
 
+PROFILE_LABELS = {"BTU Email (Test)": "Email", "Program": "Program", "Education Level": "Education level"}
+
+
+def profile_edits(old: dict, new: dict) -> dict:
+    """Student ID -> ["Program: A -> B", ...] for the profile fields an edit changes (one entry per field)."""
+    out = {}
+    for rec, row in new.items():
+        before = old.get(rec)
+        if not before:
+            continue
+        for f, label in PROFILE_LABELS.items():
+            if before.get(f, "") != row.get(f, ""):
+                line = f"{label}: {before.get(f) or '-'} -> {row.get(f) or '-'}"
+                if line not in out.setdefault(row["Student ID"], []):
+                    out[row["Student ID"]].append(line)
+    return out
+
+
+def version_skills(db, student_fk: int, version_no: int) -> list[str]:
+    return [n for (n,) in db.execute(
+        """SELECT a.skill_name FROM passports p JOIN passport_versions v ON v.passport_fk = p.id AND v.version_no = ?
+           JOIN version_source_records x ON x.version_fk = v.id JOIN skill_awards a ON a.record_id = x.record_id
+           WHERE p.student_fk = ? ORDER BY a.date_earned, a.record_id""", (version_no, student_fk))]
+
+
+def update_banner(name: str, old_ver: int, ver: int, changes: list[str], skills: list[str]) -> None:
+    bar = "=" * 64
+    print(f"\n\033[1;33m{bar}\n  PASSPORT UPDATED: {name}  (V{old_ver} -> V{ver})\n{bar}\033[0m")
+    for c in changes or ["(no visible change)"]:
+        print(f"  {c}")
+    print(f"  Skills in V{ver}: {', '.join(skills)}")
+    print(f"\033[1;33m{bar}\033[0m\n", flush=True)
+    if sys.platform == "darwin":
+        msg = (f"{name}: V{old_ver} -> V{ver}\n\nWhat changed:\n" + "\n".join(f"• {c}" for c in changes or ["-"])
+               + f"\n\nSkills in V{ver}:\n" + "\n".join(f"• {k}" for k in skills)).replace('"', "'")
+        subprocess.Popen(["osascript", "-e",
+                          f'display dialog "{msg}" with title "Passport updated" buttons {{"OK"}} default button 1'],
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
 def current_versions(demo_dir: Path) -> dict:
     db = sqlite3.connect(demo_dir / "portal.db")
     return dict(db.execute(
@@ -378,6 +418,7 @@ def main() -> None:
                 snap = snapshot(copy)
                 for line in describe_edits(prev, snap):
                     print(f"  \033[1;33mEDIT\033[0m {line}", flush=True)
+                edits = profile_edits(prev, snap)
                 prev = snap
                 before = current_versions(demo_dir)
                 synced = work / "synced.xlsx"
@@ -401,19 +442,16 @@ def main() -> None:
                 for name, email, pw in new_logins(demo_dir, env):
                     banner(name, email, pw, os.environ.get("PORT", "3000"))
                 after = current_versions(demo_dir)
-                creds = dict(l.split("\t", 1) for l in (demo_dir / "dev-credentials.txt").read_text().splitlines() if "\t" in l)
                 db = sqlite3.connect(demo_dir / "portal.db")
                 for fk, ver in after.items():
                     if fk in before and ver > before[fk]:
-                        name, email = db.execute("SELECT first_name || ' ' || last_name, email FROM students WHERE id = ?",
-                                                 (fk,)).fetchone()
-                        banner(name, email, creds.get(email, "(unchanged)"), os.environ.get("PORT", "3000"),
-                               title=f"PASSPORT UPDATED TO V{ver}")
-                        skills = [n for (n,) in db.execute(
-                            """SELECT a.skill_name FROM passports p JOIN passport_versions v ON v.passport_fk = p.id
-                               AND v.status = 'CURRENT' JOIN version_source_records x ON x.version_fk = v.id
-                               JOIN skill_awards a ON a.record_id = x.record_id WHERE p.student_fk = ?""", (fk,))]
-                        print(f"  Skills in V{ver}: " + ", ".join(skills) + "\n", flush=True)
+                        name, sid = db.execute("SELECT first_name || ' ' || last_name, student_id FROM students WHERE id = ?",
+                                               (fk,)).fetchone()
+                        old_sk, new_sk = version_skills(db, fk, before[fk]), version_skills(db, fk, ver)
+                        changes = list(edits.get(sid, []))
+                        changes += [f"Skill added: {k}" for k in new_sk if k not in old_sk]
+                        changes += [f"Skill removed: {k}" for k in old_sk if k not in new_sk]
+                        update_banner(name, before[fk], ver, changes, new_sk)
         except Exception as e:  # keep watching through network hiccups
             print(f"[{time.strftime('%H:%M:%S')}] {e}", flush=True)
         time.sleep(a.every)
