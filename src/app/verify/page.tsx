@@ -1,3 +1,4 @@
+import AppHeader from "@/components/AppHeader";
 import VerifyForm from "./VerifyForm";
 
 export const metadata = { title: "Verify a BTU AI Skills Digital Passport" };
@@ -8,9 +9,13 @@ export default function VerifyPage() {
 
 export function VerifyShell({ code }: { code?: string }) {
   return (
+    <>
+    <AppHeader area="public" home="/verify">
+      <a className="appbar-link" href="/login">Student sign-in</a>
+    </AppHeader>
     <main className="page narrow">
-      <header>
-        <p className="eyebrow">BTU AI Skills Digital Passport</p>
+      <header className="page-head">
+        <p className="eyebrow">Public verification · ვერიფიკაცია</p>
         <h1>Verify a passport</h1>
         <p className="muted">
           Enter the verification code printed on the passport. Upload the PDF too, to check that the document itself is
@@ -23,5 +28,6 @@ export function VerifyShell({ code }: { code?: string }) {
         official BTU verification yet.
       </p>
     </main>
+    </>
   );
 }

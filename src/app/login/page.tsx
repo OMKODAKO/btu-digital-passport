@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import AppHeader from "@/components/AppHeader";
 import { getCurrentStudent } from "@/lib/auth/session";
 
 const ERRORS: Record<string, string> = {
@@ -17,11 +18,21 @@ export default async function LoginPage({
   const message = error ? (ERRORS[error] ?? ERRORS.invalid) : null;
 
   return (
-    <main className="center">
+    <>
+    <AppHeader area="public" home="/login">
+      <a className="appbar-link" href="/verify">Verify a passport</a>
+    </AppHeader>
+    <main className="auth">
+      <section className="auth-intro">
+        <p className="eyebrow">Students · სტუდენტები</p>
+        <h1 className="display">Your AI skills, verified by BTU</h1>
+        <p className="lead">
+          ციფრული პასპორტი: ნახე და ჩამოტვირთე შენი BTU AI Skills Digital Passport, რომლის ნამდვილობა ბლოკჩეინზე მოწმდება.
+        </p>
+      </section>
       <div className="card login">
-        <p className="eyebrow">BTU</p>
-        <h1>AI Skills Digital Passport</h1>
-        <p className="muted">Sign in to view and download your passport.</p>
+        <h2>Sign in</h2>
+        <p className="muted">Use your BTU student test account.</p>
 
         {message && (
           <p className="alert error" role="alert">
@@ -47,10 +58,8 @@ export default async function LoginPage({
         <p className="fine">
           Checking someone&apos;s passport? <a href="/verify">Verify a passport</a> (no account needed).
         </p>
-        <p className="fine">
-          BTU staff? <a href="/admin/login">Sign in to the admin area</a> (staff accounts don&apos;t work on this page).
-        </p>
       </div>
     </main>
+    </>
   );
 }

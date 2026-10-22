@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { clearFailures, isLockedOut, recordFailure, verifyCredentials } from "@/lib/auth/credentials";
 import { cookieOptions, createSession } from "@/lib/auth/session";
-import { SESSION_COOKIE, SESSION_HOURS } from "@/lib/config";
+import { deleteStaffSession, staffCookieOptions } from "@/lib/auth/staff";
+import { SESSION_COOKIE, SESSION_HOURS, STAFF_COOKIE } from "@/lib/config";
+import { cookies } from "next/headers";
 import { isSameOrigin, redirect } from "@/lib/request";
 
 // POST /api/auth/login  (form fields: email, password)
@@ -28,5 +30,11 @@ export async function POST(req: Request) {
     ...cookieOptions,
     maxAge: SESSION_HOURS * 3600,
   });
+  // One role per browser: signing in as a student ends any staff session here.
+  const staffToken = (await cookies()).get(STAFF_COOKIE)?.value;
+  if (staffToken) {
+    deleteStaffSession(staffToken);
+    res.cookies.set(STAFF_COOKIE, "", { ...staffCookieOptions, maxAge: 0 });
+  }
   return res;
 }

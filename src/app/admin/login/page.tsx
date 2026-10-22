@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import AppHeader from "@/components/AppHeader";
 import { getCurrentStaff } from "@/lib/auth/staff";
 
 export const metadata = { title: "BTU passport admin: sign in" };
@@ -14,7 +15,9 @@ export default async function AdminLogin({ searchParams }: { searchParams: Promi
   const { error, signedout } = await searchParams;
   const message = error ? (ERRORS[error] ?? ERRORS.invalid) : null;
   return (
-    <main className="center">
+    <>
+    <AppHeader area="staff" home="/admin/login" />
+    <main className="auth auth-staff">
       <div className="card login">
         <p className="eyebrow">BTU staff</p>
         <h1>Passport administration</h1>
@@ -41,5 +44,6 @@ export default async function AdminLogin({ searchParams }: { searchParams: Promi
         <p className="fine">Prototype: demo staff accounts only. BTU single sign-on for staff isn&apos;t connected yet.</p>
       </div>
     </main>
+    </>
   );
 }

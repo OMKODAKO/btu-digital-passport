@@ -1,6 +1,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import QRCode from "qrcode";
+import AppHeader from "@/components/AppHeader";
 import Checks, { headline } from "@/components/Checks";
 import { getCurrentStudent } from "@/lib/auth/session";
 import {
@@ -54,24 +55,33 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
   const demo = student.source === "BTU_TEST_DATA" || student.source === "SEED_SYNTHETIC";
 
   return (
-    <main className="page">
-      <header className="topbar">
-        <div>
-          <p className="eyebrow">BTU AI Skills Digital Passport</p>
-          <h1>
-            {student.firstName} {student.lastName}
-          </h1>
-        </div>
-        <form method="post" action="/api/auth/logout" className="who">
+    <>
+      <AppHeader area="student" home="/dashboard">
+        <span className="appbar-user">
+          {student.firstName} {student.lastName}
           {demo && (
             <span className="pill" data-testid="demo-record">
               {student.source === "BTU_TEST_DATA" ? "BTU test data" : "Demo data"}
             </span>
           )}
-          <button type="submit" className="button">
+        </span>
+        <form method="post" action="/api/auth/logout">
+          <button type="submit" className="button ghost">
             Sign out
           </button>
         </form>
+      </AppHeader>
+    <main className="page">
+      <header className="page-head">
+        <p className="eyebrow">My Digital Passport · ჩემი პასპორტი</p>
+        <h1>
+          {student.firstName} {student.lastName}
+        </h1>
+        <p className="muted">
+          {[student.program, student.educationLevel].filter(Boolean).join(" · ")}
+          {student.program || student.educationLevel ? " · " : ""}
+          {student.studentId} · {student.email}
+        </p>
       </header>
 
       {!passport && (
@@ -138,28 +148,38 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
 
       {passport && selected && (
         <>
-          <section className="card facts">
+          <div className="passport-layout">
+            <div className="passport-main">
+          {pdf?.ok ? (
+            <section className="card viewer">
+              <div className="viewer-bar">
+                <p className="viewer-title">
+                  Passport <span className="mono">{passport.passportId}</span> · V{selected.versionNo}
+                  {selected.status !== "CURRENT" && " (superseded)"}
+                </p>
+                <a className="button" href={pdfUrl} target="_blank" rel="noopener">
+                  Open in new tab
+                </a>
+                <a className="button primary" href={downloadUrl}>
+                  Download PDF
+                </a>
+              </div>
+              <PdfViewer src={pdfUrl} title={`Passport ${passport.passportId} V${selected.versionNo}`} />
+            </section>
+          ) : (
+            <section className="card notice" data-testid="pdf-unavailable">
+              <h2>{pdf?.reason === "integrity" ? "This PDF failed its integrity check" : "The PDF file is missing"}</h2>
+              <p className="muted">
+                Your passport record exists, but its PDF can&apos;t be shown right now. No other document is shown in its
+                place. Please contact BTU.
+              </p>
+            </section>
+          )}
+
+            </div>
+            <aside className="passport-side">
+          <section className="card facts" aria-label="Passport details">
             <dl>
-              <div>
-                <dt>Student ID</dt>
-                <dd>{student.studentId}</dd>
-              </div>
-              <div>
-                <dt>Email</dt>
-                <dd>{student.email}</dd>
-              </div>
-              {student.program && (
-                <div>
-                  <dt>Program</dt>
-                  <dd data-testid="program">{student.program}</dd>
-                </div>
-              )}
-              {student.educationLevel && (
-                <div>
-                  <dt>Education level</dt>
-                  <dd data-testid="education-level">{student.educationLevel}</dd>
-                </div>
-              )}
               <div>
                 <dt>Passport ID</dt>
                 <dd data-testid="passport-id">{passport.passportId}</dd>
@@ -235,28 +255,6 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
             )}
           </section>
 
-          {pdf?.ok ? (
-            <section className="card viewer">
-              <div className="viewer-bar">
-                <a className="button primary" href={downloadUrl}>
-                  Download PDF
-                </a>
-                <a className="link" href={pdfUrl} target="_blank" rel="noopener">
-                  Open in a new tab
-                </a>
-              </div>
-              <PdfViewer src={pdfUrl} title={`Passport ${passport.passportId} V${selected.versionNo}`} />
-            </section>
-          ) : (
-            <section className="card notice" data-testid="pdf-unavailable">
-              <h2>{pdf?.reason === "integrity" ? "This PDF failed its integrity check" : "The PDF file is missing"}</h2>
-              <p className="muted">
-                Your passport record exists, but its PDF can&apos;t be shown right now. No other document is shown in its
-                place. Please contact BTU.
-              </p>
-            </section>
-          )}
-
           {skills.length > 0 && (
             <section className="card">
               <h2>Skills in V{selected.versionNo}</h2>
@@ -293,8 +291,11 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
               </ul>
             </section>
           )}
+            </aside>
+          </div>
         </>
       )}
     </main>
+    </>
   );
 }
