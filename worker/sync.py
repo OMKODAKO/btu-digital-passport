@@ -188,9 +188,11 @@ def _run(conn, table, options, run_id) -> RunResult:
     # skill edited away on a row is left out of the new version (it stays in the older versions).
     in_sheet = defaultdict(set)
     if options.apply_edits:
-        for r in live():
+        # every row still in the sheet counts, even one refused this run: a row with a problem never
+        # removes a skill that was already issued from it
+        for r in v.records.values():
             s = conn.execute("SELECT id FROM students WHERE student_id = ?", (r.student_code,)).fetchone()
-            if s and r.row.sheet_row not in v.held:
+            if s and r.record_id:
                 in_sheet[s["id"]].add(r.record_id)
     for passport in conn.execute("SELECT * FROM passports ORDER BY passport_id").fetchall():
         outcome = generate_if_needed(conn, passport, options.renderer, run_id, force=passport["student_fk"] in edited,

@@ -102,6 +102,34 @@ def fill_demo_rows(path: Path, db_path: Path | None = None) -> list[str]:
 
     filled = []
     taken = set(recs)  # Record IDs on rows of this sheet, plus those handed out below
+    sheet_recs = [val(r, "Record ID") for r in rows]
+    seen_recs = set()
+    for r in rows:
+        sid, rec = val(r, "Student ID"), val(r, "Record ID")
+        if not sid:
+            continue
+        set_ = lambda name, v, r=r: ws.cell(r, col(name), v)
+        skill = str(val(r, "Skill Name") or "").strip()
+        # a skill's ID, category and description are the same on every row (otherwise every row of it is refused)
+        if skill in skills and any(str(val(r, k) or "").strip() != str(v or "").strip() for k, v in skills[skill].items()):
+            for k, v in skills[skill].items():
+                set_(k, v)
+            set_("Badge/Stamp Code", BADGES.get(val(r, "Skill Category"), "CHECK CATEGORY"))
+            filled.append(f"{val(r, 'First Name')} {val(r, 'Last Name')} ({sid}): {skill} uses the sheet's definition")
+        # a copied row keeps the original's Record ID: give the copy its own (the import refuses duplicates)
+        if rec and rec in seen_recs:
+            free = [k for k, v in awards.items() if v == (sid, skill) and k not in sheet_recs]
+            if free:
+                new_rec = free[0]
+            else:
+                n = max(used | taken) + 1
+                used.add(n)
+                taken.add(n)
+                new_rec = f"REC-{n:04d}"
+            set_("Record ID", new_rec)
+            filled.append(f"{val(r, 'First Name')} {val(r, 'Last Name')} ({sid}): copied row -> new Record ID {new_rec}")
+        elif rec:
+            seen_recs.add(rec)
     for r in rows:
         rec, sid, skill = val(r, "Record ID"), val(r, "Student ID"), str(val(r, "Skill Name") or "").strip()
         if not (rec and sid and skill) or rec not in awards or awards[rec] == (sid, skill):
