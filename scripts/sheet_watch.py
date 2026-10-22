@@ -184,6 +184,15 @@ FIELDS = ["Student ID", "First Name", "Last Name", "BTU Email (Test)", "Program"
           "Student Status", "Skill Name", "Skill Category", "Skill Description", "Date Earned"]
 
 
+def _text(v) -> str:
+    """Cell value as text; Google Sheets turns typed dates into date cells, which must compare equal."""
+    if isinstance(v, dt.datetime):
+        return v.date().isoformat() if v.time() == dt.time() else v.isoformat(sep=" ")
+    if isinstance(v, dt.date):
+        return v.isoformat()
+    return "" if v is None else str(v)
+
+
 def snapshot(path: Path) -> dict:
     """Record ID -> the fields above, as filled (so edits can be described)."""
     ws = openpyxl.load_workbook(path, data_only=True)[SHEET]
@@ -192,7 +201,7 @@ def snapshot(path: Path) -> dict:
     for r in range(HEADER_ROW + 1, ws.max_row + 1):
         rec = ws.cell(r, head["Record ID"]).value
         if rec and ws.cell(r, head["Student ID"]).value:
-            out[str(rec)] = {f: str(ws.cell(r, head[f]).value or "") for f in FIELDS if f in head}
+            out[str(rec)] = {f: _text(ws.cell(r, head[f]).value) for f in FIELDS if f in head}
     return out
 
 
