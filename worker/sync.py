@@ -35,6 +35,7 @@ class Options:
     assign_new_passport_ids: bool = False  # allocate BTU-AI-NNNNNN for new students with none in the sheet
     renderer: object = None                # injectable for tests (e.g. a renderer that fails)
     registrar: object = "configured"       # chain.configured_registrar() unless a test passes its own
+    apply_edits: bool = False              # DEMO: apply edits to accepted rows and profiles, then issue a new version
 
 
 @dataclass
@@ -80,7 +81,7 @@ def _run(conn, table, options, run_id) -> RunResult:
 
     # ---- 2. database consistency per student --------------------------------------------------
     for sid, recs in by_student.items():
-        problems = _db_identity_problems(conn, recs[0])
+        problems = _db_identity_problems(conn, recs[0], allow_profile_edits=options.apply_edits)
         if problems:
             v.reject_all([r.row.sheet_row for r in recs], "DATABASE_CONFLICT",
                          f"{sid} doesn't match the system's records: " + "; ".join(problems) +
@@ -89,9 +90,10 @@ def _run(conn, table, options, run_id) -> RunResult:
     # ---- 3. source records and awards ---------------------------------------------------------
     counts = defaultdict(int)
     new_awards_by_student = defaultdict(list)
+    edited = set()  # student_fks whose accepted data changed (only with options.apply_edits)
     with transaction(conn):
         for r in live():
-            student_fk = _ensure_student(conn, r, counts)
+            student_fk = _ensure_student(conn, r, counts, edited if options.apply_edits else None)
             _ensure_skill(conn, r, run_id, v)
             if r.row.sheet_row in v.rejected:
                 continue
@@ -101,6 +103,16 @@ def _run(conn, table, options, run_id) -> RunResult:
                 if award["student_fk"] != student_fk:
                     v.add(r.row, "ERROR", "RECORD_OWNER_CHANGED",
                           f"{r.record_id} was accepted for another student; the row now names {r.student_code}. Not applied.")
+                elif award["source_fingerprint"] != r.fingerprint and options.apply_edits:
+                    # Accepted skills stay as issued (a database rule); profile edits on this row are applied
+                    # by _ensure_student. Only warn when the skill itself was edited.
+                    if any(award[c] != new for c, new in (
+                            ("skill_name", r.skill_name), ("skill_category", r.skill_category),
+                            ("description", r.description), ("date_earned", r.date_earned.isoformat()))):
+                        v.add(r.row, "WARNING", "CHANGED_AFTER_ACCEPT",
+                              "The skill on this row was edited after it was issued; issued skills are not rewritten. "
+                              "Add the corrected skill as a new row instead.")
+                    counts["unchanged"] += 1
                 elif award["source_fingerprint"] != r.fingerprint:
                     v.add(r.row, "WARNING", "CHANGED_AFTER_ACCEPT",
                           "Row was edited after this skill was accepted. The accepted skill is kept unchanged; "
@@ -173,7 +185,7 @@ def _run(conn, table, options, run_id) -> RunResult:
     # ---- 5. versions ---------------------------------------------------------------------------
     failures = {}
     for passport in conn.execute("SELECT * FROM passports ORDER BY passport_id").fetchall():
-        outcome = generate_if_needed(conn, passport, options.renderer, run_id)
+        outcome = generate_if_needed(conn, passport, options.renderer, run_id, force=passport["student_fk"] in edited)
         if outcome == "generated":
             counts["versions_generated"] += 1
         elif outcome is not None:
@@ -233,7 +245,7 @@ def _run(conn, table, options, run_id) -> RunResult:
 
 # ---------------------------------------------------------------------------------------------
 
-def generate_if_needed(conn, passport, renderer=None, run_id: int | None = None):
+def generate_if_needed(conn, passport, renderer=None, run_id: int | None = None, force: bool = False):
     """Generates a candidate if the passport's accepted awards grew past its newest version.
     Returns None (nothing new), "generated", or (new record ids, error) on failure, in which case the
     previous version stays current. Only accepted skill_awards are used."""
@@ -250,7 +262,7 @@ def generate_if_needed(conn, passport, renderer=None, run_id: int | None = None)
         contained = {a[0] for a in conn.execute("SELECT record_id FROM version_source_records WHERE version_fk = ?",
                                                 (current["id"],))} if current else set()
     new = awarded - contained
-    if not new:
+    if not new and not (force and contained):  # force: same skills, edited data -> next version
         return None
     try:
         generate_candidate(conn, passport["id"], sorted(contained | new), renderer)
@@ -283,7 +295,7 @@ def try_issue(conn, c, registrar) -> str:
         return "failed"
 
 
-def _db_identity_problems(conn, r: Record) -> list[str]:
+def _db_identity_problems(conn, r: Record, allow_profile_edits: bool = False) -> list[str]:
     out = []
     s = conn.execute("SELECT * FROM students WHERE student_id = ?", (r.student_code,)).fetchone()
     other = conn.execute("SELECT student_id FROM students WHERE email = ? COLLATE NOCASE AND student_id != ?",
@@ -297,9 +309,11 @@ def _db_identity_problems(conn, r: Record) -> list[str]:
             out.append(f"Passport ID {r.passport_id} belongs to {owner['student_id']}")
     if not s:
         return out
-    if s["email"].lower() != r.email:
+    if allow_profile_edits:  # name and email edits are applied by _ensure_student instead
+        pass
+    elif s["email"].lower() != r.email:
         out.append(f"email is {s['email']} in the system, {r.email} in the sheet")
-    if (s["first_name"], s["last_name"]) != (r.first_name, r.last_name):
+    if not allow_profile_edits and (s["first_name"], s["last_name"]) != (r.first_name, r.last_name):
         out.append(f"name is {s['first_name']} {s['last_name']} in the system, {r.first_name} {r.last_name} in the sheet")
     p = conn.execute("SELECT * FROM passports WHERE student_fk = ?", (s["id"],)).fetchone()
     if p:
@@ -310,8 +324,20 @@ def _db_identity_problems(conn, r: Record) -> list[str]:
     return out
 
 
-def _ensure_student(conn, r: Record, counts) -> int:
-    s = conn.execute("SELECT id FROM students WHERE student_id = ?", (r.student_code,)).fetchone()
+def _ensure_student(conn, r: Record, counts, edited: set | None = None) -> int:
+    s = conn.execute("SELECT * FROM students WHERE student_id = ?", (r.student_code,)).fetchone()
+    if s and edited is not None:  # DEMO apply-edits: name, email and profile follow the sheet
+        # The holder's name is fixed on the passport (a database rule), so name edits are not applied.
+        new = {"email": r.email, "program": r.program, "education_level": r.education_level,
+               "student_status": r.student_status}
+        changes = {k: [s[k], v] for k, v in new.items() if (s[k] or "") != (v or "")}
+        if changes:
+            conn.execute("""UPDATE students SET email = ?, program = ?, education_level = ?, student_status = ?
+                            WHERE id = ?""", (*new.values(), s["id"]))
+            if changes.keys() - {"student_status"}:
+                edited.add(s["id"])
+            audit(conn, "STUDENT_EDITED", None, student_id=r.student_code, changes=changes)
+        return s["id"]
     if s:
         # profile fields only; name and email are identity and never changed by an import
         conn.execute("UPDATE students SET program = ?, education_level = ?, student_status = ? WHERE id = ?",

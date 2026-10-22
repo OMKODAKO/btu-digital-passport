@@ -43,6 +43,8 @@ def main(argv=None) -> int:
     imp.add_argument("--no-write-back", action="store_true", help="don't write a workbook copy")
     imp.add_argument("--assign-new-passport-ids", action="store_true",
                      help="give new students without a Passport ID the next BTU-AI number (written to the copy)")
+    imp.add_argument("--apply-edits", action="store_true",
+                     help="DEMO: apply edits to already-accepted rows and student details, and issue a new version")
     args = ap.parse_args(argv)
 
     try:
@@ -52,7 +54,7 @@ def main(argv=None) -> int:
         return 2
 
     conn = connect()
-    result = run_import(conn, table, Options(assign_new_passport_ids=args.assign_new_passport_ids))
+    result = run_import(conn, table, Options(assign_new_passport_ids=args.assign_new_passport_ids, apply_edits=args.apply_edits))
     s = result.summary
 
     out_path = None

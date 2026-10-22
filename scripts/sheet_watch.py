@@ -104,6 +104,61 @@ def fill_demo_rows(path: Path) -> list[str]:
     return filled
 
 
+FIELDS = ["Student ID", "First Name", "Last Name", "BTU Email (Test)", "Program", "Education Level",
+          "Student Status", "Skill Name", "Skill Category", "Skill Description", "Date Earned"]
+
+
+def snapshot(path: Path) -> dict:
+    """Record ID -> the fields above, as filled (so edits can be described)."""
+    ws = openpyxl.load_workbook(path, data_only=True)[SHEET]
+    head = {str(c.value).strip(): c.column for c in ws[HEADER_ROW] if c.value}
+    out = {}
+    for r in range(HEADER_ROW + 1, ws.max_row + 1):
+        rec = ws.cell(r, head["Record ID"]).value
+        if rec and ws.cell(r, head["Student ID"]).value:
+            out[str(rec)] = {f: str(ws.cell(r, head[f]).value or "") for f in FIELDS if f in head}
+    return out
+
+
+def describe_edits(old: dict, new: dict) -> list[str]:
+    lines = []
+    for rec, row in new.items():
+        before = old.get(rec)
+        if not before:
+            continue
+        diff = [f"{f}: '{before.get(f, '')}' -> '{v}'" + (" (not applied: the name on a passport is fixed)"
+                if f in ("First Name", "Last Name") else
+                " (not applied: an issued skill is not rewritten; add it as a new row)"
+                if f.startswith("Skill") or f == "Date Earned" else "")
+                for f, v in row.items() if before.get(f, "") != v]
+        if diff:
+            lines.append(f"{row['First Name']} {row['Last Name']} ({row['Student ID']}, {rec}): " + "; ".join(diff))
+    return lines
+
+
+def current_versions(demo_dir: Path) -> dict:
+    db = sqlite3.connect(demo_dir / "portal.db")
+    return dict(db.execute(
+        """SELECT p.student_fk, MAX(v.version_no) FROM passports p JOIN passport_versions v ON v.passport_fk = p.id
+           WHERE v.status = 'CURRENT' GROUP BY p.student_fk"""))
+
+
+def sync_credential_emails(demo_dir: Path) -> None:
+    """After an email edit the login moves to the new address; keep dev-credentials.txt in step."""
+    db = sqlite3.connect(demo_dir / "portal.db")
+    f = demo_dir / "dev-credentials.txt"
+    lines = f.read_text().splitlines()
+    known = {e.lower() for (e,) in db.execute("SELECT email FROM students")}
+    # an address no longer in the system was changed; nothing else identifies it, so only fix single renames
+    stale = [l for l in lines if l.split("\t")[0].lower() not in known]
+    missing = [e for (e,) in db.execute(
+        "SELECT s.email FROM students s JOIN auth_credentials a ON a.student_fk = s.id")
+        if e.lower() not in {l.split("\t")[0].lower() for l in lines}]
+    if len(stale) == 1 and len(missing) == 1:
+        lines = [f"{missing[0]}\t{l.split(chr(9))[1]}" if l is stale[0] else l for l in lines]
+        f.write_text("\n".join(lines) + "\n")
+
+
 def demo_env(demo_dir: Path) -> dict:
     env = dict(os.environ)
     for line in (demo_dir / "demo.env").read_text().splitlines():
@@ -130,9 +185,9 @@ def new_logins(demo_dir: Path, env: dict) -> list[tuple[str, str, str]]:
     return out
 
 
-def banner(name: str, email: str, pw: str, port: str) -> None:
+def banner(name: str, email: str, pw: str, port: str, title: str = "NEW PASSPORT READY") -> None:
     bar = "=" * 64
-    print(f"\n\033[1;32m{bar}\n  NEW PASSPORT READY: {name}\n{bar}\033[0m")
+    print(f"\n\033[1;32m{bar}\n  {title}: {name}\n{bar}\033[0m")
     print(f"  Open:      http://localhost:{port}/login")
     print(f"  Email:     \033[1m{email}\033[0m")
     print(f"  Password:  \033[1m{pw}\033[0m")
@@ -140,7 +195,7 @@ def banner(name: str, email: str, pw: str, port: str) -> None:
     if sys.platform == "darwin":  # a popup on screen too, so the presenter sees it without the terminal
         msg = f"{name}\n\nhttp://localhost:{port}/login\nEmail: {email}\nPassword: {pw}".replace('"', "'")
         subprocess.Popen(["osascript", "-e",
-                          f'display dialog "{msg}" with title "New passport ready" buttons {{"OK"}} default button 1'],
+                          f'display dialog "{msg}" with title "{title.capitalize()}" buttons {{"OK"}} default button 1'],
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 
@@ -156,6 +211,7 @@ def main() -> None:
     work = demo_dir / "sheet"
     work.mkdir(exist_ok=True)
     last, seen = None, None
+    prev = snapshot(work / "latest.xlsx") if (work / "latest.xlsx").exists() else {}
     print(f"Watching the Google Sheet every {a.every:g}s (Ctrl-C to stop). Chain: {env.get('PASSPORT_CHAIN_NETWORK')}", flush=True)
     while True:
         try:
@@ -173,16 +229,31 @@ def main() -> None:
                 for f in fill_demo_rows(copy):
                     print(f"  filled demo row: {f}", flush=True)
                 print(f"[{time.strftime('%H:%M:%S')}] sheet changed, importing ...", flush=True)
+                snap = snapshot(copy)
+                for line in describe_edits(prev, snap):
+                    print(f"  \033[1;33mEDIT\033[0m {line}", flush=True)
+                prev = snap
+                before = current_versions(demo_dir)
                 r = subprocess.run([sys.executable, "-m", "worker", "import", "--xlsx", str(copy),
-                                    "--assign-new-passport-ids", "--no-write-back"],
+                                    "--assign-new-passport-ids", "--apply-edits", "--no-write-back"],
                                    cwd=ROOT, env=env, capture_output=True, text=True)
                 for line in r.stdout.splitlines():
                     if any(w in line for w in ("passports created", "issuance", "ERROR", "HOLD")):
                         print("  " + line.strip(), flush=True)
                 if r.returncode != 0:
                     print(r.stderr[-1500:], flush=True)
+                sync_credential_emails(demo_dir)
                 for name, email, pw in new_logins(demo_dir, env):
                     banner(name, email, pw, os.environ.get("PORT", "3000"))
+                after = current_versions(demo_dir)
+                creds = dict(l.split("\t", 1) for l in (demo_dir / "dev-credentials.txt").read_text().splitlines() if "\t" in l)
+                db = sqlite3.connect(demo_dir / "portal.db")
+                for fk, ver in after.items():
+                    if fk in before and ver > before[fk]:
+                        name, email = db.execute("SELECT first_name || ' ' || last_name, email FROM students WHERE id = ?",
+                                                 (fk,)).fetchone()
+                        banner(name, email, creds.get(email, "(unchanged)"), os.environ.get("PORT", "3000"),
+                               title=f"PASSPORT UPDATED TO V{ver}")
         except Exception as e:  # keep watching through network hiccups
             print(f"[{time.strftime('%H:%M:%S')}] {e}", flush=True)
         time.sleep(a.every)
