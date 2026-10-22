@@ -90,7 +90,7 @@ def _run(conn, table, options, run_id) -> RunResult:
     # ---- 3. source records and awards ---------------------------------------------------------
     counts = defaultdict(int)
     new_awards_by_student = defaultdict(list)
-    edited = set()  # student_fks whose accepted data changed (only with options.apply_edits)
+    edited = _EditSet()  # student_fks whose accepted data changed (only with options.apply_edits)
     with transaction(conn):
         for r in live():
             student_fk = _ensure_student(conn, r, counts, edited if options.apply_edits else None)
@@ -184,8 +184,17 @@ def _run(conn, table, options, run_id) -> RunResult:
 
     # ---- 5. versions ---------------------------------------------------------------------------
     failures = {}
+    # DEMO apply-edits: a student's next version holds exactly the skills on their rows in this sheet, so a
+    # skill edited away on a row is left out of the new version (it stays in the older versions).
+    in_sheet = defaultdict(set)
+    if options.apply_edits:
+        for r in live():
+            s = conn.execute("SELECT id FROM students WHERE student_id = ?", (r.student_code,)).fetchone()
+            if s and r.row.sheet_row not in v.held:
+                in_sheet[s["id"]].add(r.record_id)
     for passport in conn.execute("SELECT * FROM passports ORDER BY passport_id").fetchall():
-        outcome = generate_if_needed(conn, passport, options.renderer, run_id, force=passport["student_fk"] in edited)
+        outcome = generate_if_needed(conn, passport, options.renderer, run_id, force=passport["student_fk"] in edited,
+                                     only=in_sheet.get(passport["student_fk"]))
         if outcome == "generated":
             counts["versions_generated"] += 1
         elif outcome is not None:
@@ -245,7 +254,12 @@ def _run(conn, table, options, run_id) -> RunResult:
 
 # ---------------------------------------------------------------------------------------------
 
-def generate_if_needed(conn, passport, renderer=None, run_id: int | None = None, force: bool = False):
+class _EditSet(set):
+    """Students edited in this run; .seen holds those whose profile row was already applied."""
+
+
+def generate_if_needed(conn, passport, renderer=None, run_id: int | None = None, force: bool = False,
+                       only: set | None = None):
     """Generates a candidate if the passport's accepted awards grew past its newest version.
     Returns None (nothing new), "generated", or (new record ids, error) on failure, in which case the
     previous version stays current. Only accepted skill_awards are used."""
@@ -261,11 +275,18 @@ def generate_if_needed(conn, passport, renderer=None, run_id: int | None = None,
     else:
         contained = {a[0] for a in conn.execute("SELECT record_id FROM version_source_records WHERE version_fk = ?",
                                                 (current["id"],))} if current else set()
-    new = awarded - contained
-    if not new and not (force and contained):  # force: same skills, edited data -> next version
-        return None
+    if only is not None and awarded & only:  # demo apply-edits: exactly the skills now in the sheet
+        target = awarded & only
+        new = target - contained
+        if target == contained and not force:
+            return None
+    else:
+        new = awarded - contained
+        target = contained | new
+        if not new and not (force and contained):  # force: same skills, edited data -> next version
+            return None
     try:
-        generate_candidate(conn, passport["id"], sorted(contained | new), renderer)
+        generate_candidate(conn, passport["id"], sorted(target), renderer)
         return "generated"
     except Exception as exc:  # the previous version stays current
         if run_id is not None:
@@ -326,7 +347,10 @@ def _db_identity_problems(conn, r: Record, allow_profile_edits: bool = False) ->
 
 def _ensure_student(conn, r: Record, counts, edited: set | None = None) -> int:
     s = conn.execute("SELECT * FROM students WHERE student_id = ?", (r.student_code,)).fetchone()
-    if s and edited is not None:  # DEMO apply-edits: name, email and profile follow the sheet
+    if s and edited is not None and s["id"] in getattr(edited, "seen", set()):
+        return s["id"]  # the student's first row in this run decides their profile
+    if s and edited is not None:  # DEMO apply-edits: email and profile follow the sheet
+        edited.seen = getattr(edited, "seen", set()) | {s["id"]}
         # The holder's name is fixed on the passport (a database rule), so name edits are not applied.
         new = {"email": r.email, "program": r.program, "education_level": r.education_level,
                "student_status": r.student_status}

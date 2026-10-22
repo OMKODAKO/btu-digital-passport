@@ -84,20 +84,43 @@ def fill_demo_rows(path: Path, db_path: Path | None = None) -> list[str]:
         awards = {rec: (sid, name) for rec, sid, name in db.execute(
             "SELECT a.record_id, s.student_id, a.skill_name FROM skill_awards a JOIN students s ON s.id = a.student_fk")}
     used = set(recs) | {int(m.group(1)) for k in awards if (m := re.fullmatch(r"REC-(\d+)", k))}
+    by_email = {}  # email -> Student ID already in the system: one person, one Student ID
+    if db:
+        by_email = {e.lower(): sid for e, sid in db.execute("SELECT email, student_id FROM students")}
+        nums += [int(m.group(1)) for sid in by_email.values() if (m := re.fullmatch(r"BTU-T-(\d+)", sid))]
+    seen_people = {}
+    assigned = {}  # rows of the same person in this sheet share one Student ID
+    profile = {}   # Student ID -> program/level/status from that person's first row, for their other rows
+    PROFILE = ("Program", "Education Level", "Student Status")
+    if db:
+        for sid, *vals in db.execute("SELECT student_id, program, education_level, student_status FROM students"):
+            profile[sid] = dict(zip(PROFILE, vals))
 
     filled = []
     next_id, next_rec = max(nums, default=0) + 1, max(recs, default=0) + 1
+    sheet_ids = {str(val(r, "BTU Email (Test)") or "").strip().lower(): val(r, "Student ID") for r in rows
+                 if val(r, "Student ID") and val(r, "BTU Email (Test)")}
     for r in rows:
         first, last = val(r, "First Name"), val(r, "Last Name")
         if not (first and last) or val(r, "Student ID"):
             continue
-        sid = f"BTU-T-{next_id:04d}"
+        email = str(val(r, "BTU Email (Test)") or "").strip().lower()
+        key = email or f"{first} {last}".strip().lower()
+        sid = assigned.get(key) or sheet_ids.get(email) or by_email.get(email)
+        if not sid:
+            sid = f"BTU-T-{next_id:04d}"
+            next_id += 1
+        assigned[key] = sid
         set_ = lambda name, v: ws.cell(r, col(name), v)
         set_("Student ID", sid)
         set_("BTU Email (Test)", val(r, "BTU Email (Test)") or f"{sid.lower()}@example.org")
-        set_("Program", val(r, "Program") or "Hackathon Jury Demo")
-        set_("Education Level", val(r, "Education Level") or "Bachelor's")
-        set_("Student Status", val(r, "Student Status") or "Active")
+        if key in seen_people:  # a further row of the same person: blanks follow their first row
+            known = profile.get(sid, {})
+        else:
+            known, seen_people[key] = {}, True
+        for f, default in zip(PROFILE, ("Hackathon Jury Demo", "Bachelor's", "Active")):
+            set_(f, val(r, f) or known.get(f) or default)
+        profile[sid] = {f: val(r, f) for f in PROFILE}
         skill = str(val(r, "Skill Name") or "AI Literacy").strip()
         set_("Skill Name", skill)
         note = ""
@@ -125,7 +148,7 @@ def fill_demo_rows(path: Path, db_path: Path | None = None) -> list[str]:
         set_("Badge/Stamp Code", BADGES.get(val(r, "Skill Category"), "CHECK CATEGORY"))
         set_("Date Earned", val(r, "Date Earned") or dt.date.today().isoformat())
         filled.append(f"{first} {last} -> {sid}{note}")
-        next_id, next_rec = next_id + 1, next_rec + 1
+        next_rec += 1
     if filled:
         wb.save(path)
     return filled
@@ -281,6 +304,11 @@ def main() -> None:
                                                  (fk,)).fetchone()
                         banner(name, email, creds.get(email, "(unchanged)"), os.environ.get("PORT", "3000"),
                                title=f"PASSPORT UPDATED TO V{ver}")
+                        skills = [n for (n,) in db.execute(
+                            """SELECT a.skill_name FROM passports p JOIN passport_versions v ON v.passport_fk = p.id
+                               AND v.status = 'CURRENT' JOIN version_source_records x ON x.version_fk = v.id
+                               JOIN skill_awards a ON a.record_id = x.record_id WHERE p.student_fk = ?""", (fk,))]
+                        print(f"  Skills in V{ver}: " + ", ".join(skills) + "\n", flush=True)
         except Exception as e:  # keep watching through network hiccups
             print(f"[{time.strftime('%H:%M:%S')}] {e}", flush=True)
         time.sleep(a.every)
