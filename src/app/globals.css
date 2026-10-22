@@ -176,33 +176,3 @@ a { color: var(--brand-dark); }
 .topbar h1 { font-size: 2rem; }
 .facts dd { font-family: "Inter", "Noto Sans Georgian", sans-serif; }
 .skills li { border-left: 3px solid var(--brand); padding-left: 10px; }
-
-/* ---- BTU Classroom layout ---------------------------------------------------------------------- */
-:root { --link-blue: #1d5fae; --row-alt: #f6f6f7; }
-.sidebar { border-radius: 2px; }
-.sidebar-title { display: none; }
-.sidebar-term { margin: 0; padding: 14px 16px; background: #e4e4e6; color: #2b2b2b; font: 600 0.95rem/1.3 var(--display); text-transform: uppercase; letter-spacing: 0.04em; }
-.sidebar-section { margin: 0; padding: 14px 16px 6px; font: 600 0.72rem/1 var(--display); color: #8a8b90; text-transform: uppercase; letter-spacing: 0.1em; }
-.sidebar-nav { border-top: 1px solid var(--line); }
-.sidebar-nav a { color: var(--link-blue); font-weight: 500; font-size: 0.93rem; }
-.sidebar-nav a:hover { color: var(--brand-dark); }
-.sidebar-info { margin: 0; padding: 4px 16px 14px; display: grid; gap: 2px; font-size: 0.85rem; border-top: 1px solid var(--line); }
-.sidebar-info dt { color: #8a8b90; font-size: 0.75rem; margin-top: 8px; }
-.sidebar-info dd { margin: 0; overflow-wrap: anywhere; }
-.page-title, .shell-main > h1, .shell-main section > h1:first-child {
-  font: 600 2rem/1.15 var(--display); text-transform: uppercase; letter-spacing: 0.02em;
-  margin: 0 0 4px; padding-bottom: 10px; border-bottom: 1px solid #cfcfd3;
-}
-.page-sub { margin: 8px 0 0; font: 500 1.1rem/1.2 var(--display); text-transform: uppercase; color: var(--muted); letter-spacing: 0.04em; }
-.shell-main .topbar { align-items: flex-end; }
-.shell-main .topbar > div { flex: 1 1 320px; }
-.table.classroom { display: table; border: 1px solid #d5d5d9; }
-.table.classroom th { background: #fff; color: var(--ink); font-size: 0.85rem; border-bottom: 2px solid #d5d5d9; }
-.table.classroom td, .table.classroom th { border-right: 1px solid #ececef; }
-.table.classroom tbody tr:nth-child(odd) td { background: var(--row-alt); }
-.table.classroom tbody tr:nth-child(even) td { background: #fff; }
-.table.classroom tfoot td { font-weight: 700; background: #fff; border-top: 2px solid #d5d5d9; }
-.table.classroom td:first-child, .table.classroom th:first-child { width: 28px; text-align: center; }
-.table.classroom .skill-desc { display: block; color: var(--muted); }
-.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; }
-.dot.d1 { background: #22c27a; } .dot.d2 { background: #ff7a1a; } .dot.d3 { background: var(--brand); }

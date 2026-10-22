@@ -54,44 +54,13 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
   const demo = student.source === "BTU_TEST_DATA" || student.source === "SEED_SYNTHETIC";
 
   return (
-    <div className="shell">
-      <aside className="sidebar">
-        <p className="sidebar-term">AI Skills Passport · 2026</p>
-        <p className="sidebar-section">პასპორტი</p>
-        <nav className="sidebar-nav">
-          <a href="/dashboard">ჩემი პასპორტი</a>
-          {passport && selected && <a href="#skills">უნარები</a>}
-          {passport && <a href="#history">ვერსიების ისტორია</a>}
-          {passport && selected && <a href={downloadUrl}>PDF-ის ჩამოტვირთვა</a>}
-          <a href="/verify">ვერიფიკაცია</a>
-        </nav>
-        <p className="sidebar-section">პირადი ინფორმაცია</p>
-        <dl className="sidebar-info">
-          <dt>Student ID</dt>
-          <dd>{student.studentId}</dd>
-          <dt>ელფოსტა</dt>
-          <dd>{student.email}</dd>
-          {student.program && (
-            <>
-              <dt>პროგრამა</dt>
-              <dd>{student.program}</dd>
-            </>
-          )}
-          {student.educationLevel && (
-            <>
-              <dt>საფეხური</dt>
-              <dd>{student.educationLevel}</dd>
-            </>
-          )}
-        </dl>
-      </aside>
-    <main className="shell-main">
+    <main className="page">
       <header className="topbar">
         <div>
-          <h1 className="page-title">ჩემი პასპორტი</h1>
-          <p className="page-sub">
+          <p className="eyebrow">BTU AI Skills Digital Passport</p>
+          <h1>
             {student.firstName} {student.lastName}
-          </p>
+          </h1>
         </div>
         <form method="post" action="/api/auth/logout" className="who">
           {demo && (
@@ -289,46 +258,24 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
           )}
 
           {skills.length > 0 && (
-            <section className="card" id="skills">
+            <section className="card">
               <h2>Skills in V{selected.versionNo}</h2>
-              <table className="table classroom" data-testid="skills">
-                <thead>
-                  <tr>
-                    <th aria-label="Category" />
-                    <th>Skill</th>
-                    <th>Category</th>
-                    <th>Badge</th>
-                    <th>Earned</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {skills.map((k) => (
-                    <tr key={k.recordId}>
-                      <td>
-                        <span className={`dot ${k.category === "AI Skill" ? "d1" : k.category === "AI Applied Skill" ? "d2" : "d3"}`} />
-                      </td>
-                      <td>
-                        <span className="skill-name">{k.name}</span>
-                        {k.description && <span className="skill-desc">{k.description}</span>}
-                      </td>
-                      <td>{k.category}</td>
-                      <td className="mono">{k.badgeCode}</td>
-                      <td>{formatDate(k.dateEarned)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-                <tfoot>
-                  <tr>
-                    <td />
-                    <td colSpan={4}>სულ: {skills.length} უნარი</td>
-                  </tr>
-                </tfoot>
-              </table>
+              <ul className="skills" data-testid="skills">
+                {skills.map((k) => (
+                  <li key={k.recordId}>
+                    <span className="skill-name">{k.name}</span>
+                    <span className="muted">
+                      {k.category} · {k.badgeCode} · earned {formatDate(k.dateEarned)}
+                    </span>
+                    {k.description && <span className="skill-desc">{k.description}</span>}
+                  </li>
+                ))}
+              </ul>
             </section>
           )}
 
           {passport.versions.length > 0 && (
-            <section className="card" id="history">
+            <section className="card">
               <h2>Version history</h2>
               <ul className="versions" data-testid="history">
                 {passport.versions.map((ver) => (
@@ -349,6 +296,5 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
         </>
       )}
     </main>
-    </div>
   );
 }
