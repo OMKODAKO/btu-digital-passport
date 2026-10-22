@@ -33,7 +33,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       {real === 0 && (
         <p className="alert info" data-testid="demo-banner">
           Demo environment: every record here is BTU hackathon test data or synthetic demo data, not real institutional
-          data. The blockchain is a local test network and the issuer is a test issuer.
+          data. The blockchain is the public Ethereum Sepolia test network and the issuer is a test issuer.
         </p>
       )}
       {children}

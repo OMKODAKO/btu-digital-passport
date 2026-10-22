@@ -19,7 +19,7 @@ export function VerifyShell({ code }: { code?: string }) {
       </header>
       <VerifyForm initialCode={code} />
       <p className="fine">
-        Prototype: records are on a local test blockchain and the issuer is a test issuer, so no result here is an
+        Prototype: records are on the public Ethereum Sepolia test network and the issuer is a test issuer, so no result here is an
         official BTU verification yet.
       </p>
     </main>
