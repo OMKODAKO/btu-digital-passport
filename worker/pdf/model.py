@@ -30,6 +30,8 @@ class Holder:
     last_name: str
     first_issued: date      # never changes between versions
     skills: list[Skill] = field(default_factory=list)
+    program: str = ""         # study program and degree level, printed small on the cover
+    education_level: str = ""
 
 
 def canonical_payload(holder: Holder, version: int, issued_at: str) -> dict:
@@ -43,5 +45,7 @@ def canonical_payload(holder: Holder, version: int, issued_at: str) -> dict:
         "first_issued": holder.first_issued.isoformat(),
         "version": version,
         "issued_at": issued_at,
+        **({"program": holder.program} if holder.program else {}),
+        **({"education_level": holder.education_level} if holder.education_level else {}),
         "skills": [{**asdict(s), "date_earned": s.date_earned.isoformat()} for s in holder.skills],
     }

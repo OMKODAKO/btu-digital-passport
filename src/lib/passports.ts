@@ -85,6 +85,7 @@ export type VersionSkill = {
   name: string;
   category: string;
   badgeCode: string;
+  description: string;
   dateEarned: string;
 };
 
@@ -93,7 +94,7 @@ export function getVersionSkills(studentFk: number, versionNo: number): VersionS
   return getDb()
     .prepare(
       `SELECT a.record_id AS recordId, a.skill_name AS name, a.skill_category AS category,
-              a.badge_code AS badgeCode, a.date_earned AS dateEarned
+              a.badge_code AS badgeCode, a.description, a.date_earned AS dateEarned
          FROM passports p
          JOIN passport_versions v ON v.passport_fk = p.id AND v.version_no = ?
          JOIN version_source_records x ON x.version_fk = v.id

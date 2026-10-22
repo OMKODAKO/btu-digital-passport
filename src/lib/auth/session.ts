@@ -10,6 +10,8 @@ export type SessionStudent = {
   firstName: string;
   lastName: string;
   email: string;
+  program: string | null;
+  educationLevel: string | null;
   source: string; // BTU_TEST_DATA or SEED_SYNTHETIC: demo records, not real institutional data
 };
 
@@ -49,7 +51,8 @@ export const getCurrentStudent = cache(async (): Promise<SessionStudent | null> 
   const row = getDb()
     .prepare(
       `SELECT s.id, s.student_id AS studentId, s.first_name AS firstName,
-              s.last_name AS lastName, s.email, s.source
+              s.last_name AS lastName, s.email, s.program,
+              s.education_level AS educationLevel, s.source
          FROM sessions x JOIN students s ON s.id = x.student_fk
         WHERE x.token_sha256 = ? AND x.expires_at > ?`,
     )

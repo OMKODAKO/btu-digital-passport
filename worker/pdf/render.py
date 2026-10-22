@@ -304,6 +304,15 @@ def draw_cover(d: _Doc, page, h: Holder, version: int, issued_at: str, code: str
         layout.cover_texts.append(s)
     d.text(page, 648, 266, fmt_date(h.first_issued), "light", 15)
     d.text(page, 761, 511, h.passport_id, "bold", 12, align="right")
+    study = "  ·  ".join(x for x in (h.program, h.education_level) if x)
+    if study:  # one small line under the orange label; must stay left of the BTU logo (x ~ 355)
+        study, size = _caps(study), 7.5
+        while size > 6.0 and d.f.width(study, "light", size) > 240:
+            size -= 0.5
+        while d.f.width(study, "light", size) > 240:
+            study = study[:-2].rstrip() + "…"
+        d.text(page, 108, 492, study, "light", size)
+        layout.cover_texts.append(study)
     d.text(page, 108, 504, f"VERSION V{version}  ·  ISSUED {fmt_date_iso(issued_at)}", "light", 7.5)
     d.text(page, 108, 516, f"VERIFICATION CODE  {code}", "bold", 7.5)
     layout.cover_texts += [fmt_date(h.first_issued), h.passport_id, code, f"VERSION V{version}"]

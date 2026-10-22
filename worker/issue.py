@@ -67,8 +67,10 @@ def _holder(conn, passport_fk: int, record_ids: list[str]) -> Holder:
         key=lambda s: (s.date_earned, s.record_id),
     )
     # Name, Passport ID and first-issue date come from the passport row, frozen at first issuance.
+    s = conn.execute("SELECT program, education_level FROM students WHERE id = ?", (p["student_fk"],)).fetchone()
     return Holder(passport_id=p["passport_id"], first_name=p["holder_first_name"], last_name=p["holder_last_name"],
-                  first_issued=date.fromisoformat(p["first_issued_on"]), skills=skills)
+                  first_issued=date.fromisoformat(p["first_issued_on"]), skills=skills,
+                  program=(s["program"] or "") if s else "", education_level=(s["education_level"] or "") if s else "")
 
 
 def generate_candidate(conn: sqlite3.Connection, passport_fk: int, record_ids: list[str], renderer=None) -> dict:

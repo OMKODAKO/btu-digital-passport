@@ -155,13 +155,18 @@ def main() -> None:
     url = export_url(a.link)
     work = demo_dir / "sheet"
     work.mkdir(exist_ok=True)
-    last = None
+    last, seen = None, None
     print(f"Watching the Google Sheet every {a.every:g}s (Ctrl-C to stop). Chain: {env.get('PASSPORT_CHAIN_NETWORK')}", flush=True)
     while True:
         try:
             raw = download(url, work / "downloaded.xlsx")
             digest = content_digest(work / "downloaded.xlsx")
-            if digest != last:
+            # Import only once the sheet has stopped changing for one interval, so a row someone is still
+            # typing (name first, then email, program ...) is not imported half-filled.
+            stable, seen = digest == seen, digest
+            if digest != last and not stable:
+                print(f"[{time.strftime('%H:%M:%S')}] sheet changed, waiting until editing stops ...", flush=True)
+            if digest != last and stable:
                 last = digest
                 copy = work / "latest.xlsx"
                 copy.write_bytes(raw)

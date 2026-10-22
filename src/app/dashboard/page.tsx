@@ -141,6 +141,26 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
           <section className="card facts">
             <dl>
               <div>
+                <dt>Student ID</dt>
+                <dd>{student.studentId}</dd>
+              </div>
+              <div>
+                <dt>Email</dt>
+                <dd>{student.email}</dd>
+              </div>
+              {student.program && (
+                <div>
+                  <dt>Program</dt>
+                  <dd data-testid="program">{student.program}</dd>
+                </div>
+              )}
+              {student.educationLevel && (
+                <div>
+                  <dt>Education level</dt>
+                  <dd data-testid="education-level">{student.educationLevel}</dd>
+                </div>
+              )}
+              <div>
                 <dt>Passport ID</dt>
                 <dd data-testid="passport-id">{passport.passportId}</dd>
               </div>
@@ -247,6 +267,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
                     <span className="muted">
                       {k.category} · {k.badgeCode} · earned {formatDate(k.dateEarned)}
                     </span>
+                    {k.description && <span className="skill-desc">{k.description}</span>}
                   </li>
                 ))}
               </ul>
