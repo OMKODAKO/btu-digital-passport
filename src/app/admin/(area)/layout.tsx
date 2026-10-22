@@ -11,14 +11,16 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   return (
     <div className="shell">
       <aside className="sidebar">
-        <p className="sidebar-title">Staff area</p>
+        <p className="sidebar-term">AI Skills Passport · 2026</p>
+        <p className="sidebar-section">მართვა</p>
         <nav className="sidebar-nav adminnav">
-          <a href="/admin">Overview</a>
-          <a href="/admin/students">Find a student</a>
-          <a href="/admin/issues">Import problems</a>
-          <a href="/admin/audit">Audit log</a>
-          <a href="/verify">Public verification</a>
+          <a href="/admin">მიმოხილვა · Overview</a>
+          <a href="/admin/students">სტუდენტის ძებნა</a>
+          <a href="/admin/issues">იმპორტის პრობლემები</a>
+          <a href="/admin/audit">აუდიტის ჟურნალი</a>
+          <a href="/verify">საჯარო ვერიფიკაცია</a>
         </nav>
+        <p className="sidebar-section">ანგარიში</p>
         <form method="post" action="/api/admin/logout" className="sidebar-who">
           <span className="muted">
             {staff.displayName}
