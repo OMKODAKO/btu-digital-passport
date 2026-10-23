@@ -184,19 +184,10 @@ def _run(conn, table, options, run_id) -> RunResult:
 
     # ---- 5. versions ---------------------------------------------------------------------------
     failures = {}
-    # DEMO apply-edits: a student's next version holds exactly the skills on their rows in this sheet, so a
-    # skill edited away on a row is left out of the new version (it stays in the older versions).
-    in_sheet = defaultdict(set)
-    if options.apply_edits:
-        # every row still in the sheet counts, even one refused this run: a row with a problem never
-        # removes a skill that was already issued from it
-        for r in v.records.values():
-            s = conn.execute("SELECT id FROM students WHERE student_id = ?", (r.student_code,)).fetchone()
-            if s and r.record_id:
-                in_sheet[s["id"]].add(r.record_id)
+    # A new version always holds every accepted award, with apply-edits too: a row that was edited, deleted or
+    # left out of the sheet never removes a skill that was already awarded (there is no revocation workflow).
     for passport in conn.execute("SELECT * FROM passports ORDER BY passport_id").fetchall():
-        outcome = generate_if_needed(conn, passport, options.renderer, run_id, force=passport["student_fk"] in edited,
-                                     only=in_sheet.get(passport["student_fk"]))
+        outcome = generate_if_needed(conn, passport, options.renderer, run_id, force=passport["student_fk"] in edited)
         if outcome == "generated":
             counts["versions_generated"] += 1
         elif outcome is not None:
@@ -260,11 +251,11 @@ class _EditSet(set):
     """Students edited in this run; .seen holds those whose profile row was already applied."""
 
 
-def generate_if_needed(conn, passport, renderer=None, run_id: int | None = None, force: bool = False,
-                       only: set | None = None):
+def generate_if_needed(conn, passport, renderer=None, run_id: int | None = None, force: bool = False):
     """Generates a candidate if the passport's accepted awards grew past its newest version.
     Returns None (nothing new), "generated", or (new record ids, error) on failure, in which case the
-    previous version stays current. Only accepted skill_awards are used."""
+    previous version stays current. Only accepted skill_awards are used, and every one of them is kept:
+    the new version is a superset of the newest one, never smaller."""
     awarded = {a[0] for a in conn.execute("SELECT record_id FROM skill_awards WHERE student_fk = ?",
                                           (passport["student_fk"],))}
     # compare with the newest version already made: a waiting candidate, else the current version
@@ -277,16 +268,10 @@ def generate_if_needed(conn, passport, renderer=None, run_id: int | None = None,
     else:
         contained = {a[0] for a in conn.execute("SELECT record_id FROM version_source_records WHERE version_fk = ?",
                                                 (current["id"],))} if current else set()
-    if only is not None and awarded & only:  # demo apply-edits: exactly the skills now in the sheet
-        target = awarded & only
-        new = target - contained
-        if target == contained and not force:
-            return None
-    else:
-        new = awarded - contained
-        target = contained | new
-        if not new and not (force and contained):  # force: same skills, edited data -> next version
-            return None
+    new = awarded - contained
+    target = contained | new
+    if not new and not (force and contained):  # force: same skills, edited data -> next version
+        return None
     try:
         generate_candidate(conn, passport["id"], sorted(target), renderer)
         return "generated"
