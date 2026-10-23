@@ -1,6 +1,7 @@
 import { can, requireStaff } from "@/lib/auth/staff";
 import { SOURCE_LABEL, studentDetail } from "@/lib/admin";
 import { audit } from "@/lib/audit";
+import { txUrl } from "@/lib/explorer";
 import { verifyVersion } from "@/lib/verify";
 import AuditTable from "../../AuditTable";
 import { day, fmt } from "../../../format";
@@ -122,7 +123,14 @@ export default async function StudentRecord({
                     <td className="muted">
                       {v.txHash ? (
                         <>
-                          {v.network}, block {v.blockNumber}, tx <span className="mono">{short(v.txHash)}</span>
+                          {v.network}, block {v.blockNumber}, tx{" "}
+                          {txUrl(v.chainId, v.txHash) ? (
+                            <a className="mono" href={txUrl(v.chainId, v.txHash)!} target="_blank" rel="noopener" data-testid="tx-link">
+                              {short(v.txHash)}
+                            </a>
+                          ) : (
+                            <span className="mono">{short(v.txHash)}</span>
+                          )}
                           {v.issuerTestOnly !== 0 ? ", test issuer" : ""}. Now:{" "}
                           <span data-testid="live-chain">{r ? `${r.chain.toLowerCase()}, ${r.evidence.confirmations ?? "?"} confirmations, issuer ${r.issuer.toLowerCase().replace("_", " ")}` : "not checked"}</span>
                         </>

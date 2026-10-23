@@ -137,7 +137,7 @@ export function studentDetail(studentId: string) {
     .prepare(
       `SELECT id, version_no AS versionNo, verification_code AS verificationCode, status, issued_at AS issuedAt,
               activated_at AS activatedAt, pdf_sha256 AS pdfSha256, chain_tx_hash AS txHash, chain_network AS network,
-              chain_block_number AS blockNumber, chain_confirmations AS confirmations, chain_issuer AS issuer,
+              chain_id AS chainId, chain_block_number AS blockNumber, chain_confirmations AS confirmations, chain_issuer AS issuer,
               chain_issuer_label AS issuerLabel, chain_issuer_test_only AS issuerTestOnly,
               chain_registered_at AS registeredAt,
               (SELECT COUNT(*) FROM version_source_records x WHERE x.version_fk = passport_versions.id) AS records
@@ -145,7 +145,7 @@ export function studentDetail(studentId: string) {
     )
     .all(pid) as {
       id: number; versionNo: number; verificationCode: string; status: string; issuedAt: string; activatedAt: string | null;
-      pdfSha256: string; txHash: string | null; network: string | null; blockNumber: number | null;
+      pdfSha256: string; txHash: string | null; network: string | null; chainId: number | null; blockNumber: number | null;
       confirmations: number | null; issuer: string | null; issuerLabel: string | null; issuerTestOnly: number | null;
       registeredAt: string | null; records: number;
     }[];

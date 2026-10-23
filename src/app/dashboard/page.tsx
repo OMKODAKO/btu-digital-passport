@@ -4,6 +4,7 @@ import QRCode from "qrcode";
 import AppHeader from "@/components/AppHeader";
 import Checks, { headline } from "@/components/Checks";
 import { getCurrentStudent } from "@/lib/auth/session";
+import { txUrl } from "@/lib/explorer";
 import {
   getPassportForStudent,
   getPendingInfo,
@@ -51,6 +52,10 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
     const base = process.env.PUBLIC_BASE_URL ?? (host ? `${h.get("x-forwarded-proto") ?? "http"}://${host}` : null);
     if (base) qr = await QRCode.toString(`${base.replace(/\/$/, "")}${verifyPath}`, { type: "svg", margin: 0, errorCorrectionLevel: "M" });
   }
+  // The student's own QR to this version's registration transaction on the public explorer. It can't be
+  // printed in the PDF itself: the transaction records the PDF's hash, so it only exists after the PDF.
+  const chainUrl = selected ? txUrl(selected.chainId, selected.chainTxHash) : null;
+  const chainQr = chainUrl ? await QRCode.toString(chainUrl, { type: "svg", margin: 0, errorCorrectionLevel: "M" }) : null;
   const lastUpdated = passport?.current?.issuedAt ?? null;
   const demo = student.source === "BTU_TEST_DATA" || student.source === "SEED_SYNTHETIC";
 
@@ -215,10 +220,27 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
             {selected.chainTxHash && (
               <p className="fine" data-testid="chain-record">
                 Registered on {selected.chainNetwork ?? "a blockchain"}, block {selected.chainBlockNumber}, transaction{" "}
-                <span className="mono">{selected.chainTxHash.slice(0, 10)}…{selected.chainTxHash.slice(-6)}</span>.
+                {chainUrl ? (
+                  <a className="mono" href={chainUrl} target="_blank" rel="noopener" data-testid="tx-link">
+                    {selected.chainTxHash.slice(0, 10)}…{selected.chainTxHash.slice(-6)}
+                  </a>
+                ) : (
+                  <span className="mono">{selected.chainTxHash.slice(0, 10)}…{selected.chainTxHash.slice(-6)}</span>
+                )}
+                .
                 {selected.chainIssuerTestOnly !== 0 &&
                   " Issued by a test issuer: official BTU issuer verification is still pending."}
               </p>
+            )}
+            {chainUrl && chainQr && (
+              <div className="verifyrow" data-testid="chain-qr-block">
+                <div className="qr" data-testid="chain-qr" role="img" aria-label="QR code for this version's blockchain transaction" dangerouslySetInnerHTML={{ __html: chainQr }} />
+                <p className="muted">
+                  Scan to see V{selected.versionNo} of your passport on the public blockchain explorer:{" "}
+                  <a href={chainUrl} target="_blank" rel="noopener">open the transaction</a>. It shows the PDF&apos;s
+                  SHA-256 and the issuer; no name or email is stored there.
+                </p>
+              </div>
             )}
             {!selected.chainTxHash && (
               <p className="fine">
@@ -284,7 +306,18 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
                     <span className="muted">
                       issued {formatDate(ver.issuedAt)} ·{" "}
                       {ver.status === "CURRENT" ? <span className="pill ok">current</span> : <span className="pill">superseded</span>}
-                      {ver.chainTxHash ? "" : " · not registered on a blockchain"}
+                      {txUrl(ver.chainId, ver.chainTxHash) ? (
+                        <>
+                          {" · "}
+                          <a href={txUrl(ver.chainId, ver.chainTxHash)!} target="_blank" rel="noopener" data-testid="history-tx-link">
+                            transaction
+                          </a>
+                        </>
+                      ) : ver.chainTxHash ? (
+                        ""
+                      ) : (
+                        " · not registered on a blockchain"
+                      )}
                     </span>
                   </li>
                 ))}

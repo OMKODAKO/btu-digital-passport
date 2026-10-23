@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { VerificationResult } from "@/lib/verify";
 import Checks, { headline } from "@/components/Checks";
+import { txUrl } from "@/lib/explorer";
 
 export default function VerifyForm({ initialCode = "" }: { initialCode?: string }) {
   const [code, setCode] = useState(initialCode);
@@ -75,7 +76,15 @@ export default function VerifyForm({ initialCode = "" }: { initialCode?: string 
               <dt>Registry contract</dt>
               <dd className="mono">{result.evidence.registry}</dd>
               <dt>Transaction</dt>
-              <dd className="mono">{result.evidence.txHash ?? "not available"}</dd>
+              <dd className="mono">
+                {txUrl(result.evidence.chainId, result.evidence.txHash) ? (
+                  <a href={txUrl(result.evidence.chainId, result.evidence.txHash)!} target="_blank" rel="noopener" data-testid="tx-link">
+                    {result.evidence.txHash}
+                  </a>
+                ) : (
+                  (result.evidence.txHash ?? "not available")
+                )}
+              </dd>
               <dt>Issuer</dt>
               <dd>
                 {result.evidence.issuerLabel} <span className="mono">{result.evidence.issuerAddress}</span>

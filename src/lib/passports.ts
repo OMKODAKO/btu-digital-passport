@@ -13,6 +13,7 @@ export type PassportVersion = {
   pdfSha256: string;
   chainTxHash: string | null;
   chainNetwork: string | null;
+  chainId: number | null;
   chainBlockNumber: number | null;
   chainIssuerLabel: string | null;
   chainIssuerTestOnly: number | null;
@@ -48,7 +49,7 @@ export function getPassportForStudent(studentFk: number): Passport | null {
       `SELECT version_no AS versionNo, verification_code AS verificationCode, status,
               issued_at AS issuedAt, pdf_storage_key AS pdfStorageKey,
               pdf_sha256 AS pdfSha256, chain_tx_hash AS chainTxHash, chain_network AS chainNetwork,
-              chain_block_number AS chainBlockNumber, chain_issuer_label AS chainIssuerLabel,
+              chain_id AS chainId, chain_block_number AS chainBlockNumber, chain_issuer_label AS chainIssuerLabel,
               chain_issuer_test_only AS chainIssuerTestOnly
          FROM passport_versions WHERE passport_fk = ? ORDER BY version_no DESC`,
     )
