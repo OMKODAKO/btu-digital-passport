@@ -6,6 +6,7 @@
   python3 -m worker verify --code BTU-XXXX-XXXX-XXXX [--pdf file.pdf]   check against the chain + trust anchor
   python3 -m worker chain deploy|set-issuer|anchor ...                 registry administration (chain_admin.py)
   python3 -m worker retry                                              carry out retries requested in the admin area
+  python3 -m worker subjects load|list                                 add the subject catalog + simulated syllabi / show them
 """
 from __future__ import annotations
 
@@ -34,6 +35,8 @@ def main(argv=None) -> int:
             print(json.dumps(d, ensure_ascii=False))
         print(f"{len(done)} retry request(s) processed")
         return 1 if any(d["state"] == "FAILED" for d in done) else 0
+    if argv[:1] == ["subjects"]:
+        return _subjects(argv[1:])
     ap = argparse.ArgumentParser(prog="python3 -m worker")
     sub = ap.add_subparsers(dest="cmd", required=True)
     imp = sub.add_parser("import", help="import the skill workbook and generate passport versions")
@@ -115,6 +118,30 @@ def _verify(argv) -> int:
                Path(args.pdf).read_bytes() if args.pdf else None)
     print(json.dumps(v.as_dict(), indent=2))
     return 0 if v.status == VALID else 1
+
+
+def _subjects(argv) -> int:
+    from .subjects import CatalogError, load_catalog, passport_subjects, syllabus_components
+
+    ap = argparse.ArgumentParser(prog="python3 -m worker subjects")
+    ap.add_argument("action", choices=["load", "list"])
+    args = ap.parse_args(argv)
+    conn = connect()
+    if args.action == "load":
+        try:
+            r = load_catalog(conn)
+        except CatalogError as exc:
+            print(f"Catalog not loaded, nothing changed: {exc}", file=sys.stderr)
+            return 2
+        print(f"Subjects added {len(r.subjects_added)}, syllabi added {len(r.syllabi_added)}, already present {r.unchanged}")
+        for d in r.differences:
+            print(f"  kept as stored: {d}")
+        return 0
+    for s in passport_subjects(conn):
+        comps = syllabus_components(conn, s["id"])
+        parts = ", ".join(f"{c['label']} {c['weight']:g}% (/{c['max_points']:g})" for c in comps)
+        print(f"{s['code']:24} {s['credits']} ECTS  {s['skill_area']:16} {s['name_en']}\n{'':26}{parts}")
+    return 0
 
 
 def _col(n: int) -> str:

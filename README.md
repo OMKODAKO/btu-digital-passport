@@ -84,8 +84,10 @@ All passwords are generated fresh and kept in `data-demo/dev-credentials.txt`. M
 Everything the demo writes (database, PDFs, throwaway devnet keys, passwords) goes to `data-demo/`, which is
 git-ignored. Never commit it.
 
-Tests (after `npm run quickstart`): `source .venv/bin/activate`, then `npm test` (web, 49 pass) and
-`npm run test:worker` (Python, 78 pass).
+Tests (after `npm run quickstart`): `source .venv/bin/activate`, then `npm run build && npm test` (web, 49 pass;
+the tests start the built app, so without a build they all fail) and `npm run test:worker` (Python, 93 pass).
+
+Subject scores and badges (in progress): [docs/SUBJECTS.md](docs/SUBJECTS.md).
 
 ## Setup reference
 

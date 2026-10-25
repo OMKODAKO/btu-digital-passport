@@ -1,0 +1,1153 @@
+{
+  "source": "BTU_COURSE_LIST_2026-10-25",
+  "note": "Course names and ECTS credits from the BTU course list Merabi shared on 2026-10-25 (no grades taken from it). Syllabi are SIMULATED: BTU syllabi are not available to this project. passport_relevant marks the subjects that count toward the AI Skills Digital Passport.",
+  "subjects": [
+    {
+      "code": "SUBJ-VIBE-CODING",
+      "name_ka": "ვაიბ ქოუდინგი და AI-აგენტური ინჟინერია",
+      "name_en": "Vibe Coding and AI-Agentic Engineering",
+      "credits": 3,
+      "passport_relevant": true,
+      "skill_area": "AI & ML",
+      "logo_key": "agent",
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 10,
+          "max_points": 20
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 20,
+          "max_points": 40
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Agent project",
+          "weight": 30,
+          "max_points": 100
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 15,
+          "max_points": 30
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 25,
+          "max_points": 50
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-AI-ML",
+      "name_ka": "ხელოვნური ინტელექტი და მანქანური სწავლება",
+      "name_en": "Artificial Intelligence and Machine Learning",
+      "credits": 6,
+      "passport_relevant": true,
+      "skill_area": "AI & ML",
+      "logo_key": "neural",
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 10,
+          "max_points": 20
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 20,
+          "max_points": 40
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Course project",
+          "weight": 25,
+          "max_points": 100
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 20,
+          "max_points": 40
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 25,
+          "max_points": 50
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-AI-FUND",
+      "name_ka": "ხელოვნური ინტელექტის საფუძვლები",
+      "name_en": "Fundamentals of Artificial Intelligence",
+      "credits": 3,
+      "passport_relevant": true,
+      "skill_area": "AI & ML",
+      "logo_key": "spark",
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 10,
+          "max_points": 20
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 20,
+          "max_points": 40
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Course project",
+          "weight": 25,
+          "max_points": 100
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 20,
+          "max_points": 40
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 25,
+          "max_points": 50
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-DEEP-LEARNING",
+      "name_ka": "მანქანური სწავლება (ღრმა დასწავლა)",
+      "name_en": "Machine Learning (Deep Learning)",
+      "credits": 6,
+      "passport_relevant": true,
+      "skill_area": "AI & ML",
+      "logo_key": "layers",
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 10,
+          "max_points": 20
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 20,
+          "max_points": 40
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Course project",
+          "weight": 25,
+          "max_points": 100
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 20,
+          "max_points": 40
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 25,
+          "max_points": 50
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-PYTHON",
+      "name_ka": "პროგრამირება (Python)",
+      "name_en": "Programming (Python)",
+      "credits": 6,
+      "passport_relevant": true,
+      "skill_area": "Programming",
+      "logo_key": "code",
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 10,
+          "max_points": 20
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Programming assignments",
+          "weight": 25,
+          "max_points": 50
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 15,
+          "max_points": 100
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 20,
+          "max_points": 40
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 60
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-PYTHON-INTRO",
+      "name_ka": "პროგრამირების საწყისები (Python)",
+      "name_en": "Introduction to Programming (Python)",
+      "credits": 6,
+      "passport_relevant": true,
+      "skill_area": "Programming",
+      "logo_key": "brackets",
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 10,
+          "max_points": 20
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Programming assignments",
+          "weight": 25,
+          "max_points": 50
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 15,
+          "max_points": 100
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 20,
+          "max_points": 40
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 60
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-DSA-1",
+      "name_ka": "მონაცემთა სტრუქტურები და ალგორითმები (C, I)",
+      "name_en": "Data Structures and Algorithms (C, I)",
+      "credits": 6,
+      "passport_relevant": true,
+      "skill_area": "Programming",
+      "logo_key": "tree",
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 10,
+          "max_points": 20
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Programming assignments",
+          "weight": 25,
+          "max_points": 50
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 15,
+          "max_points": 100
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 20,
+          "max_points": 40
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 60
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-DATABASES",
+      "name_ka": "მონაცემთა ბაზების საწყისები",
+      "name_en": "Introduction to Databases",
+      "credits": 6,
+      "passport_relevant": true,
+      "skill_area": "Data",
+      "logo_key": "database",
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 10,
+          "max_points": 20
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Labs",
+          "weight": 25,
+          "max_points": 50
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 15,
+          "max_points": 100
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 20,
+          "max_points": 40
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 60
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-PROB-STATS",
+      "name_ka": "ალბათობის თეორია და მათემატიკური სტატისტიკა",
+      "name_en": "Probability Theory and Mathematical Statistics",
+      "credits": 6,
+      "passport_relevant": true,
+      "skill_area": "Data",
+      "logo_key": "distribution",
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 15,
+          "max_points": 30
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Problem sets",
+          "weight": 15,
+          "max_points": 30
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 30,
+          "max_points": 60
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 40,
+          "max_points": 80
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-LINEAR-ALGEBRA",
+      "name_ka": "წრფივი ალგებრა (გაღრმავებული კურსი)",
+      "name_en": "Linear Algebra (Advanced)",
+      "credits": 6,
+      "passport_relevant": true,
+      "skill_area": "Math foundations",
+      "logo_key": "matrix",
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 15,
+          "max_points": 30
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Problem sets",
+          "weight": 15,
+          "max_points": 30
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 30,
+          "max_points": 60
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 40,
+          "max_points": 80
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-GRAPHICS-VIS",
+      "name_ka": "კომპიუტერული გრაფიკა და ვიზუალიზაცია",
+      "name_en": "Computer Graphics and Visualization",
+      "credits": 3,
+      "passport_relevant": true,
+      "skill_area": "Data",
+      "logo_key": "chart",
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 10,
+          "max_points": 20
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Labs",
+          "weight": 25,
+          "max_points": 50
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 15,
+          "max_points": 100
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 20,
+          "max_points": 40
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 60
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-INFOSEC",
+      "name_ka": "ინფორმაციული უსაფრთხოება",
+      "name_en": "Information Security",
+      "credits": 6,
+      "passport_relevant": true,
+      "skill_area": "Security",
+      "logo_key": "shield",
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 10,
+          "max_points": 20
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Labs",
+          "weight": 25,
+          "max_points": 50
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 15,
+          "max_points": 100
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 20,
+          "max_points": 40
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 60
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-DIGITAL-TECH",
+      "name_ka": "ციფრული ტექნოლოგიების პრინციპები",
+      "name_en": "Principles of Digital Technologies",
+      "credits": 3,
+      "passport_relevant": true,
+      "skill_area": "Digital literacy",
+      "logo_key": "chip",
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 10,
+          "max_points": 20
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 30,
+          "max_points": 60
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 20,
+          "max_points": 100
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 15,
+          "max_points": 30
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 25,
+          "max_points": 50
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-ELECTROMAGNETISM",
+      "name_ka": "ელექტრომაგნეტიზმის საფუძვლები",
+      "name_en": "Fundamentals of Electromagnetism",
+      "credits": 6,
+      "passport_relevant": false,
+      "skill_area": null,
+      "logo_key": null,
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 15,
+          "max_points": 30
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Problem sets",
+          "weight": 15,
+          "max_points": 30
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 30,
+          "max_points": 60
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 40,
+          "max_points": 80
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-COMP-ARCH",
+      "name_ka": "კომპიუტერის არქიტექტურა",
+      "name_en": "Computer Architecture",
+      "credits": 4,
+      "passport_relevant": false,
+      "skill_area": null,
+      "logo_key": null,
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 10,
+          "max_points": 20
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Labs",
+          "weight": 25,
+          "max_points": 50
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 15,
+          "max_points": 100
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 20,
+          "max_points": 40
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 60
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-CS-THEORY",
+      "name_ka": "კომპიუტერული მეცნიერების თეორიული საფუძვლები",
+      "name_en": "Theoretical Foundations of Computer Science",
+      "credits": 3,
+      "passport_relevant": false,
+      "skill_area": null,
+      "logo_key": null,
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 15,
+          "max_points": 30
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Problem sets",
+          "weight": 15,
+          "max_points": 30
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 30,
+          "max_points": 60
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 40,
+          "max_points": 80
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-NETWORKS",
+      "name_ka": "კომპიუტერული ქსელების საწყისები",
+      "name_en": "Introduction to Computer Networks",
+      "credits": 6,
+      "passport_relevant": false,
+      "skill_area": null,
+      "logo_key": null,
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 10,
+          "max_points": 20
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Labs",
+          "weight": 25,
+          "max_points": 50
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 15,
+          "max_points": 100
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 20,
+          "max_points": 40
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 60
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-DSA-2",
+      "name_ka": "მონაცემთა სტრუქტურები და ალგორითმები (C++, II)",
+      "name_en": "Data Structures and Algorithms (C++, II)",
+      "credits": 6,
+      "passport_relevant": false,
+      "skill_area": null,
+      "logo_key": null,
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 10,
+          "max_points": 20
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Programming assignments",
+          "weight": 25,
+          "max_points": 50
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 15,
+          "max_points": 100
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 20,
+          "max_points": 40
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 60
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-OS",
+      "name_ka": "ოპერაციული სისტემა",
+      "name_en": "Operating Systems",
+      "credits": 4,
+      "passport_relevant": false,
+      "skill_area": null,
+      "logo_key": null,
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 10,
+          "max_points": 20
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Labs",
+          "weight": 25,
+          "max_points": 50
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 15,
+          "max_points": 100
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 20,
+          "max_points": 40
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 60
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-PARADIGMS",
+      "name_ka": "პროგრამირების პარადიგმები",
+      "name_en": "Programming Paradigms",
+      "credits": 6,
+      "passport_relevant": false,
+      "skill_area": null,
+      "logo_key": null,
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 10,
+          "max_points": 20
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Programming assignments",
+          "weight": 25,
+          "max_points": 50
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 15,
+          "max_points": 100
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 20,
+          "max_points": 40
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 60
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-SOFTWARE-ENG",
+      "name_ka": "პროგრამული ინჟინერია",
+      "name_en": "Software Engineering",
+      "credits": 6,
+      "passport_relevant": false,
+      "skill_area": null,
+      "logo_key": null,
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 10,
+          "max_points": 20
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 30,
+          "max_points": 60
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 20,
+          "max_points": 100
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 15,
+          "max_points": 30
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 25,
+          "max_points": 50
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-ENGLISH-B1",
+      "name_ka": "ინგლისური ენის პრაქტიკული კურსი (B1)",
+      "name_en": "Practical English (B1)",
+      "credits": 6,
+      "passport_relevant": false,
+      "skill_area": null,
+      "logo_key": null,
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 10,
+          "max_points": 20
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 30,
+          "max_points": 60
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 20,
+          "max_points": 100
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 15,
+          "max_points": 30
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 25,
+          "max_points": 50
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-ENGLISH-B2",
+      "name_ka": "ინგლისური ენის პრაქტიკული კურსი (B2)",
+      "name_en": "Practical English (B2)",
+      "credits": 6,
+      "passport_relevant": false,
+      "skill_area": null,
+      "logo_key": null,
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 10,
+          "max_points": 20
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 30,
+          "max_points": 60
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 20,
+          "max_points": 100
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 15,
+          "max_points": 30
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 25,
+          "max_points": 50
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-INNOVATION",
+      "name_ka": "ინოვაციების მენეჯმენტი და სტარტაპი",
+      "name_en": "Innovation Management and Startups",
+      "credits": 6,
+      "passport_relevant": false,
+      "skill_area": null,
+      "logo_key": null,
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 10,
+          "max_points": 20
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 30,
+          "max_points": 60
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 20,
+          "max_points": 100
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 15,
+          "max_points": 30
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 25,
+          "max_points": 50
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-CALCULUS-1",
+      "name_ka": "კალკულუსი I",
+      "name_en": "Calculus I",
+      "credits": 5,
+      "passport_relevant": false,
+      "skill_area": null,
+      "logo_key": null,
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 15,
+          "max_points": 30
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Problem sets",
+          "weight": 15,
+          "max_points": 30
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 30,
+          "max_points": 60
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 40,
+          "max_points": 80
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-CALCULUS-2",
+      "name_ka": "კალკულუსი II",
+      "name_en": "Calculus II",
+      "credits": 5,
+      "passport_relevant": false,
+      "skill_area": null,
+      "logo_key": null,
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 15,
+          "max_points": 30
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Problem sets",
+          "weight": 15,
+          "max_points": 30
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 30,
+          "max_points": 60
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 40,
+          "max_points": 80
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-ENTREPRENEURSHIP",
+      "name_ka": "შესავალი მეწარმეობაში",
+      "name_en": "Introduction to Entrepreneurship",
+      "credits": 6,
+      "passport_relevant": false,
+      "skill_area": null,
+      "logo_key": null,
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 10,
+          "max_points": 20
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 30,
+          "max_points": 60
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 20,
+          "max_points": 100
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 15,
+          "max_points": 30
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 25,
+          "max_points": 50
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-WRITING",
+      "name_ka": "წერის ტექნიკა",
+      "name_en": "Writing Techniques",
+      "credits": 3,
+      "passport_relevant": false,
+      "skill_area": null,
+      "logo_key": null,
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 10,
+          "max_points": 20
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 30,
+          "max_points": 60
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 20,
+          "max_points": 100
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 15,
+          "max_points": 30
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 25,
+          "max_points": 50
+        }
+      ]
+    },
+    {
+      "code": "SUBJ-DISCRETE-MATH",
+      "name_ka": "დისკრეტული მათემატიკა",
+      "name_en": "Discrete Mathematics",
+      "credits": 6,
+      "passport_relevant": false,
+      "skill_area": null,
+      "logo_key": null,
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 15,
+          "max_points": 30
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Problem sets",
+          "weight": 15,
+          "max_points": 30
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 30,
+          "max_points": 60
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 40,
+          "max_points": 80
+        }
+      ]
+    }
+  ]
+}
