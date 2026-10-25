@@ -194,3 +194,7 @@ a:hover { color: var(--brand); }
 .check { display: flex; gap: 8px; align-items: center; font-weight: 400 !important; }
 .check input { width: auto !important; }
 .toolbar { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.button.google { display: flex; width: 100%; margin: 14px 0 6px; }
+.login .form + .form, .login .google + .form { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); }
+.demo-staff { display: grid; gap: 8px; margin-top: 8px; }
+.demo-staff .button { margin-top: 0; text-align: left; }

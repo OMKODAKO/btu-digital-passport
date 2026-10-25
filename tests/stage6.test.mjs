@@ -22,7 +22,7 @@ const key = () => "0x" + randomBytes(32).toString("hex"); // fresh keys, in memo
 const adminKey = key();
 const issuerKey = key();
 const rogueKey = key(); // funded but never authorised as an issuer
-let env = { ...process.env, DATA_DIR: dataDir };
+let env = { ...process.env, PASSPORT_PASSWORD_LOGIN: "1", DATA_DIR: dataDir };
 let server, node;
 const accounts = new Map();
 const S1 = "btu-t-0001@example.org"; // BTU-AI-000125
@@ -347,11 +347,11 @@ test("held and rejected skills stay as they are: no admin route can confirm a sk
   const awarded = new Set(query("SELECT record_id FROM skill_awards").map((r) => r.record_id));
   for (const r of held) assert.ok(!awarded.has(r.record_id), r.record_id);
   // the only state-changing admin endpoints are sign-in, sign-out, retry, and (subject stage 03) adding a
-  // synthetic student and entering subject marks (plus the read-only course results CSV); none of them
-  // touches sheet records, skills or versions
+  // synthetic student and entering subject marks (plus the read-only course results CSV, and the local demo
+  // sign-in); none of them touches sheet records, skills or versions
   const routes = fs.readdirSync(path.resolve("src/app/api/admin")).sort();
-  assert.deepEqual(routes, ["courses", "login", "logout", "marks", "retry", "students"]);
-  for (const [route, libs] of [["retry", []], ["students", ["src/lib/students.ts"]], ["marks", ["src/lib/subjects.ts"]], ["courses", []]]) {
+  assert.deepEqual(routes, ["courses", "demo", "login", "logout", "marks", "retry", "students"]);
+  for (const [route, libs] of [["retry", []], ["demo", ["src/lib/auth/signin.ts"]], ["students", ["src/lib/students.ts"]], ["marks", ["src/lib/subjects.ts"]], ["courses", []]]) {
     for (const f of [`src/app/api/admin/${route}/route.ts`, ...libs]) {
       const src = fs.readFileSync(path.resolve(f), "utf8").replace(/^\s*(\/\/|\*).*$/gm, "");
       assert.ok(!/source_records|skill_awards|passport_versions/.test(src), f);

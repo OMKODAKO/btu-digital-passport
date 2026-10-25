@@ -1,4 +1,5 @@
 import { can, requireStaff } from "@/lib/auth/staff";
+import { PASSWORD_LOGIN } from "@/lib/config";
 import { EDUCATION_LEVELS, nextStudentId, STUDENT_STATUSES } from "@/lib/students";
 
 export default async function NewStudent({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
@@ -44,7 +45,12 @@ export default async function NewStudent({ searchParams }: { searchParams: Promi
               {STUDENT_STATUSES.map((l) => <option key={l}>{l}</option>)}
             </select></div>
         </div>
-        <label className="check"><input type="checkbox" name="createLogin" defaultChecked /> Create a test login (the password is shown once)</label>
+        {PASSWORD_LOGIN ? (
+          <label className="check"><input type="checkbox" name="createLogin" defaultChecked /> Create a test login (the password is shown once)</label>
+        ) : (
+          <p className="fine">No password is needed: the student signs in with the Google account that uses this email
+            (and, in the local demo, from the list on the sign-in page).</p>
+        )}
         <div><button type="submit" className="button primary" style={{ width: "auto" }}>Add student</button></div>
       </form>
     </section>

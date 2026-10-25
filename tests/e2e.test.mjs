@@ -28,7 +28,7 @@ const evidenceDir = process.env.EVIDENCE_DIR ? path.resolve(process.env.EVIDENCE
 const key = () => "0x" + randomBytes(32).toString("hex"); // fresh keys, in memory only
 const adminKey = key();
 const issuerKey = key();
-let env = { ...process.env, DATA_DIR: dataDir, STUDENT_EMAIL_DOMAINS: "example.org" };
+let env = { ...process.env, PASSPORT_PASSWORD_LOGIN: "1", DATA_DIR: dataDir, STUDENT_EMAIL_DOMAINS: "example.org" };
 let server, node, registry, issuer;
 const passwords = new Map();
 const evidence = [];

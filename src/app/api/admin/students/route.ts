@@ -3,6 +3,7 @@ import { can, getCurrentStaff } from "@/lib/auth/staff";
 import { audit } from "@/lib/audit";
 import { putFlash } from "@/lib/flash";
 import { isSameOrigin, redirect } from "@/lib/request";
+import { PASSWORD_LOGIN } from "@/lib/config";
 import { createStudent, StudentError } from "@/lib/students";
 
 // POST /api/admin/students  (form: firstName, lastName, email?, studentId?, program?, educationLevel?, status?, createLogin?)
@@ -22,7 +23,7 @@ export async function POST(req: Request) {
     const s = await createStudent(
       { firstName: field("firstName"), lastName: field("lastName"), email: field("email"), studentId: field("studentId"),
         program: field("program"), educationLevel: field("educationLevel"), status: field("status") },
-      f.get("createLogin") === "on",
+      PASSWORD_LOGIN && f.get("createLogin") === "on",
     );
     audit({ kind: "STAFF", ref: staff.email }, "STUDENT_CREATED", null, { student: s.studentId, login: !!s.password });
     const flash = s.password ? `&created=${putFlash(`${s.email}\t${s.password}`)}` : "";

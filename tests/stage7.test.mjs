@@ -12,7 +12,7 @@ import Database from "better-sqlite3";
 const PORT = 3922;
 const BASE = `http://127.0.0.1:${PORT}`;
 const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "bdp-s7-"));
-const env = { ...process.env, DATA_DIR: dataDir, PASSPORT_ISSUANCE_MODE: "local-demo" };
+const env = { ...process.env, PASSPORT_PASSWORD_LOGIN: "1", DATA_DIR: dataDir, PASSPORT_ISSUANCE_MODE: "local-demo" };
 const OPERATOR = "ops.demo@staff.example.org";
 const VIEWER = "viewer.demo@staff.example.org";
 const ST = "BTU-T-0001";

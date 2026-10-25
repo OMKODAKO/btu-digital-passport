@@ -22,3 +22,17 @@ export const STUDENT_EMAIL_DOMAINS = (process.env.STUDENT_EMAIL_DOMAINS ?? "")
   .split(",")
   .map((d) => d.trim().toLowerCase())
   .filter(Boolean);
+
+// Sign-in methods. Merabi asked for no passwords: the forms are gone unless PASSPORT_PASSWORD_LOGIN=1, which only
+// the automated tests (and copies that still rely on the old test logins) set.
+export const PASSWORD_LOGIN = process.env.PASSPORT_PASSWORD_LOGIN === "1";
+// Demo sign-in: pick any demo student, or a demo staff account, with one click. For a local demo only:
+// quickstart sets it and starts the app on 127.0.0.1, so no other computer can reach it. Never set it on a server.
+export const DEMO_LOGIN = process.env.PASSPORT_DEMO_LOGIN === "1";
+// Google sign-in (OpenID Connect). Needs an OAuth client from Google Cloud Console; the redirect URI to register is
+// <PUBLIC_BASE_URL>/api/auth/google/callback. GOOGLE_HOSTED_DOMAIN (e.g. btu.edu.ge) admits only that Workspace.
+export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID ?? "";
+export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET ?? "";
+export const GOOGLE_HOSTED_DOMAIN = (process.env.GOOGLE_HOSTED_DOMAIN ?? "").trim().toLowerCase();
+export const GOOGLE_LOGIN = !!(GOOGLE_CLIENT_ID && GOOGLE_CLIENT_SECRET);
+export const GOOGLE_COOKIE = `${COOKIE_PREFIX}_google`;

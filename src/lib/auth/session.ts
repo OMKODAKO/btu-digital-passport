@@ -25,7 +25,7 @@ export const cookieOptions = {
 };
 
 /** Creates a server-side session for an already-authenticated student and returns the cookie token. */
-export function createSession(studentFk: number, authMethod: "password" | "google"): string {
+export function createSession(studentFk: number, authMethod: "password" | "google" | "demo"): string {
   const token = randomBytes(32).toString("base64url");
   const now = new Date();
   const expires = new Date(now.getTime() + SESSION_HOURS * 3600 * 1000);

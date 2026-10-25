@@ -5,11 +5,14 @@ import { deleteStaffSession, staffCookieOptions } from "@/lib/auth/staff";
 import { SESSION_COOKIE, SESSION_HOURS, STAFF_COOKIE } from "@/lib/config";
 import { cookies } from "next/headers";
 import { isSameOrigin, redirect } from "@/lib/request";
+import { PASSWORD_LOGIN } from "@/lib/config";
 
 // POST /api/auth/login  (form fields: email, password)
 // Success: session cookie + redirect to /dashboard. Failure: back to /login with an error code.
 export async function POST(req: Request) {
   const back = (error: string) => redirect(`/login?error=${error}`);
+  // Passwords are switched off (Google and the local demo sign-in replace them); only the tests turn them on.
+  if (!PASSWORD_LOGIN) return new NextResponse("Not found", { status: 404 });
   if (!isSameOrigin(req)) return new NextResponse("Forbidden", { status: 403 });
 
   const form = await req.formData();

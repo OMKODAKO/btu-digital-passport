@@ -6,10 +6,13 @@ import { cookieOptions, deleteSession } from "@/lib/auth/session";
 import { SESSION_COOKIE, STAFF_COOKIE, STAFF_SESSION_HOURS } from "@/lib/config";
 import { cookies } from "next/headers";
 import { isSameOrigin, redirect } from "@/lib/request";
+import { PASSWORD_LOGIN } from "@/lib/config";
 
 // POST /api/admin/login  (form fields: email, password). Staff accounts only; student logins don't work here.
 export async function POST(req: Request) {
   const back = (error: string) => redirect(`/admin/login?error=${error}`);
+  // Passwords are switched off (Google and the local demo sign-in replace them); only the tests turn them on.
+  if (!PASSWORD_LOGIN) return new NextResponse("Not found", { status: 404 });
   if (!isSameOrigin(req)) return new NextResponse("Forbidden", { status: 403 });
 
   const form = await req.formData();
