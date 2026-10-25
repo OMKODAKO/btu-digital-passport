@@ -308,3 +308,17 @@ test("step 16: re-running synchronization changes nothing", async () => {
   assert.equal(Number(await rpc("eth_blockNumber")), blocks, "no new transactions");
   record(16, "PASS", { before, after: counts(), note: "two more runs: 0 new awards, 0 versions, 0 transactions" });
 });
+
+test("extra: on the local devnet the transaction links open the portal's page, read live from the chain", async () => {
+  const dash = await dashboard(cookie);
+  const href = dash.match(/href="(\/chain\/tx\/0x[0-9a-f]{64})"/)?.[1];
+  assert.ok(href, "the dashboard links the transaction to the local page");
+  assert.equal(href, `/chain/tx/${v2.chain_tx_hash}`);
+  const page = clean(await (await fetch(`${BASE}${href}`)).text());
+  assert.ok(page.includes('data-testid="local-tx"') && page.includes(">success<"));
+  assert.ok(page.includes(v2.pdf_sha256.toLowerCase()) && page.includes('data-testid="local-tx-match"'), "on-chain hash matches the stored PDF");
+  assert.ok(page.includes(STUDENT.passportId) && !page.includes(STUDENT.email), "Passport ID only, no email");
+  const unknown = clean(await (await fetch(`${BASE}/chain/tx/0x${"ab".repeat(32)}`)).text());
+  assert.ok(unknown.includes('data-testid="local-tx-error"'));
+  assert.equal((await fetch(`${BASE}/chain/tx/not-a-hash`)).status, 404);
+});

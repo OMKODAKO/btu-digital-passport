@@ -21,7 +21,7 @@ export const REGISTRY_ABI = parseAbi([
   "function versionsOf(bytes32 passportRef) view returns (bytes32[])",
   "function issuer(address account) view returns ((bool active, bool testOnly, uint64 authorisedAt, uint64 revokedAt, string label))",
 ]);
-const REGISTERED_EVENT = parseAbiItem(
+export const REGISTERED_EVENT = parseAbiItem(
   "event VersionRegistered(bytes32 indexed codeKey, bytes32 indexed passportRef, address indexed issuer, uint32 versionNo, bytes32 pdfSha256)",
 );
 
