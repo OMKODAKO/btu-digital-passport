@@ -31,6 +31,7 @@ import pymupdf as fitz
 import qrcode
 
 from .model import LEARNING_FORMAT, TIER_LABEL, Holder, Skill, SubjectBadge
+from ..subjects.scoring import tier_for
 from .subject_badges import StampCache, draw_demo_note, draw_subject_card, place_subject_stamp
 
 ASSETS = Path(__file__).resolve().parent / "assets"  # override with PASSPORT_ASSETS_DIR
@@ -442,6 +443,9 @@ def render_passport(holder: Holder, version: int, issued_at: str, code: str, ver
         if sk.category not in STAMP_CLIPS:
             raise RenderError(f"{sk.record_id}: no stamp artwork for category '{sk.category}'")
 
+    for b in holder.subjects:  # a passport never prints a tier its score doesn't earn
+        if tier_for(b.score) != b.tier:
+            raise ValueError(f"{b.code}: score {b.score} earns {tier_for(b.score)}, not {b.tier}")
     entries = list(holder.skills) + [_SubjectRow(b) for b in holder.subjects]   # subject badges after the skills
     rows = _plan_rows(d, entries)
     overflowing = [(sk, [k for k, c in cells.items() if not c.fitted]) for sk, cells in rows

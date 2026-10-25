@@ -202,6 +202,18 @@ class ArtworkTest(unittest.TestCase):
                     self.assertIn(tier, page.get_text())
                     self.assertGreater(len(page.get_drawings()), 3)
 
+    def test_a_tier_that_the_score_does_not_earn_is_never_printed(self):
+        from datetime import date
+        from worker.pdf.model import Holder, SubjectBadge, canonical_payload
+        from worker.pdf.render import render_passport
+        bad = SubjectBadge("SUBJ-X", "Course", "კურსი", "chip", 6, 1, "66.00", "PLATINUM")
+        h = Holder("BTU-AI-000999", "Nino", "Testadze", date(2026, 9, 1), [], "CS", "Master's", [bad])
+        out = TMP_ROOT / "bad.pdf"
+        with self.assertRaisesRegex(ValueError, "66.00 earns SILVER, not PLATINUM"):
+            render_passport(h, 1, "2026-10-25T15:00:00Z", "BTU-AAAA-BBBB-CCCC", "https://x/verify/BTU-AAAA-BBBB-CCCC",
+                            canonical_payload(h, 1, "2026-10-25T15:00:00Z"), out)
+        self.assertFalse(out.exists())
+
 
 if __name__ == "__main__":
     unittest.main()
