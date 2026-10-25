@@ -25,6 +25,10 @@ command -v node >/dev/null || die "Node.js is missing. Install Node.js 22 or new
 command -v python3 >/dev/null || die "Python 3 is missing. Install Python 3.10 or newer: https://www.python.org"
 python3 -c 'import sys; sys.exit(sys.version_info < (3, 10))' || die "Python $(python3 -V) is too old; install 3.10 or newer."
 command -v curl >/dev/null || die "curl is missing; install it first."
+# another app (e.g. a second copy of the portal) already on this port would answer the browser instead
+if curl -s -m 2 -o /dev/null "http://127.0.0.1:$PORT/"; then
+  die "Port $PORT is already in use by another app. Stop it, or pick another port: PORT=3100 npm run quickstart"
+fi
 echo "node $(node -v), $(python3 -V)"
 
 if [ ! -d node_modules ]; then say "Installing the web app (npm ci)"; npm ci; fi
