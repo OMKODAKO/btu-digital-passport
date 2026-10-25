@@ -53,9 +53,25 @@ midterm 21/30 (15%), final 40/50 (25%) → 7.5 + 15 + 24 + 10.5 + 20 = **77.00 �
 | Information Security | 6 | Security |
 | Principles of Digital Technologies | 3 | Digital literacy |
 
+## Stage 02: marks and subject results
+
+- `db/migrations/007_grades.sql` adds `grade_entries`: one row per mark (student × syllabus component), on the
+  component's own scale. Append-only: a correction is a new row naming the mark it replaces (`supersedes_fk`).
+  The database refuses edits, deletes, a mark above the component's maximum, a second "first" mark, a correction
+  of another student's mark, and two corrections of one mark.
+- Marks are allowed only for passport subjects, and stay under the syllabus version the student was first marked under.
+- `worker/subjects/grades.py`: `record_marks()` checks every mark before storing any; the same mark again is a
+  no-op; each change is written to the audit log (`GRADES_RECORDED`). `subject_results()` gives per subject
+  COMPLETE (score + tier) or IN_PROGRESS (which components are missing; no score, no badge).
+
+```bash
+python3 -m worker grades add --student BTU-T-0001 --subject SUBJ-VIBE-CODING \
+  "Quizzes=15" "Assignments=30" "Agent project=80" "Midterm exam=21" "Final exam=40"
+python3 -m worker grades show --student BTU-T-0001     # SUBJ-VIBE-CODING  77.00  GOLD
+```
+
 ## Next stages
 
-2. Grades store (append-only, per student × syllabus component) using the score and tier above.
 3. Staff UI: add a student, enter grades, syllabus popup.
 4. Synthetic data generator.
 5. Subject badges (subject logo × silver/gold/platinum) under the skills on the PDF; new passport versions.

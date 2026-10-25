@@ -47,7 +47,7 @@ def dump(conn, table: str) -> list[tuple]:
 
 
 class MigrationTests(unittest.TestCase):
-    def test_migration_006_keeps_existing_data_exactly(self):
+    def test_new_migrations_keep_existing_data_exactly(self):
         """A database made before 006 (with imported passports) gains the new tables and nothing else changes."""
         old_dir = TMP_ROOT / "migrations-005"
         old_dir.mkdir()
@@ -64,10 +64,10 @@ class MigrationTests(unittest.TestCase):
             conn.close()
         finally:
             config.MIGRATIONS_DIR = real
-        conn = connect()  # same data folder, all migrations: applies 006 only
+        conn = connect()  # same data folder, all migrations: applies 006 onward
         self.assertEqual({t: dump(conn, t) for t in EXISTING}, before)
-        self.assertEqual(conn.execute("SELECT MAX(version) FROM schema_migrations").fetchone()[0], "006")
-        for t in ("subjects", "syllabi", "syllabus_components"):
+        self.assertEqual(conn.execute("SELECT MAX(version) FROM schema_migrations").fetchone()[0], "007")
+        for t in ("subjects", "syllabi", "syllabus_components", "grade_entries"):
             self.assertEqual(conn.execute(f"SELECT COUNT(*) FROM {t}").fetchone()[0], 0)
 
 

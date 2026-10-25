@@ -7,6 +7,8 @@
   python3 -m worker chain deploy|set-issuer|anchor ...                 registry administration (chain_admin.py)
   python3 -m worker retry                                              carry out retries requested in the admin area
   python3 -m worker subjects load|list                                 add the subject catalog + simulated syllabi / show them
+  python3 -m worker grades add --student BTU-T-0001 --subject SUBJ-VIBE-CODING "Quizzes=15" "Final exam=40" ...
+  python3 -m worker grades show --student BTU-T-0001                   a student's subject scores and badge tiers
 """
 from __future__ import annotations
 
@@ -37,6 +39,8 @@ def main(argv=None) -> int:
         return 1 if any(d["state"] == "FAILED" for d in done) else 0
     if argv[:1] == ["subjects"]:
         return _subjects(argv[1:])
+    if argv[:1] == ["grades"]:
+        return _grades(argv[1:])
     ap = argparse.ArgumentParser(prog="python3 -m worker")
     sub = ap.add_subparsers(dest="cmd", required=True)
     imp = sub.add_parser("import", help="import the skill workbook and generate passport versions")
@@ -141,6 +145,45 @@ def _subjects(argv) -> int:
         comps = syllabus_components(conn, s["id"])
         parts = ", ".join(f"{c['label']} {c['weight']:g}% (/{c['max_points']:g})" for c in comps)
         print(f"{s['code']:24} {s['credits']} ECTS  {s['skill_area']:16} {s['name_en']}\n{'':26}{parts}")
+    return 0
+
+
+def _grades(argv) -> int:
+    from .subjects.grades import GradeError, record_marks, subject_results
+
+    ap = argparse.ArgumentParser(prog="python3 -m worker grades")
+    sub = ap.add_subparsers(dest="action", required=True)
+    add = sub.add_parser("add", help="record marks (a different mark for a marked component is entered as a correction)")
+    add.add_argument("--student", required=True, help="Student ID, e.g. BTU-T-0001")
+    add.add_argument("--subject", required=True, help="subject code, e.g. SUBJ-VIBE-CODING")
+    add.add_argument("--by", default="cli", help="who entered the marks (default: cli)")
+    add.add_argument("--note")
+    add.add_argument("marks", nargs="+", help='"<component label>=<points>"')
+    show = sub.add_parser("show", help="a student's subject scores and tiers")
+    show.add_argument("--student", required=True)
+    args = ap.parse_args(argv)
+    conn = connect()
+    try:
+        if args.action == "add":
+            marks = {}
+            for m in args.marks:
+                label, sep, value = m.rpartition("=")
+                if not sep or not label.strip():
+                    raise GradeError(f"{m!r}: write marks as \"<component label>=<points>\"")
+                try:
+                    marks[label.strip()] = float(value)
+                except ValueError:
+                    raise GradeError(f"{m!r}: {value!r} is not a number") from None
+            r = record_marks(conn, args.student, args.subject, marks, entered_by=args.by, note=args.note)
+            print(f"added {len(r['added'])}, corrected {len(r['corrected'])}, unchanged {len(r['unchanged'])}")
+        for res in subject_results(conn, args.student):
+            if res.status == "COMPLETE":
+                print(f"{res.subject_code:24} {res.score:>6}  {res.tier or 'no badge'}")
+            else:
+                print(f"{res.subject_code:24} in progress, missing: {', '.join(res.missing)}")
+    except GradeError as exc:
+        print(f"Nothing recorded: {exc}", file=sys.stderr)
+        return 2
     return 0
 
 
