@@ -4,6 +4,8 @@ Pages, in order:
   1  cover: name, surname, first-issue date, Passport ID, version, issue date, verification code
   2  about (static BTU text) + Passport ID
   3+ Verified AI Skillset: one stamp card per skill, 10 per page, page repeated as needed
+  .. Verified Subject Badges (only when the holder has any): one badge card per completed subject with a
+     tier, 10 per page, on the skillset page's background (subject_badges.py)
   .. AI Skill Supplement: one table row per skill, 5 per page, repeated; QR + code on its last page
   .. continuation pages, only when a table cell's text can't fit even at the smallest legible size.
      BTU supplied no design for these, so they reuse the supplement background with a clearly
@@ -28,6 +30,7 @@ import pymupdf as fitz
 import qrcode
 
 from .model import LEARNING_FORMAT, Holder, Skill
+from .subject_badges import draw_subject_page
 
 ASSETS = Path(__file__).resolve().parent / "assets"  # override with PASSPORT_ASSETS_DIR
 
@@ -420,13 +423,15 @@ def render_passport(holder: Holder, version: int, issued_at: str, code: str, ver
     cont_pages, cont_start = _plan_continuation(d, overflowing)
 
     skill_pages = max(1, math.ceil(len(holder.skills) / CARDS_PER_PAGE))
+    subj_pages = math.ceil(len(holder.subjects) / CARDS_PER_PAGE)
     supp_pages = max(1, math.ceil(len(holder.skills) / ROWS_PER_PAGE))
-    first_cont = 2 + skill_pages + supp_pages
+    first_supp = 2 + skill_pages + subj_pages
+    first_cont = first_supp + supp_pages
     cont_page_of = {rid: first_cont + n for rid, n in cont_start.items()}
 
     doc = fitz.open()
     doc.insert_pdf(template, from_page=P_COVER, to_page=P_ABOUT)
-    for _ in range(skill_pages):
+    for _ in range(skill_pages + subj_pages):
         doc.insert_pdf(template, from_page=P_SKILLSET, to_page=P_SKILLSET)
     for _ in range(supp_pages + len(cont_pages)):
         doc.insert_pdf(template, from_page=P_SUPPLEMENT, to_page=P_SUPPLEMENT)
@@ -437,8 +442,12 @@ def render_passport(holder: Holder, version: int, issued_at: str, code: str, ver
     for n in range(skill_pages):
         chunk = holder.skills[n * CARDS_PER_PAGE:(n + 1) * CARDS_PER_PAGE]
         draw_skillset(d, doc[2 + n], stamps, holder, chunk, n + 1, skill_pages)
-    for n in range(supp_pages):
+    for n in range(subj_pages):
         idx = 2 + skill_pages + n
+        draw_subject_page(d, doc[idx], idx, holder, holder.subjects[n * CARDS_PER_PAGE:(n + 1) * CARDS_PER_PAGE],
+                          (CARD_X, CARD_Y, CARD_W, white_out), n + 1, subj_pages, layout, Placed)
+    for n in range(supp_pages):
+        idx = first_supp + n
         draw_supplement(d, doc[idx], idx, stamps, holder, rows[n * ROWS_PER_PAGE:(n + 1) * ROWS_PER_PAGE], n + 1,
                         supp_pages, cont_page_of, version, issued_at, code, verify_url, layout)
         layout.supplement_pages.append(idx)

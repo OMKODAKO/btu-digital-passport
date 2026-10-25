@@ -17,6 +17,7 @@
     "test:worker": "python3 -m unittest discover -s worker/tests -t . -v",
     "create-staff": "tsx scripts/create-staff.ts",
     "retry": "python3 -m worker retry",
+    "badges": "python3 -m worker subjects publish",
     "test:e2e": "node --test tests/e2e.test.mjs",
     "demo:setup": "bash scripts/demo-setup.sh",
     "demo:start": "bash -c 'set -a; . \"${DEMO_DIR:-data-demo}/demo.env\"; set +a; exec next start'",

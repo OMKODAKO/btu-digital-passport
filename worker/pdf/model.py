@@ -23,6 +23,22 @@ class Skill:
     earned_through: str = ""  # optional sheet column; falls back to the category's learning format
 
 
+TIER_LABEL = {"SILVER": "Silver", "GOLD": "Gold", "PLATINUM": "Platinum"}
+
+
+@dataclass(frozen=True)
+class SubjectBadge:
+    """A completed BTU subject with a badge tier (score 60+), printed below the skills."""
+    code: str
+    name_en: str
+    name_ka: str
+    logo_key: str          # picks the drawn subject icon (render.SUBJECT_ICONS)
+    credits: int
+    syllabus_version: int
+    score: str             # "77.00", out of 100
+    tier: str              # SILVER | GOLD | PLATINUM
+
+
 @dataclass
 class Holder:
     passport_id: str        # permanent
@@ -32,6 +48,7 @@ class Holder:
     skills: list[Skill] = field(default_factory=list)
     program: str = ""         # study program and degree level, printed small on the cover
     education_level: str = ""
+    subjects: list[SubjectBadge] = field(default_factory=list)
 
 
 def canonical_payload(holder: Holder, version: int, issued_at: str) -> dict:
@@ -48,4 +65,6 @@ def canonical_payload(holder: Holder, version: int, issued_at: str) -> dict:
         **({"program": holder.program} if holder.program else {}),
         **({"education_level": holder.education_level} if holder.education_level else {}),
         "skills": [{**asdict(s), "date_earned": s.date_earned.isoformat()} for s in holder.skills],
+        # only in versions that have subject badges, so the data of every earlier version stays as it was
+        **({"subject_badges": [asdict(b) for b in holder.subjects]} if holder.subjects else {}),
     }

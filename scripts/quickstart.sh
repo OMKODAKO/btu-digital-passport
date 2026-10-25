@@ -77,8 +77,14 @@ grep staff "$DEMO_DIR/dev-credentials.txt" | sed 's/^/  /' || true
 echo "Verify:    http://localhost:$PORT/verify   (no login; use a code from a student's dashboard)"
 echo "More:      npm run demo:add-skill   (in a second terminal: adds a CONFIRMED skill, V2 goes on-chain)"
 
-say "Starting the app on http://localhost:$PORT  (Ctrl+C stops it; the devnet keeps running)"
+say "Starting the app on http://localhost:$PORT  (Ctrl+C stops it and the badge publisher; the devnet keeps running)"
 set -a; . "$DEMO_DIR/demo.env"; set +a
 # own cookie names, so signing in here never signs you out of another copy of the portal on localhost
 export PASSPORT_COOKIE_PREFIX="${PASSPORT_COOKIE_PREFIX:-bdp_demo_$PORT}"
-exec node_modules/.bin/next start -p "$PORT"
+# subject badges: when marks give a new or different badge, a new passport version is made and registered on the
+# local devnet within ~10 s (demo data only; a marked student without a passport gets the next Passport ID)
+echo "Badges:    new passport versions follow subject marks every 10 s (log: $DEMO_DIR/badges.log)"
+python3 -m worker subjects publish --assign-new-passport-ids --watch 10 >>"$DEMO_DIR/badges.log" 2>&1 &
+BADGES_PID=$!
+trap 'kill $BADGES_PID 2>/dev/null' EXIT INT TERM
+node_modules/.bin/next start -p "$PORT"

@@ -24,6 +24,7 @@ from .db import audit, transaction, utc_now
 from . import chain
 from .issue import (chain_ref, generate_candidate, issue_candidate, record_registration_failure, record_submitted_tx,
                     waiting_candidate)
+from .subjects.badges import badge_keys, contained_badges, current_badges
 from .table import PASSPORT_ID, FIRST_ISSUED, SYNC_NOTES, SYNC_STATUS, SYNCED_AT, SYNCED_VERSION, SourceTable
 from .validate import Record, Validation, validate_table
 
@@ -252,7 +253,8 @@ class _EditSet(set):
 
 
 def generate_if_needed(conn, passport, renderer=None, run_id: int | None = None, force: bool = False):
-    """Generates a candidate if the passport's accepted awards grew past its newest version.
+    """Generates a candidate if the passport's accepted awards grew past its newest version, or its
+    subject badges differ from the newest version's.
     Returns None (nothing new), "generated", or (new record ids, error) on failure, in which case the
     previous version stays current. Only accepted skill_awards are used, and every one of them is kept:
     the new version is a superset of the newest one, never smaller."""
@@ -270,10 +272,14 @@ def generate_if_needed(conn, passport, renderer=None, run_id: int | None = None,
                                                 (current["id"],))} if current else set()
     new = awarded - contained
     target = contained | new
-    if not new and not (force and contained):  # force: same skills, edited data -> next version
+    # subject badges (stage 05): a version follows the student's current badges, so a new, changed or
+    # corrected-away badge makes the next version; sheet skills are still never dropped
+    badges = current_badges(conn, passport["student_fk"])
+    badges_changed = badge_keys(badges) != contained_badges(conn, passport["id"], waiting, current)
+    if not new and not badges_changed and not (force and contained):  # force: same skills, edited data -> next version
         return None
     try:
-        generate_candidate(conn, passport["id"], sorted(target), renderer)
+        generate_candidate(conn, passport["id"], sorted(target), renderer, subjects=badges)
         return "generated"
     except Exception as exc:  # the previous version stays current
         if run_id is not None:

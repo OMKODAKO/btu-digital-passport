@@ -7,6 +7,8 @@
   python3 -m worker chain deploy|set-issuer|anchor ...                 registry administration (chain_admin.py)
   python3 -m worker retry                                              carry out retries requested in the admin area
   python3 -m worker subjects load|list                                 add the subject catalog + simulated syllabi / show them
+  python3 -m worker subjects publish [--assign-new-passport-ids] [--watch SECONDS]
+                                                                       new passport versions with the current subject badges
   python3 -m worker grades add --student BTU-T-0001 --subject SUBJ-VIBE-CODING "Quizzes=12" "Final exam=23" ...
   python3 -m worker grades show --student BTU-T-0001                   a student's subject scores and badge tiers
 """
@@ -128,9 +130,23 @@ def _subjects(argv) -> int:
     from .subjects import CatalogError, load_catalog, passport_subjects, syllabus_components
 
     ap = argparse.ArgumentParser(prog="python3 -m worker subjects")
-    ap.add_argument("action", choices=["load", "list"])
+    ap.add_argument("action", choices=["load", "list", "publish"])
+    ap.add_argument("--assign-new-passport-ids", action="store_true",
+                    help="publish: give a marked student without a passport the next Passport ID")
+    ap.add_argument("--watch", type=float, metavar="SECONDS", help="publish: repeat every SECONDS until stopped (demo)")
     args = ap.parse_args(argv)
     conn = connect()
+    if args.action == "publish":
+        import time
+
+        from .subjects.badges import publish
+        while True:
+            for r in publish(conn, assign_new_passport_ids=args.assign_new_passport_ids):
+                if r.get("generation", "") != "not needed" or r.get("issuance") != "nothing waiting":
+                    print(json.dumps(r, ensure_ascii=False), flush=True)
+            if not args.watch:
+                return 0
+            time.sleep(max(2.0, args.watch))
     if args.action == "load":
         try:
             r = load_catalog(conn)
@@ -143,7 +159,7 @@ def _subjects(argv) -> int:
         return 0
     for s in passport_subjects(conn):
         comps = syllabus_components(conn, s["id"])
-        parts = ", ".join(f"{c['label']} {c['weight']:g}% (/{c['max_points']:g})" for c in comps)
+        parts = ", ".join(f"{c['label']} {c['max_points']:g}" for c in comps)
         print(f"{s['code']:24} {s['credits']} ECTS  {s['skill_area']:16} {s['name_en']}\n{'':26}{parts}")
     return 0
 

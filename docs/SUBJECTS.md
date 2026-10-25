@@ -94,9 +94,25 @@ All in the admin area (`/admin`), sign-in required; viewing needs any staff role
 
 Nothing in stage 03 changes passports, versions, sheet records or skills; badges reach the PDF in stage 05.
 
+## Stage 05: subject badges on the passport
+
+- A completed passport subject with a score of 60+ is a badge: Silver 60+, Gold 70+, Platinum 90+.
+- The PDF gets **Verified Subject Badges** page(s) right after the Verified AI Skillset page(s), on the same
+  template background with its own heading: one card per badge, 10 per page, with the score out of 100, tier and
+  ECTS. The badge art is drawn in `worker/pdf/subject_badges.py` in the style of BTU's stamps: subject icon +
+  tier, one colour per tier (13 icons x 3 tiers). The page says the syllabi and marks are simulated demo data.
+- `passport-data.json` in the PDF lists the badges (`subject_badges`) only for versions that have any, so every
+  earlier version's data is unchanged.
+- Versions: migration 008 records each candidate's and version's badges (`candidate_subjects`,
+  `version_subjects`, append-only). `sync.generate_if_needed` makes the next version when the student's current
+  badges differ from the newest version's (new badge, other score or tier, or a badge corrected away), keeping
+  every sheet skill. An import without marks makes no new versions.
+- `python3 -m worker subjects publish [--assign-new-passport-ids] [--watch SECONDS]` (`npm run badges`) does this
+  for every marked student and issues the new version like an import does. The quickstart runs it every 10 s in
+  the background on the local demo data, so marks entered in the admin reach the PDF on their own.
+
 ## Next stages
 
 4. Synthetic data generator.
-5. Subject badges (subject logo × silver/gold/platinum) under the skills on the PDF; new passport versions.
 6. Dashboard skills chart and verify page.
 7. Live rollout after a backup of the live data.
