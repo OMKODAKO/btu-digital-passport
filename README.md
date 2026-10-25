@@ -17,21 +17,75 @@ these limits. Sign-in uses test passwords: **BTU Google sign-in is not built**. 
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Components, data flow, identifiers, capacity analysis |
 | [chain/README.md](chain/README.md) | Contract, registrar, issuer identity model, public test network and production setup |
 
-## Quick start: the demo
+## Quick start / სწრაფი დაწყება
 
-Needs Node.js 22+ and Python 3 (tested with Node 22.22 and Python 3.13), and this folder next to `../AI DIGITAL PASSPORT/` (BTU's workbook).
+### ქართულად
+
+გჭირდება **Node.js 22+**, **Python 3.10+** და **Git** (macOS, Linux; Windows-ზე გამოიყენე WSL ან Git Bash).
+არანაირი გასაღები, საფულე ან Google ანგარიში არ არის საჭირო: ყველაფერი შენს კომპიუტერზე, ლოკალურ ტესტ-ბლოკჩეინზე მუშაობს.
 
 ```bash
-npm install
-(cd chain && npm install)                       # local devnet + Solidity compiler
-pip install -r worker/requirements.txt          # openpyxl, pymupdf, qrcode, web3
-npm run build
-npm run demo:setup     # local devnet, registry, TEST issuer, imports BTU's workbook: 18 passports, V1 on-chain
-npm run demo:start     # http://localhost:3000 ; passwords in data-demo/dev-credentials.txt
-npm run demo:add-skill # a CONFIRMED skill for BTU-T-0001 (in a workbook copy) -> V2 registered and current
+git clone https://github.com/OMKODAKO/btu-digital-passport.git
+cd btu-digital-passport
+npm run quickstart
 ```
 
-Everything the demo writes goes to `data-demo/` (git-ignored). Move that folder away to start again.
+პირველად 3–5 წუთი სჭირდება (ინსტალაცია, build, 18 დემო სტუდენტის პასპორტი ბლოკჩეინზე). ბოლოს ტერმინალში
+დაიბეჭდება ტესტ-ლოგინები და გაიხსნება **http://localhost:3000**.
+
+| რა | სად | შესვლა |
+| --- | --- | --- |
+| სტუდენტის პასპორტი | http://localhost:3000/login | მაგ. `btu-t-0001@example.org` + პაროლი ტერმინალიდან |
+| ადმინის პანელი | http://localhost:3000/admin/login | `ops.demo@staff.example.org` + პაროლი ტერმინალიდან |
+| საჯარო ვერიფიკაცია | http://localhost:3000/verify | ლოგინი არ სჭირდება: კოდი სტუდენტის დაფიდან + PDF |
+
+ყველა პაროლი ინახება `data-demo/dev-credentials.txt`-ში. ახალი უნარის დამატება (V2 ბლოკჩეინზე): მეორე ტერმინალში
+`npm run demo:add-skill`. გაჩერება: Ctrl+C. ხელახლა გაშვება: ისევ `npm run quickstart`. ნულიდან დაწყება: წაშალე
+`data-demo/` და გაუშვი `npm run quickstart`. კომპიუტერის გადატვირთვის შემდეგ ლოკალური ბლოკჩეინი ცარიელდება, ამიტომ
+`quickstart` ძველ დემოს გადაიტანს `data-demo-old-…`-ში და ახალს შექმნის, ახალი პაროლებით.
+
+**კომპიუტერის გარეშე (ბრაუზერში):** GitHub-ზე რეპოში **Code → Codespaces → Create codespace**, ტერმინალში
+`npm run quickstart`, შემდეგ Ports ჩანართში გახსენი 3000 პორტი.
+
+### English
+
+Needs **Node.js 22+**, **Python 3.10+** and **Git** (macOS, Linux; on Windows use WSL or Git Bash). No keys, wallet
+or Google account: everything runs on your machine against a throwaway local test chain.
+
+```bash
+git clone https://github.com/OMKODAKO/btu-digital-passport.git
+cd btu-digital-passport
+npm run quickstart
+```
+
+The first run takes 3–5 minutes: it installs the web app, the local chain tooling and the Python worker (in `.venv/`),
+builds the app, starts a local Hardhat devnet, deploys the registry with a TEST issuer, imports the demo workbook
+(`samples/demo/workbook.xlsx`, BTU's fictional hackathon test data) and registers 18 passports (V1) on-chain. It then
+prints the test logins and serves **http://localhost:3000**.
+
+| What | Where | Sign in |
+| --- | --- | --- |
+| Student passport | http://localhost:3000/login | e.g. `btu-t-0001@example.org` + the password printed in the terminal |
+| Staff admin area | http://localhost:3000/admin/login | `ops.demo@staff.example.org` + the printed password |
+| Public verification | http://localhost:3000/verify | no sign-in: a code from a student dashboard + the PDF |
+
+All passwords are generated fresh and kept in `data-demo/dev-credentials.txt`. More:
+
+- `npm run demo:add-skill` (second terminal): adds a CONFIRMED skill for BTU-T-0001, V2 is registered and becomes current.
+- Stop with Ctrl+C; run `npm run quickstart` again to restart. To start from zero, delete `data-demo/`.
+- The devnet keeps nothing across a reboot, so `quickstart` then moves the old demo to `data-demo-old-…` and makes a
+  new one, with new passwords.
+- **No computer at hand:** on GitHub, **Code → Codespaces → Create codespace**, run `npm run quickstart` in its
+  terminal, and open port 3000 from the Ports tab.
+- Full walkthrough: [docs/DEMO-SCRIPT.md](docs/DEMO-SCRIPT.md). Manual steps (what `quickstart` runs):
+  `npm ci`, `(cd chain && npm ci)`, `python3 -m venv .venv && .venv/bin/pip install -r worker/requirements.txt`,
+  `npm run build`, `npm run demo:setup`, `npm run demo:start`.
+
+Everything the demo writes (database, PDFs, throwaway devnet keys, passwords) goes to `data-demo/`, which is
+git-ignored. Never commit it.
+
+Tests (after `npm run quickstart`): `source .venv/bin/activate`, then `npm test` (web, 49 pass) and
+`npm run test:worker` (Python, 78 pass).
 
 ## Setup reference
 
@@ -82,7 +136,7 @@ Stage 1 note: students sign in with a test email and password and land on their 
 
 ## Run it locally (stage 1 path: seeds the old prototype PDFs, which are not on a chain)
 
-Needs Node.js 22 or newer. The folder must sit next to `passport-generator/` (the seed reads its PDFs).
+Needs Node.js 22 or newer. The seed reads `../passport-generator/out/` when it exists, else its copy in `tests/fixtures/seed/`.
 
 ```bash
 npm install

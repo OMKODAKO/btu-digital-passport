@@ -1,0 +1,742 @@
+{
+  "passports": {
+    "BTU-AI-000125": {
+      "passport_id": "BTU-AI-000125",
+      "student_id": "BTU-T-0001",
+      "first_name": "Giorgi",
+      "last_name": "Kapanadze",
+      "email": "btu-t-0001@example.org",
+      "first_issued": "2026-09-15",
+      "versions": [
+        {
+          "version": 1,
+          "label": "V1",
+          "status": "superseded",
+          "issued_at": "2026-10-17T10:00:00Z",
+          "verification_code": "BTU-7RZ7-GZNH-QKWL",
+          "content_sha256": "8aed393163b074d5d6711c6dab1ff679ad20550fb4aabf15b20108a49385cb21",
+          "pdf_sha256": "d5a57eea544d612f352ff2cb64e40ae8e4f51af86c9613894f15b827ead31881",
+          "pdf_path": "BTU-AI-000125/BTU-AI-000125_V1.pdf",
+          "record_ids": [
+            "REC-0001",
+            "REC-0015"
+          ],
+          "anchored_tx": null
+        },
+        {
+          "version": 2,
+          "label": "V2",
+          "status": "current",
+          "issued_at": "2026-10-21T10:00:00Z",
+          "verification_code": "BTU-GSG5-OEYD-BMAP",
+          "content_sha256": "42e4403285266d3ba7f0adbf96390a735c333abb435841d04ea3f9e51eac9f6a",
+          "pdf_sha256": "371aff718e9f8f72d3f649670626934129e10e6e1623eb7dc4f6772e73e7d019",
+          "pdf_path": "BTU-AI-000125/BTU-AI-000125_V2.pdf",
+          "record_ids": [
+            "REC-0001",
+            "REC-0043",
+            "REC-0015",
+            "REC-0029"
+          ],
+          "anchored_tx": null
+        }
+      ],
+      "current_version": 2
+    },
+    "BTU-AI-000126": {
+      "passport_id": "BTU-AI-000126",
+      "student_id": "BTU-T-0002",
+      "first_name": "Mariam",
+      "last_name": "Beridze",
+      "email": "btu-t-0002@example.org",
+      "first_issued": "2026-09-15",
+      "versions": [
+        {
+          "version": 1,
+          "label": "V1",
+          "status": "superseded",
+          "issued_at": "2026-10-17T10:00:00Z",
+          "verification_code": "BTU-QPJF-KVBN-6WUK",
+          "content_sha256": "a27bafa05dbd6725fd921dee9a845bf46b23c1f897571da6d975fe1944b8cb36",
+          "pdf_sha256": "0acd99156d9cd0353af4b20c5658275cfd6c3f9f1b42d3ba289308577d6791bb",
+          "pdf_path": "BTU-AI-000126/BTU-AI-000126_V1.pdf",
+          "record_ids": [
+            "REC-0002",
+            "REC-0016"
+          ],
+          "anchored_tx": null
+        },
+        {
+          "version": 2,
+          "label": "V2",
+          "status": "current",
+          "issued_at": "2026-10-21T10:00:00Z",
+          "verification_code": "BTU-3SSE-7ORP-KIYN",
+          "content_sha256": "c9653f681b8bbab923594d85dae8abfc149c43cb3a0aff46323855a3325c22ec",
+          "pdf_sha256": "f3ca6c5f80d17374427e5a9c7cb3ef63cd007b3be27bb4e8ca923fcad43bb619",
+          "pdf_path": "BTU-AI-000126/BTU-AI-000126_V2.pdf",
+          "record_ids": [
+            "REC-0030",
+            "REC-0002",
+            "REC-0044",
+            "REC-0016"
+          ],
+          "anchored_tx": null
+        }
+      ],
+      "current_version": 2
+    },
+    "BTU-AI-000127": {
+      "passport_id": "BTU-AI-000127",
+      "student_id": "BTU-T-0004",
+      "first_name": "Saba",
+      "last_name": "Japaridze",
+      "email": "btu-t-0004@example.org",
+      "first_issued": "2026-08-12",
+      "versions": [
+        {
+          "version": 1,
+          "label": "V1",
+          "status": "superseded",
+          "issued_at": "2026-10-17T10:00:00Z",
+          "verification_code": "BTU-DXSA-UP5G-PCZS",
+          "content_sha256": "3381d1096721af943dfbccd069eb07235d46195dc76da30c332b762fe9083ae3",
+          "pdf_sha256": "d08e647e2e26047d42f456fb6e3638c29fc04ffad47255381fd23ea5b8267fd0",
+          "pdf_path": "BTU-AI-000127/BTU-AI-000127_V1.pdf",
+          "record_ids": [
+            "REC-0004",
+            "REC-0017"
+          ],
+          "anchored_tx": null
+        },
+        {
+          "version": 2,
+          "label": "V2",
+          "status": "current",
+          "issued_at": "2026-10-21T10:00:00Z",
+          "verification_code": "BTU-YN46-LEW2-HAGR",
+          "content_sha256": "c3a66224e413d256c4bbf4663565f0a7f75da344b6a79cc8a13c7a5cbb9cba47",
+          "pdf_sha256": "23edcbcac5c9a4ea0766b093c41aa71f00483484c90fd85a33aa086283553989",
+          "pdf_path": "BTU-AI-000127/BTU-AI-000127_V2.pdf",
+          "record_ids": [
+            "REC-0032",
+            "REC-0004",
+            "REC-0017"
+          ],
+          "anchored_tx": null
+        }
+      ],
+      "current_version": 2
+    },
+    "BTU-AI-000128": {
+      "passport_id": "BTU-AI-000128",
+      "student_id": "BTU-T-0006",
+      "first_name": "Davit",
+      "last_name": "Metreveli",
+      "email": "btu-t-0006@example.org",
+      "first_issued": "2026-07-10",
+      "versions": [
+        {
+          "version": 1,
+          "label": "V1",
+          "status": "superseded",
+          "issued_at": "2026-10-17T10:00:00Z",
+          "verification_code": "BTU-G44V-PSM7-OKXI",
+          "content_sha256": "55cdd4ddb74caeb7effbec92365e738a5941541f924480bb6be5dbe4de6922f4",
+          "pdf_sha256": "4cb2b19e17a6ea5cf86f51fe724080f647190ae77c12ccd4c3f94302099ab7ef",
+          "pdf_path": "BTU-AI-000128/BTU-AI-000128_V1.pdf",
+          "record_ids": [
+            "REC-0006",
+            "REC-0020"
+          ],
+          "anchored_tx": null
+        },
+        {
+          "version": 2,
+          "label": "V2",
+          "status": "current",
+          "issued_at": "2026-10-21T10:00:00Z",
+          "verification_code": "BTU-V5CS-7KBO-WKLJ",
+          "content_sha256": "7c42686e78035a55c6d484f91b1fac87545bb0f75aca9061dfd943ae2ad49df7",
+          "pdf_sha256": "324ab35eed83a5f52e553c6ba5554ad280281abdd2a7cd28aae828d61253bf73",
+          "pdf_path": "BTU-AI-000128/BTU-AI-000128_V2.pdf",
+          "record_ids": [
+            "REC-0034",
+            "REC-0006",
+            "REC-0045",
+            "REC-0020"
+          ],
+          "anchored_tx": null
+        }
+      ],
+      "current_version": 2
+    },
+    "BTU-AI-000129": {
+      "passport_id": "BTU-AI-000129",
+      "student_id": "BTU-T-0008",
+      "first_name": "Luka",
+      "last_name": "Kipiani",
+      "email": "btu-t-0008@example.org",
+      "first_issued": "2026-06-22",
+      "versions": [
+        {
+          "version": 1,
+          "label": "V1",
+          "status": "superseded",
+          "issued_at": "2026-10-17T10:00:00Z",
+          "verification_code": "BTU-5RK4-HHQ6-AOZI",
+          "content_sha256": "278fed3c50ba8c4a8edc0b992daa5c32f238ce230573384e0904047c2d960f7b",
+          "pdf_sha256": "c53f87fd646a16e05d0ed616513378186e62427da4a7375180ea7259df7a2185",
+          "pdf_path": "BTU-AI-000129/BTU-AI-000129_V1.pdf",
+          "record_ids": [
+            "REC-0022",
+            "REC-0008"
+          ],
+          "anchored_tx": null
+        },
+        {
+          "version": 2,
+          "label": "V2",
+          "status": "current",
+          "issued_at": "2026-10-21T10:00:00Z",
+          "verification_code": "BTU-OZNI-O7LZ-WA3X",
+          "content_sha256": "8c799cd832ae24612bc8f7811b37fe425d5bb4b589f85f95fda4d63e77a1c07c",
+          "pdf_sha256": "f758be240f2b82c8bfbb59a1781734d703d72fed9006d721913d105542960866",
+          "pdf_path": "BTU-AI-000129/BTU-AI-000129_V2.pdf",
+          "record_ids": [
+            "REC-0022",
+            "REC-0036",
+            "REC-0008",
+            "REC-0047",
+            "REC-0056",
+            "REC-0060"
+          ],
+          "anchored_tx": null
+        }
+      ],
+      "current_version": 2
+    },
+    "BTU-AI-000130": {
+      "passport_id": "BTU-AI-000130",
+      "student_id": "BTU-T-0009",
+      "first_name": "Tamar",
+      "last_name": "Gogoladze",
+      "email": "btu-t-0009@example.org",
+      "first_issued": "2025-11-10",
+      "versions": [
+        {
+          "version": 1,
+          "label": "V1",
+          "status": "superseded",
+          "issued_at": "2026-10-17T10:00:00Z",
+          "verification_code": "BTU-XBBA-5MPE-XFP2",
+          "content_sha256": "95855f84f4014f197b1c4cfab3b8ad2c18368896bd08d80d372f334ef0d2a589",
+          "pdf_sha256": "2f11fabef57c15e4f08467944eecf6b55a54a5e2fdd5e28eaf915b0cae25a237",
+          "pdf_path": "BTU-AI-000130/BTU-AI-000130_V1.pdf",
+          "record_ids": [
+            "REC-0023",
+            "REC-0009"
+          ],
+          "anchored_tx": null
+        },
+        {
+          "version": 2,
+          "label": "V2",
+          "status": "current",
+          "issued_at": "2026-10-21T10:00:00Z",
+          "verification_code": "BTU-K2EY-4Q5K-GKAL",
+          "content_sha256": "8da59fc16bffaadfae8a08059c15e2d22ff91aebf50586ab4978fdcf7e5c9cf5",
+          "pdf_sha256": "449ff0897935f0bae1d1db56b7efeafe10511e3a4a49b6401a039851bf00f875",
+          "pdf_path": "BTU-AI-000130/BTU-AI-000130_V2.pdf",
+          "record_ids": [
+            "REC-0023",
+            "REC-0037",
+            "REC-0009"
+          ],
+          "anchored_tx": null
+        }
+      ],
+      "current_version": 2
+    },
+    "BTU-AI-000131": {
+      "passport_id": "BTU-AI-000131",
+      "student_id": "BTU-T-0011",
+      "first_name": "Elene",
+      "last_name": "Lomidze",
+      "email": "btu-t-0011@example.org",
+      "first_issued": "2026-03-20",
+      "versions": [
+        {
+          "version": 1,
+          "label": "V1",
+          "status": "superseded",
+          "issued_at": "2026-10-17T10:00:00Z",
+          "verification_code": "BTU-DCHT-HNZX-QYDQ",
+          "content_sha256": "0586a5328f40832d7a2f49d023f6fee6eccbf7cd063534c8ea9f061678696d6b",
+          "pdf_sha256": "ce48b7fea84f4682cda4d9eaed1d50330b469899def2559e3fdfaa58c98ffbc7",
+          "pdf_path": "BTU-AI-000131/BTU-AI-000131_V1.pdf",
+          "record_ids": [
+            "REC-0011",
+            "REC-0025"
+          ],
+          "anchored_tx": null
+        },
+        {
+          "version": 2,
+          "label": "V2",
+          "status": "current",
+          "issued_at": "2026-10-21T10:00:00Z",
+          "verification_code": "BTU-IB6M-EAYQ-BKRA",
+          "content_sha256": "74fe449a47cb6c0f48b52b7280c5bb7249e2dc2224499e7cc87635246eb30b91",
+          "pdf_sha256": "72351685dae40b7682f6153eee664f5befc66a3a69758886e9ffe4601ba15474",
+          "pdf_path": "BTU-AI-000131/BTU-AI-000131_V2.pdf",
+          "record_ids": [
+            "REC-0011",
+            "REC-0025",
+            "REC-0039"
+          ],
+          "anchored_tx": null
+        }
+      ],
+      "current_version": 2
+    },
+    "BTU-AI-000132": {
+      "passport_id": "BTU-AI-000132",
+      "student_id": "BTU-T-0013",
+      "first_name": "Ketevan",
+      "last_name": "Abashidze",
+      "email": "btu-t-0013@example.org",
+      "first_issued": "2025-12-20",
+      "versions": [
+        {
+          "version": 1,
+          "label": "V1",
+          "status": "superseded",
+          "issued_at": "2026-10-17T10:00:00Z",
+          "verification_code": "BTU-APNW-YZN5-I5D7",
+          "content_sha256": "c9a09a3f3444e33da620de5757c933096cd2efbcc0d142cec47974fbdf554a52",
+          "pdf_sha256": "cf4e11c5071c0610cfd2bb0353def042d21e0d217eb08485395fa1e4d18e29c5",
+          "pdf_path": "BTU-AI-000132/BTU-AI-000132_V1.pdf",
+          "record_ids": [
+            "REC-0013",
+            "REC-0027"
+          ],
+          "anchored_tx": null
+        },
+        {
+          "version": 2,
+          "label": "V2",
+          "status": "current",
+          "issued_at": "2026-10-21T10:00:00Z",
+          "verification_code": "BTU-REHE-ZRYP-GSUN",
+          "content_sha256": "e72a2763b50df904eda9b46eefd18fc18847aa46bf612ca48066b045a9bab5ac",
+          "pdf_sha256": "e9376bd5a1f10ec8b5b5f1b726d981cae8e80e0b9c50498d42bed9599594fa9d",
+          "pdf_path": "BTU-AI-000132/BTU-AI-000132_V2.pdf",
+          "record_ids": [
+            "REC-0041",
+            "REC-0013",
+            "REC-0027",
+            "REC-0057"
+          ],
+          "anchored_tx": null
+        }
+      ],
+      "current_version": 2
+    },
+    "BTU-AI-000133": {
+      "passport_id": "BTU-AI-000133",
+      "student_id": "BTU-T-0003",
+      "first_name": "Nino",
+      "last_name": "Maisuradze",
+      "email": "btu-t-0003@example.org",
+      "first_issued": "2026-09-20",
+      "versions": [
+        {
+          "version": 1,
+          "label": "V1",
+          "status": "current",
+          "issued_at": "2026-10-21T10:00:00Z",
+          "verification_code": "BTU-WQBA-HLW7-LHMG",
+          "content_sha256": "fc74f4d16251787e946953491d1cbde0e0f49159d5579e8c53f2f35eabafa3d7",
+          "pdf_sha256": "f0535655f7935f912c24f068b9451b0cbfe4adb34637a536b097b8ca149044a9",
+          "pdf_path": "BTU-AI-000133/BTU-AI-000133_V1.pdf",
+          "record_ids": [
+            "REC-0031",
+            "REC-0003",
+            "REC-0018",
+            "REC-0048",
+            "REC-0055",
+            "REC-0059"
+          ],
+          "anchored_tx": null
+        }
+      ],
+      "current_version": 1
+    },
+    "BTU-AI-000134": {
+      "passport_id": "BTU-AI-000134",
+      "student_id": "BTU-T-0005",
+      "first_name": "Ana",
+      "last_name": "Kiknadze",
+      "email": "btu-t-0005@example.org",
+      "first_issued": "2026-09-26",
+      "versions": [
+        {
+          "version": 1,
+          "label": "V1",
+          "status": "current",
+          "issued_at": "2026-10-21T10:00:00Z",
+          "verification_code": "BTU-HEZI-6MGS-OLBE",
+          "content_sha256": "90d808ec921d1cbacc825a3ef78b537019b53742924c258c94a7f0295faba6cd",
+          "pdf_sha256": "b28f2a7bef2ad25f37b2d3be9291266a4d98150d7ec0540be5ffdfa0a1c4c350",
+          "pdf_path": "BTU-AI-000134/BTU-AI-000134_V1.pdf",
+          "record_ids": [
+            "REC-0033",
+            "REC-0005",
+            "REC-0019"
+          ],
+          "anchored_tx": null
+        }
+      ],
+      "current_version": 1
+    },
+    "BTU-AI-000135": {
+      "passport_id": "BTU-AI-000135",
+      "student_id": "BTU-T-0007",
+      "first_name": "Salome",
+      "last_name": "Chkheidze",
+      "email": "btu-t-0007@example.org",
+      "first_issued": "2026-09-19",
+      "versions": [
+        {
+          "version": 1,
+          "label": "V1",
+          "status": "current",
+          "issued_at": "2026-10-21T10:00:00Z",
+          "verification_code": "BTU-PDSB-Y5ZW-AYF4",
+          "content_sha256": "41001000d2df62814b8a53dff8297ade0e77e6ab0c356db381e2a026e8b0160b",
+          "pdf_sha256": "93c5060353ccba38271558803acf484cddb235bf9e5dd108e5f0e39fef552430",
+          "pdf_path": "BTU-AI-000135/BTU-AI-000135_V1.pdf",
+          "record_ids": [
+            "REC-0021",
+            "REC-0035",
+            "REC-0007",
+            "REC-0046",
+            "REC-0053",
+            "REC-0058"
+          ],
+          "anchored_tx": null
+        }
+      ],
+      "current_version": 1
+    },
+    "BTU-AI-000136": {
+      "passport_id": "BTU-AI-000136",
+      "student_id": "BTU-T-0010",
+      "first_name": "Irakli",
+      "last_name": "Samkharadze",
+      "email": "btu-t-0010@example.org",
+      "first_issued": "2026-09-28",
+      "versions": [
+        {
+          "version": 1,
+          "label": "V1",
+          "status": "current",
+          "issued_at": "2026-10-21T10:00:00Z",
+          "verification_code": "BTU-FI4F-SVZR-RBCS",
+          "content_sha256": "a07db7743273b3e609d6a1633ab134a2fe6e5d9e71663558edfa51cea97d770a",
+          "pdf_sha256": "7578a95e9a56f22a6b61b633a1a8b424b931eedec026a3c768e46d1da2282917",
+          "pdf_path": "BTU-AI-000136/BTU-AI-000136_V1.pdf",
+          "record_ids": [
+            "REC-0024",
+            "REC-0038",
+            "REC-0010"
+          ],
+          "anchored_tx": null
+        }
+      ],
+      "current_version": 1
+    },
+    "BTU-AI-000137": {
+      "passport_id": "BTU-AI-000137",
+      "student_id": "BTU-T-0012",
+      "first_name": "Nikoloz",
+      "last_name": "Gelashvili",
+      "email": "btu-t-0012@example.org",
+      "first_issued": "2026-09-18",
+      "versions": [
+        {
+          "version": 1,
+          "label": "V1",
+          "status": "current",
+          "issued_at": "2026-10-21T10:00:00Z",
+          "verification_code": "BTU-DAA3-74RR-KBFJ",
+          "content_sha256": "78bc364fa9cd7743033a5ce29641d8b4712dd2d0f23deb2a022b069ad787b2ec",
+          "pdf_sha256": "34334ff18921c0f3aa3a5a552a543d0031bcf05078a88a05e5973fde79fdccfb",
+          "pdf_path": "BTU-AI-000137/BTU-AI-000137_V1.pdf",
+          "record_ids": [
+            "REC-0040",
+            "REC-0012",
+            "REC-0026",
+            "REC-0054"
+          ],
+          "anchored_tx": null
+        }
+      ],
+      "current_version": 1
+    },
+    "BTU-AI-000138": {
+      "passport_id": "BTU-AI-000138",
+      "student_id": "BTU-T-0014",
+      "first_name": "Aleksandre",
+      "last_name": "Mchedlishvili",
+      "email": "btu-t-0014@example.org",
+      "first_issued": "2026-09-24",
+      "versions": [
+        {
+          "version": 1,
+          "label": "V1",
+          "status": "current",
+          "issued_at": "2026-10-21T10:00:00Z",
+          "verification_code": "BTU-SBJC-GRZ3-BVBU",
+          "content_sha256": "48f46f5c86547cc759b2dd7bb839f91678408077b6b626c075dcbd26abf17cfc",
+          "pdf_sha256": "ebeb31ffc769cc2fe34209a6b31e7381f3d55bc3eb66a21c5fb717dd906c75bc",
+          "pdf_path": "BTU-AI-000138/BTU-AI-000138_V1.pdf",
+          "record_ids": [
+            "REC-0042",
+            "REC-0014",
+            "REC-0028"
+          ],
+          "anchored_tx": null
+        }
+      ],
+      "current_version": 1
+    },
+    "BTU-AI-000139": {
+      "passport_id": "BTU-AI-000139",
+      "student_id": "BTU-T-0021",
+      "first_name": "Luka",
+      "last_name": "Japaridze",
+      "email": "btu-t-0021@example.org",
+      "first_issued": "2026-10-17",
+      "versions": [
+        {
+          "version": 1,
+          "label": "V1",
+          "status": "current",
+          "issued_at": "2026-10-21T10:00:00Z",
+          "verification_code": "BTU-QP3C-J4G4-BNQC",
+          "content_sha256": "a05fc1602579123eea1a199299b0ebc775210b3353af500452f265c9eb563718",
+          "pdf_sha256": "186488b8ac8a400cb12e958a35d91583d8257ff8aa45574584983f0aca4e1868",
+          "pdf_path": "BTU-AI-000139/BTU-AI-000139_V1.pdf",
+          "record_ids": [
+            "REC-0049"
+          ],
+          "anchored_tx": null
+        }
+      ],
+      "current_version": 1
+    },
+    "BTU-AI-000140": {
+      "passport_id": "BTU-AI-000140",
+      "student_id": "BTU-T-0022",
+      "first_name": "Salome",
+      "last_name": "Abashidze",
+      "email": "btu-t-0022@example.org",
+      "first_issued": "2026-10-17",
+      "versions": [
+        {
+          "version": 1,
+          "label": "V1",
+          "status": "current",
+          "issued_at": "2026-10-21T10:00:00Z",
+          "verification_code": "BTU-VRYD-6M3V-2ANW",
+          "content_sha256": "a5b88860188138acb9c30f27afa4d5570201a53884bbd8d2b4c446b7964a21cc",
+          "pdf_sha256": "b0ded21236bdbcadcbf815b13254dbac50a9869f3b51da7d459fad6067bef5da",
+          "pdf_path": "BTU-AI-000140/BTU-AI-000140_V1.pdf",
+          "record_ids": [
+            "REC-0050"
+          ],
+          "anchored_tx": null
+        }
+      ],
+      "current_version": 1
+    },
+    "BTU-AI-000141": {
+      "passport_id": "BTU-AI-000141",
+      "student_id": "BTU-T-0023",
+      "first_name": "Dato",
+      "last_name": "Kiknadze",
+      "email": "btu-t-0023@example.org",
+      "first_issued": "2026-10-17",
+      "versions": [
+        {
+          "version": 1,
+          "label": "V1",
+          "status": "current",
+          "issued_at": "2026-10-21T10:00:00Z",
+          "verification_code": "BTU-ZSLK-MU5J-CD3Z",
+          "content_sha256": "590dc64aa5b52cc27ea7c7421752a637aec9b1fa3f9fe9bd3c6062b7a268b39d",
+          "pdf_sha256": "1acaea305e95c0019bcadbd8be1d7ef8f06d4a1552d12a644bd46e323bb4ef06",
+          "pdf_path": "BTU-AI-000141/BTU-AI-000141_V1.pdf",
+          "record_ids": [
+            "REC-0051"
+          ],
+          "anchored_tx": null
+        }
+      ],
+      "current_version": 1
+    },
+    "BTU-AI-000142": {
+      "passport_id": "BTU-AI-000142",
+      "student_id": "BTU-T-0024",
+      "first_name": "Elene",
+      "last_name": "Tsiklauri",
+      "email": "btu-t-0024@example.org",
+      "first_issued": "2026-10-17",
+      "versions": [
+        {
+          "version": 1,
+          "label": "V1",
+          "status": "current",
+          "issued_at": "2026-10-21T10:00:00Z",
+          "verification_code": "BTU-OCRT-YOWG-63FY",
+          "content_sha256": "dcbd5e7bc7c2f48fb068da86e7a132002f9c5dfce429fb3440b09664e14a4917",
+          "pdf_sha256": "b44c2c616735de756c2dc183b12c6261a971ac38186dc798cf080350d8a398e6",
+          "pdf_path": "BTU-AI-000142/BTU-AI-000142_V1.pdf",
+          "record_ids": [
+            "REC-0052"
+          ],
+          "anchored_tx": null
+        }
+      ],
+      "current_version": 1
+    }
+  },
+  "codes": {
+    "BTU-7RZ7-GZNH-QKWL": {
+      "passport_id": "BTU-AI-000125",
+      "version": 1
+    },
+    "BTU-QPJF-KVBN-6WUK": {
+      "passport_id": "BTU-AI-000126",
+      "version": 1
+    },
+    "BTU-DXSA-UP5G-PCZS": {
+      "passport_id": "BTU-AI-000127",
+      "version": 1
+    },
+    "BTU-G44V-PSM7-OKXI": {
+      "passport_id": "BTU-AI-000128",
+      "version": 1
+    },
+    "BTU-5RK4-HHQ6-AOZI": {
+      "passport_id": "BTU-AI-000129",
+      "version": 1
+    },
+    "BTU-XBBA-5MPE-XFP2": {
+      "passport_id": "BTU-AI-000130",
+      "version": 1
+    },
+    "BTU-DCHT-HNZX-QYDQ": {
+      "passport_id": "BTU-AI-000131",
+      "version": 1
+    },
+    "BTU-APNW-YZN5-I5D7": {
+      "passport_id": "BTU-AI-000132",
+      "version": 1
+    },
+    "BTU-GSG5-OEYD-BMAP": {
+      "passport_id": "BTU-AI-000125",
+      "version": 2
+    },
+    "BTU-3SSE-7ORP-KIYN": {
+      "passport_id": "BTU-AI-000126",
+      "version": 2
+    },
+    "BTU-YN46-LEW2-HAGR": {
+      "passport_id": "BTU-AI-000127",
+      "version": 2
+    },
+    "BTU-V5CS-7KBO-WKLJ": {
+      "passport_id": "BTU-AI-000128",
+      "version": 2
+    },
+    "BTU-OZNI-O7LZ-WA3X": {
+      "passport_id": "BTU-AI-000129",
+      "version": 2
+    },
+    "BTU-K2EY-4Q5K-GKAL": {
+      "passport_id": "BTU-AI-000130",
+      "version": 2
+    },
+    "BTU-IB6M-EAYQ-BKRA": {
+      "passport_id": "BTU-AI-000131",
+      "version": 2
+    },
+    "BTU-REHE-ZRYP-GSUN": {
+      "passport_id": "BTU-AI-000132",
+      "version": 2
+    },
+    "BTU-WQBA-HLW7-LHMG": {
+      "passport_id": "BTU-AI-000133",
+      "version": 1
+    },
+    "BTU-HEZI-6MGS-OLBE": {
+      "passport_id": "BTU-AI-000134",
+      "version": 1
+    },
+    "BTU-PDSB-Y5ZW-AYF4": {
+      "passport_id": "BTU-AI-000135",
+      "version": 1
+    },
+    "BTU-FI4F-SVZR-RBCS": {
+      "passport_id": "BTU-AI-000136",
+      "version": 1
+    },
+    "BTU-DAA3-74RR-KBFJ": {
+      "passport_id": "BTU-AI-000137",
+      "version": 1
+    },
+    "BTU-SBJC-GRZ3-BVBU": {
+      "passport_id": "BTU-AI-000138",
+      "version": 1
+    },
+    "BTU-QP3C-J4G4-BNQC": {
+      "passport_id": "BTU-AI-000139",
+      "version": 1
+    },
+    "BTU-VRYD-6M3V-2ANW": {
+      "passport_id": "BTU-AI-000140",
+      "version": 1
+    },
+    "BTU-ZSLK-MU5J-CD3Z": {
+      "passport_id": "BTU-AI-000141",
+      "version": 1
+    },
+    "BTU-OCRT-YOWG-63FY": {
+      "passport_id": "BTU-AI-000142",
+      "version": 1
+    }
+  },
+  "reserved_ids": [
+    125,
+    126,
+    127,
+    128,
+    129,
+    130,
+    131,
+    132,
+    133,
+    134,
+    135,
+    136,
+    137,
+    138,
+    139,
+    140,
+    141,
+    142
+  ]
+}

@@ -20,7 +20,8 @@
     "test:e2e": "node --test tests/e2e.test.mjs",
     "demo:setup": "bash scripts/demo-setup.sh",
     "demo:start": "bash -c 'set -a; . \"${DEMO_DIR:-data-demo}/demo.env\"; set +a; exec next start'",
-    "demo:add-skill": "bash scripts/demo-add-skill.sh"
+    "demo:add-skill": "bash scripts/demo-add-skill.sh",
+    "quickstart": "bash scripts/quickstart.sh"
   },
   "dependencies": {
     "better-sqlite3": "12.11.1",

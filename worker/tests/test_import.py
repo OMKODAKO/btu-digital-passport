@@ -29,7 +29,7 @@ from worker.sync import Options, run_import
 from worker.table import OUTPUT_COLUMNS
 
 WORKBOOK = Path(os.environ.get(
-    "BTU_WORKBOOK", config.PORTAL_ROOT.parent / "AI DIGITAL PASSPORT" / "BTU AI Skills Digital Passport Hackathon_Test Data.xlsx"))
+    "BTU_WORKBOOK", config.PORTAL_ROOT / "samples" / "demo" / "workbook.xlsx"))
 SHEET = "Passport Skill Records"
 HEADER_ROW = 4
 COL = {h: i + 1 for i, h in enumerate([

@@ -6,6 +6,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 DEMO_DIR="${DEMO_DIR:-$PWD/data-testnet}"
 WORKBOOK="${BTU_WORKBOOK:-../AI DIGITAL PASSPORT/BTU AI Skills Digital Passport Hackathon_Test Data.xlsx}"
+[ -e "$WORKBOOK" ] || WORKBOOK="$PWD/samples/demo/workbook.xlsx"
 RPC="${TESTNET_RPC:-https://ethereum-sepolia-rpc.publicnode.com}"
 CHAIN_ID=11155111
 NETWORK="Ethereum Sepolia testnet"

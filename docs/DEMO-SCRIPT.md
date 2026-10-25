@@ -8,11 +8,11 @@ sign-in and the Google Sheets reader are not built."*
 ## Before the demo (once, ~2 minutes)
 
 ```bash
-npm install && (cd chain && npm install) && pip install -r worker/requirements.txt
-npm run build
-npm run demo:setup        # devnet, registry, TEST issuer, imports BTU's workbook: 18 passports V1 registered on-chain
-npm run demo:start        # http://localhost:3000   (keep this terminal open)
+npm run quickstart        # installs, builds, devnet + registry + TEST issuer, 18 passports V1 on-chain, serves :3000
 ```
+
+(The same by hand: `npm ci && (cd chain && npm ci)`, a `.venv` with `worker/requirements.txt`, `npm run build`,
+`npm run demo:setup`, `npm run demo:start`.)
 
 Open `data-demo/dev-credentials.txt` for the passwords. Keep two browser windows: a normal one (student) and a
 private one (employer, no login). To rehearse again from zero: move `data-demo/` away and run `demo:setup` again.
