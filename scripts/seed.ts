@@ -3,7 +3,7 @@
  *
  *   npm run seed
  *
- * Source: the passport generator's registry (SEED_REGISTRY, default ../passport-generator/out/registry.json).
+ * Source: the passport generator's registry (SEED_REGISTRY; default ../passport-generator/out/registry.json, else tests/fixtures/seed/).
  * - Students, passports and versions are inserted only if missing; existing rows are never overwritten.
  * - Each PDF is copied into DATA_DIR/storage and its SHA-256 must equal the registry's pdf_sha256,
  *   otherwise that version is skipped.
@@ -41,7 +41,12 @@ type RegistryPassport = {
   versions: RegistryVersion[];
 };
 
-const registryPath = path.resolve(process.env.SEED_REGISTRY ?? "../passport-generator/out/registry.json");
+// A fresh clone has no ../passport-generator: fall back to the copy of its output kept as a test fixture
+const generatorRegistry = path.resolve("../passport-generator/out/registry.json");
+const registryPath = path.resolve(
+  process.env.SEED_REGISTRY ??
+    (fs.existsSync(generatorRegistry) ? generatorRegistry : "tests/fixtures/seed/registry.json"),
+);
 const registryDir = path.dirname(registryPath);
 const credentialsFile = path.join(DATA_DIR, "dev-credentials.txt");
 

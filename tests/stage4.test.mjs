@@ -14,7 +14,7 @@ const RPC_PORT = 8619;
 const BASE = `http://127.0.0.1:${PORT}`;
 const RPC = `http://127.0.0.1:${RPC_PORT}`;
 const WORKBOOK = path.resolve(
-  process.env.BTU_WORKBOOK ?? "../AI DIGITAL PASSPORT/BTU AI Skills Digital Passport Hackathon_Test Data.xlsx",
+  process.env.BTU_WORKBOOK ?? "samples/demo/workbook.xlsx",
 );
 const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "bdp-s4-"));
 const key = () => "0x" + randomBytes(32).toString("hex"); // fresh keys, held in memory only

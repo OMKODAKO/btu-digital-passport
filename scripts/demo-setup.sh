@@ -14,6 +14,10 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 DEMO_DIR="${DEMO_DIR:-$PWD/data-demo}"
 WORKBOOK="${BTU_WORKBOOK:-../AI DIGITAL PASSPORT/BTU AI Skills Digital Passport Hackathon_Test Data.xlsx}"
+# A fresh clone has no ../AI DIGITAL PASSPORT folder: use the copy of BTU's (fictional) test data in the repo
+[ -e "$WORKBOOK" ] || WORKBOOK="$PWD/samples/demo/workbook.xlsx"
+# Use the project's virtualenv when `npm run quickstart` made one
+[ -x .venv/bin/python3 ] && export PATH="$PWD/.venv/bin:$PATH"
 RPC="http://127.0.0.1:8545"
 PORT="${PORT:-3000}"
 

@@ -13,7 +13,7 @@ import Database from "better-sqlite3";
 const PORT = 3918;
 const BASE = `http://127.0.0.1:${PORT}`;
 const WORKBOOK = path.resolve(
-  process.env.BTU_WORKBOOK ?? "../AI DIGITAL PASSPORT/BTU AI Skills Digital Passport Hackathon_Test Data.xlsx",
+  process.env.BTU_WORKBOOK ?? "samples/demo/workbook.xlsx",
 );
 const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "bdp-s2-"));
 const env = { ...process.env, DATA_DIR: dataDir };

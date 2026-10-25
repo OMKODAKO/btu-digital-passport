@@ -21,7 +21,7 @@ const RPC_PORT = 8630;
 const BASE = `http://127.0.0.1:${PORT}`;
 const RPC = `http://127.0.0.1:${RPC_PORT}`;
 const WORKBOOK = path.resolve(
-  process.env.BTU_WORKBOOK ?? "../AI DIGITAL PASSPORT/BTU AI Skills Digital Passport Hackathon_Test Data.xlsx",
+  process.env.BTU_WORKBOOK ?? "samples/demo/workbook.xlsx",
 );
 const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "bdp-e2e-"));
 const evidenceDir = process.env.EVIDENCE_DIR ? path.resolve(process.env.EVIDENCE_DIR) : null;
