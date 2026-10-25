@@ -4,9 +4,9 @@ Pages, in order:
   1  cover: name, surname, first-issue date, Passport ID, version, issue date, verification code
   2  about (static BTU text) + Passport ID
   3+ Verified AI Skillset: one stamp card per skill, 10 per page, page repeated as needed
-  .. Verified Subject Badges (only when the holder has any): one badge card per completed subject with a
-     tier, 10 per page, on the skillset page's background (subject_badges.py)
-  .. AI Skill Supplement: one table row per skill, 5 per page, repeated; QR + code on its last page
+     followed by the subject badges (completed BTU subjects scoring 60+), one card each (subject_badges.py)
+  .. AI Skill Supplement: one table row per skill, then per subject badge (with its short course
+     description), 5 per page, repeated; QR + code on its last page
   .. continuation pages, only when a table cell's text can't fit even at the smallest legible size.
      BTU supplied no design for these, so they reuse the supplement background with a clearly
      labelled temporary layout.
@@ -24,13 +24,14 @@ import json
 import math
 import os
 from dataclasses import dataclass, field
+from datetime import date
 from pathlib import Path
 
 import pymupdf as fitz
 import qrcode
 
-from .model import LEARNING_FORMAT, Holder, Skill
-from .subject_badges import draw_subject_page
+from .model import LEARNING_FORMAT, TIER_LABEL, Holder, Skill, SubjectBadge
+from .subject_badges import StampCache, draw_demo_note, draw_subject_card, place_subject_stamp
 
 ASSETS = Path(__file__).resolve().parent / "assets"  # override with PASSPORT_ASSETS_DIR
 
@@ -195,6 +196,20 @@ def qr_png(data: str) -> bytes:
     return buf.getvalue()
 
 
+class _SubjectRow:
+    """A subject badge in the shape of a Skill, so the supplement table and continuation pages treat it alike."""
+
+    def __init__(self, b: SubjectBadge):
+        self.badge = b
+        self.record_id = b.code
+        self.name = b.name_en
+        self.category = f"{TIER_LABEL[b.tier]} subject badge"
+        self.badge_code = f"{b.tier}-{b.code}"
+        self.description = b.description or b.name_en
+        self.date_earned = date.fromisoformat(b.date_earned)
+        self.earned_through = f"BTU course  ·  {b.credits} ECTS  ·  score {b.score} / 100"
+
+
 def place_stamp(page, stamps_doc, category, center_x, center_y, scale=1.0):
     clip = STAMP_CLIPS[category]
     w, h = clip.width * scale, clip.height * scale
@@ -321,14 +336,18 @@ def draw_cover(d: _Doc, page, h: Holder, version: int, issued_at: str, code: str
     layout.cover_texts += [fmt_date(h.first_issued), h.passport_id, code, f"VERSION V{version}"]
 
 
-def draw_skillset(d: _Doc, page, stamps, h: Holder, skills: list[Skill], page_no: int, page_count: int):
-    if not h.skills:
+def draw_skillset(d: _Doc, page, page_idx, stamps, cache, h: Holder, skills: list, page_no: int, page_count: int,
+                  layout: Layout):
+    if not h.skills and not h.subjects:
         white_out(page, fitz.Rect(CARD_X[0] - 2, CARD_Y[0] - 2, CARD_X[-1] + CARD_W + 2, CARD_Y[1] + CARD_H + 2))
         d.text(page, 421, 300, "NO CONFIRMED AI SKILLS RECORDED YET", "bold", 13, GREY, align="center")
     for i, sk in enumerate(skills):
         cx, cy = CARD_X[i % 5], CARD_Y[i // 5]
         mid = cx + CARD_W / 2
         white_out(page, fitz.Rect(cx + 50, cy + 60, cx + 81, cy + 92))  # empty-slot asterisk
+        if isinstance(sk, _SubjectRow):
+            draw_subject_card(d, page, page_idx, sk.badge, i, cx, cy, CARD_W, cache, layout, Placed)
+            continue
         place_stamp(page, stamps, sk.category, mid, cy + 46)
 
         # The card is a summary: the name shrinks to fit 4 lines; the supplement row holds the full text.
@@ -346,14 +365,16 @@ def draw_skillset(d: _Doc, page, stamps, h: Holder, skills: list[Skill], page_no
             y += lh
         d.text(page, mid, y + 1, _caps(sk.category), "light", 10, align="center")
         d.text(page, mid, y + 12, f"EARNED {fmt_date(sk.date_earned)}", "light", 7, GREY, align="center")
+    if any(isinstance(sk, _SubjectRow) for sk in skills):
+        draw_demo_note(d, page)
     d.text(page, 761, 511, h.passport_id, "bold", 12, align="right")
     if page_count > 1:
         d.text(page, 767, 112, f"{page_no} / {page_count}", "light", 9, GREY, align="right")
 
 
-def draw_supplement(d: _Doc, page, page_idx, stamps, h: Holder, rows, page_no, page_count, cont_page_of,
+def draw_supplement(d: _Doc, page, page_idx, stamps, cache, h: Holder, rows, page_no, page_count, cont_page_of,
                     version, issued_at, code, verify_url, layout: Layout):
-    if not h.skills:
+    if not h.skills and not h.subjects:
         white_out(page, fitz.Rect(COL_X[0] - 12, ROW_Y[0] + 1, COL_X[5] + 5, ROW_Y[1] - 1))
         for r in range(1, ROWS_PER_PAGE):
             ym = (ROW_Y[r] + ROW_Y[r + 1]) / 2
@@ -364,7 +385,10 @@ def draw_supplement(d: _Doc, page, page_idx, stamps, h: Holder, rows, page_no, p
         y0, y1 = ROW_Y[i], ROW_Y[i + 1]
         ym = (y0 + y1) / 2
         white_out(page, fitz.Rect(129, ym - 12, 153, ym + 12))  # empty-row circle
-        place_stamp(page, stamps, sk.category, (COL_X[0] + COL_X[1]) / 2, ym, scale=0.66)
+        if isinstance(sk, _SubjectRow):
+            place_subject_stamp(page, d.f, cache, sk.badge, (COL_X[0] + COL_X[1]) / 2, ym, 84.0, -4.0)
+        else:
+            place_stamp(page, stamps, sk.category, (COL_X[0] + COL_X[1]) / 2, ym, scale=0.66)
         for key, sizes in (("name", NAME_SIZES), ("description", DESC_SIZES), ("earned_through", EARNED_SIZES)):
             cell = cells[key]
             if cell.fitted:
@@ -372,7 +396,8 @@ def draw_supplement(d: _Doc, page, page_idx, stamps, h: Holder, rows, page_no, p
                 layout.placed.append(Placed(page_idx, tuple(cell.rect), cell.text, f"{sk.record_id} {key}"))
             else:
                 _draw_overflow_cell(d, page, cell, cont_page_of[sk.record_id] + 1, sizes)
-        badge = f"BADGE {sk.badge_code}  ·  {sk.record_id}"
+        badge = (f"{TIER_LABEL[sk.badge.tier].upper()} SUBJECT BADGE  ·  {sk.record_id}" if isinstance(sk, _SubjectRow)
+                 else f"BADGE {sk.badge_code}  ·  {sk.record_id}")
         d.text(page, (COL_X[3] + COL_X[4]) / 2, y1 - 6, badge, "light", 5.8, GREY, align="center")
         layout.placed.append(Placed(page_idx, (COL_X[3] + 4, y1 - 12, COL_X[4] - 4, y1 - 2), badge, f"{sk.record_id} badge"))
         date_r = fitz.Rect(COL_X[4] + 4, y0 + 3, COL_X[5] - 4, y1 - 3)
@@ -417,21 +442,21 @@ def render_passport(holder: Holder, version: int, issued_at: str, code: str, ver
         if sk.category not in STAMP_CLIPS:
             raise RenderError(f"{sk.record_id}: no stamp artwork for category '{sk.category}'")
 
-    rows = _plan_rows(d, holder.skills)
+    entries = list(holder.skills) + [_SubjectRow(b) for b in holder.subjects]   # subject badges after the skills
+    rows = _plan_rows(d, entries)
     overflowing = [(sk, [k for k, c in cells.items() if not c.fitted]) for sk, cells in rows
                    if any(not c.fitted for c in cells.values())]
     cont_pages, cont_start = _plan_continuation(d, overflowing)
 
-    skill_pages = max(1, math.ceil(len(holder.skills) / CARDS_PER_PAGE))
-    subj_pages = math.ceil(len(holder.subjects) / CARDS_PER_PAGE)
-    supp_pages = max(1, math.ceil(len(holder.skills) / ROWS_PER_PAGE))
-    first_supp = 2 + skill_pages + subj_pages
+    skill_pages = max(1, math.ceil(len(entries) / CARDS_PER_PAGE))
+    supp_pages = max(1, math.ceil(len(entries) / ROWS_PER_PAGE))
+    first_supp = 2 + skill_pages
     first_cont = first_supp + supp_pages
     cont_page_of = {rid: first_cont + n for rid, n in cont_start.items()}
 
     doc = fitz.open()
     doc.insert_pdf(template, from_page=P_COVER, to_page=P_ABOUT)
-    for _ in range(skill_pages + subj_pages):
+    for _ in range(skill_pages):
         doc.insert_pdf(template, from_page=P_SKILLSET, to_page=P_SKILLSET)
     for _ in range(supp_pages + len(cont_pages)):
         doc.insert_pdf(template, from_page=P_SUPPLEMENT, to_page=P_SUPPLEMENT)
@@ -439,16 +464,13 @@ def render_passport(holder: Holder, version: int, issued_at: str, code: str, ver
     layout = Layout(passport_id=holder.passport_id, code=code)
     draw_cover(d, doc[0], holder, version, issued_at, code, layout)
     d.text(doc[1], 154, 492.5, holder.passport_id, "bold", 12)
+    cache = StampCache()
     for n in range(skill_pages):
-        chunk = holder.skills[n * CARDS_PER_PAGE:(n + 1) * CARDS_PER_PAGE]
-        draw_skillset(d, doc[2 + n], stamps, holder, chunk, n + 1, skill_pages)
-    for n in range(subj_pages):
-        idx = 2 + skill_pages + n
-        draw_subject_page(d, doc[idx], idx, holder, holder.subjects[n * CARDS_PER_PAGE:(n + 1) * CARDS_PER_PAGE],
-                          (CARD_X, CARD_Y, CARD_W, white_out), n + 1, subj_pages, layout, Placed)
+        chunk = entries[n * CARDS_PER_PAGE:(n + 1) * CARDS_PER_PAGE]
+        draw_skillset(d, doc[2 + n], 2 + n, stamps, cache, holder, chunk, n + 1, skill_pages, layout)
     for n in range(supp_pages):
         idx = first_supp + n
-        draw_supplement(d, doc[idx], idx, stamps, holder, rows[n * ROWS_PER_PAGE:(n + 1) * ROWS_PER_PAGE], n + 1,
+        draw_supplement(d, doc[idx], idx, stamps, cache, holder, rows[n * ROWS_PER_PAGE:(n + 1) * ROWS_PER_PAGE], n + 1,
                         supp_pages, cont_page_of, version, issued_at, code, verify_url, layout)
         layout.supplement_pages.append(idx)
     for n, lines in enumerate(cont_pages):

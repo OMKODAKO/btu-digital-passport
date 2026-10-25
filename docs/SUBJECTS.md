@@ -97,10 +97,12 @@ Nothing in stage 03 changes passports, versions, sheet records or skills; badges
 ## Stage 05: subject badges on the passport
 
 - A completed passport subject with a score of 60+ is a badge: Silver 60+, Gold 70+, Platinum 90+.
-- The PDF gets **Verified Subject Badges** page(s) right after the Verified AI Skillset page(s), on the same
-  template background with its own heading: one card per badge, 10 per page, with the score out of 100, tier and
-  ECTS. The badge art is drawn in `worker/pdf/subject_badges.py` in the style of BTU's stamps: subject icon +
-  tier, one colour per tier (13 icons x 3 tiers). The page says the syllabi and marks are simulated demo data.
+- Subject badges are printed after the sheet skills, like skills (Merabi, 2026-10-25): a card on the Verified
+  AI Skillset page (stamp, course name, score out of 100, tier, ECTS) and a row in the AI Skill Supplement table
+  (course name, the course's short description from `catalog.json`, "BTU course · ECTS · score", date of the
+  last mark). The badge art is drawn in `worker/pdf/subject_badges.py` in the style of BTU's stamps: subject
+  icon + tier, one colour per tier (13 icons x 3 tiers). The skillset page says the syllabi and marks are
+  simulated demo data.
 - `passport-data.json` in the PDF lists the badges (`subject_badges`) only for versions that have any, so every
   earlier version's data is unchanged.
 - Versions: migration 008 records each candidate's and version's badges (`candidate_subjects`,

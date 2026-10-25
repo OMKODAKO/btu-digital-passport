@@ -59,6 +59,8 @@ def validate_catalog(data: dict) -> list[str]:
             problems.append(f"{code}: credits must be a positive whole number")
         if s.get("passport_relevant") and not s.get("skill_area"):
             problems.append(f"{code}: a passport subject needs a skill_area")
+        if s.get("passport_relevant") and not str(s.get("description") or "").strip():
+            problems.append(f"{code}: a passport subject needs a short description (printed on the passport)")
         problems += [f"{code}: {p}" for p in validate_syllabus(s.get("syllabus") or [])]
     if not seen_codes:
         problems.append("catalog has no subjects")

@@ -100,6 +100,7 @@ class CatalogTests(unittest.TestCase):
             "used twice": lambda d: d["subjects"][1].update(name_ka=d["subjects"][0]["name_ka"]),
             "credits must be": lambda d: d["subjects"][0].update(credits=0),
             "needs a skill_area": lambda d: d["subjects"][0].update(skill_area=None),
+            "needs a short description": lambda d: d["subjects"][0].update(description=""),
             "label twice": lambda d: d["subjects"][0]["syllabus"][1].update(label=d["subjects"][0]["syllabus"][0]["label"]),
         }
         for expected, break_it in cases.items():

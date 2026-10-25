@@ -28,7 +28,8 @@ TIER_LABEL = {"SILVER": "Silver", "GOLD": "Gold", "PLATINUM": "Platinum"}
 
 @dataclass(frozen=True)
 class SubjectBadge:
-    """A completed BTU subject with a badge tier (score 60+), printed below the skills."""
+    """A completed BTU subject with a badge tier (score 60+), printed after the sheet skills on the skillset
+    and supplement pages."""
     code: str
     name_en: str
     name_ka: str
@@ -37,6 +38,8 @@ class SubjectBadge:
     syllabus_version: int
     score: str             # "77.00", out of 100
     tier: str              # SILVER | GOLD | PLATINUM
+    description: str = ""  # a short phrase about the course, from the catalog
+    date_earned: str = ""  # ISO date the last mark was entered (when the subject was completed)
 
 
 @dataclass

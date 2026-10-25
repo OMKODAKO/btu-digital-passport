@@ -1,9 +1,10 @@
-"""Subject badge artwork and the "Verified Subject Badges" pages (subject stage 05).
+"""Subject badge artwork and how subject badges are placed on the passport (subject stage 05).
 
 The badges are drawn here in vector form, in the style of BTU's skill stamps: a slightly tilted
-rectangle with a dashed inner border, now with the subject's icon on the left and the tier on the
-right. Each tier has its own colour (Silver, Gold, Platinum), so every subject has three variants.
-The pages reuse the template's skillset page (same 5 x 2 card grid) with their own heading.
+rectangle with a dashed inner border, with the subject's icon on the left and the tier on the right.
+Each tier has its own colour (Silver, Gold, Platinum), so every subject has three variants.
+render.py prints them after the sheet skills: a card on the Verified AI Skillset page and a row in the
+AI Skill Supplement table, like a skill.
 """
 from __future__ import annotations
 
@@ -24,8 +25,6 @@ TIER_COLORS = {
 }
 STAMP_W, STAMP_H = 150.0, 56.0
 TILTS = [-6.0, 4.0, -4.0, 6.0, -3.0]          # per card column, like the hand-placed skill stamps
-HEADING = "VERIFIED SUBJECT BADGES"
-SUBHEADING = "BTU course results, scored out of 100  ·  Silver 60+  ·  Gold 70+  ·  Platinum 90+"
 DEMO_NOTE = "DEMO: SIMULATED SYLLABI AND HAND-ENTERED MARKS (BTU GRADES NOT CONNECTED)"
 
 
@@ -137,52 +136,50 @@ def stamp_doc(fonts, logo_key: str, tier: str) -> fitz.Document:
     return doc
 
 
-# ---------------------------------------------------------------- page
+# ---------------------------------------------------------------- placing
 
-def retitle_page(page, d):
-    """Replaces the skillset page's heading with this page's own, removing the old text itself."""
-    for r in (fitz.Rect(72, 77, 300, 125),):
-        page.add_redact_annot(r, fill=(1, 1, 1))
-    page.apply_redactions(images=fitz.PDF_REDACT_IMAGE_NONE,
-                          graphics=getattr(fitz, "PDF_REDACT_LINE_ART_NONE", 0))
-    d.text(page, 74.1, 101.0, HEADING, "bold", 22.0)
-    d.text(page, 76.2, 120.0, SUBHEADING, "bold", 9.5)
+class StampCache(dict):
+    """(logo_key, tier) -> stamp document, made once per rendered passport."""
 
-
-def draw_subject_page(d, page, page_idx, h, badges: list[SubjectBadge], grid, page_no: int, page_count: int,
-                      layout, placed_cls):
-    card_x, card_y, card_w, white_out = grid
-    retitle_page(page, d)
-    cache: dict = {}
-    for i, b in enumerate(badges):
-        cx, cy = card_x[i % 5], card_y[i // 5]
-        mid = cx + card_w / 2
-        white_out(page, fitz.Rect(cx + 50, cy + 60, cx + 81, cy + 92))  # empty-slot asterisk
+    def get_stamp(self, fonts, b: SubjectBadge) -> fitz.Document:
         key = (b.logo_key, b.tier)
-        if key not in cache:
-            cache[key] = stamp_doc(d.f, b.logo_key, b.tier)
-        w, hgt = 118.0, 118.0 * STAMP_H / STAMP_W
-        target = fitz.Rect(mid - w / 2 - 4, cy + 46 - hgt / 2 - 8, mid + w / 2 + 4, cy + 46 + hgt / 2 + 8)
-        page.show_pdf_page(target, cache[key], 0, rotate=TILTS[i % 5])
+        if key not in self:
+            self[key] = stamp_doc(fonts, b.logo_key, b.tier)
+        return self[key]
 
-        name = b.name_en.upper()
-        fitted = d.fit(name, "bold", [9.5, 9.0, 8.5, 8.0, 7.5, 7.0], card_w - 14, 34, 1.1)
-        if fitted:
-            size, lines, lh = fitted
-        else:  # the full name is in the passport data; the card shows as much as fits
-            size, lh = 7.0, 7.7
-            lines = d.wrap(name, "bold", size, card_w - 14)[:4]
-            lines[-1] = lines[-1].rsplit(" ", 1)[0] + " …"
-        y = cy + 84 + size * 0.85
-        for ln in lines:
-            d.text(page, mid, y, ln, "bold", size, align="center")
-            y += lh
-        score = f"SCORE {b.score} / 100"
-        sy = cy + 131
-        d.text(page, mid, sy, score, "light", 9.0, align="center")
-        layout.placed.append(placed_cls(page_idx, (cx + 4, sy - 9, cx + card_w - 4, sy + 2.5), score, f"{b.code} score"))
-        d.text(page, mid, sy + 9, f"{TIER_LABEL[b.tier].upper()}  ·  {b.credits} ECTS", "light", 6.8, GREY, align="center")
+
+def place_subject_stamp(page, fonts, cache: StampCache, b: SubjectBadge, center_x, center_y, width, tilt):
+    h = width * STAMP_H / STAMP_W
+    pad = width * 0.07   # room for the tilt
+    target = fitz.Rect(center_x - width / 2 - pad, center_y - h / 2 - 2 * pad,
+                       center_x + width / 2 + pad, center_y + h / 2 + 2 * pad)
+    page.show_pdf_page(target, cache.get_stamp(fonts, b), 0, rotate=tilt)
+
+
+def draw_subject_card(d, page, page_idx, b: SubjectBadge, slot: int, cx, cy, card_w, cache: StampCache, layout,
+                      placed_cls):
+    """One skillset-page card for a subject badge: stamp, course name, score, tier and ECTS."""
+    mid = cx + card_w / 2
+    place_subject_stamp(page, d.f, cache, b, mid, cy + 46, 118.0, TILTS[slot % 5])
+    name = b.name_en.upper()
+    fitted = d.fit(name, "bold", [9.5, 9.0, 8.5, 8.0, 7.5, 7.0], card_w - 14, 34, 1.1)
+    if fitted:
+        size, lines, lh = fitted
+    else:  # the full name is in the supplement table and the passport data
+        size, lh = 7.0, 7.7
+        lines = d.wrap(name, "bold", size, card_w - 14)[:4]
+        lines[-1] = lines[-1].rsplit(" ", 1)[0] + " …"
+    y = cy + 84 + size * 0.85
+    for ln in lines:
+        d.text(page, mid, y, ln, "bold", size, align="center")
+        y += lh
+    score = f"SCORE {b.score} / 100"
+    sy = cy + 131
+    d.text(page, mid, sy, score, "light", 9.0, align="center")
+    layout.placed.append(placed_cls(page_idx, (cx + 4, sy - 9, cx + card_w - 4, sy + 2.5), score, f"{b.code} score"))
+    d.text(page, mid, sy + 9, f"{TIER_LABEL[b.tier].upper()} SUBJECT BADGE  ·  {b.credits} ECTS", "light", 6.4, GREY,
+           align="center")
+
+
+def draw_demo_note(d, page):
     d.text(page, 420, 500, DEMO_NOTE, "light", 5.6, GREY, align="center")
-    d.text(page, 761, 511, h.passport_id, "bold", 12, align="right")
-    if page_count > 1:
-        d.text(page, 767, 112, f"{page_no} / {page_count}", "light", 9, GREY, align="right")

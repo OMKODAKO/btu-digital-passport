@@ -89,17 +89,21 @@ class BadgesTest(unittest.TestCase):
             [(VIBE, 1, "77.00", "GOLD")])
 
         doc = self.pdf(now)
-        text = "".join(p.get_text() for p in doc)
-        self.assertIn("VERIFIED SUBJECT BADGES", text)
-        self.assertIn("SCORE 77.00 / 100", text)
-        self.assertIn("VIBE CODING", text)
-        self.assertIn("GOLD", text)
         data = json.loads(doc.embfile_get("passport-data.json"))
         self.assertEqual([(b["code"], b["score"], b["tier"]) for b in data["subject_badges"]], [(VIBE, "77.00", "GOLD")])
-        # the subject page sits right after the skillset page(s), before the supplement table
-        self.assertIn("VERIFIED AI SKILLSET", doc[2].get_text())
-        self.assertIn("VERIFIED SUBJECT BADGES", doc[3].get_text())
-        self.assertNotIn("VERIFIED AI SKILLSET", doc[3].get_text(), "the template's heading is replaced, not covered")
+        self.assertTrue(data["subject_badges"][0]["description"])
+        # after the sheet skills: a card on the skillset page and a row (with the course description) in the supplement
+        skillset = doc[2].get_text()
+        self.assertIn("VERIFIED AI SKILLSET", skillset)
+        self.assertIn("SCORE 77.00 / 100", skillset)
+        self.assertIn("GOLD SUBJECT BADGE", skillset)
+        self.assertNotIn("NO CONFIRMED AI SKILLS", skillset)
+        supplement = "".join(doc[i].get_text() for i in range(3, doc.page_count))
+        self.assertIn("AI-ASSISTED CODING", supplement)
+        self.assertIn("SCORE 77.00 / 100", supplement)
+        self.assertIn(VIBE, supplement)
+        cards = [ln for ln in skillset.splitlines() if ln.startswith("EARNED ") or ln.startswith("SCORE ")]
+        self.assertTrue(cards[-1].startswith("SCORE"), "the subject card comes after the skill cards")
 
     def test_publishing_again_changes_nothing(self):
         record_marks(self.conn, ST1, VIBE, GOLD, entered_by="t")
@@ -117,6 +121,7 @@ class BadgesTest(unittest.TestCase):
         v2 = self.current()
         self.assertEqual(v2["version_no"], v1["version_no"] + 1)
         self.assertIn("SCORE 93.00 / 100", "".join(p.get_text() for p in self.pdf(v2)))
+        self.assertIn("PLATINUM SUBJECT BADGE", "".join(p.get_text() for p in self.pdf(v2)))
         self.assertEqual(self.conn.execute("SELECT tier FROM version_subjects WHERE version_fk = ?", (v2["id"],)).fetchone()[0],
                          "PLATINUM")
         # the earlier version keeps its own badge record and its own file
@@ -129,7 +134,7 @@ class BadgesTest(unittest.TestCase):
         self.publish()
         v3 = self.current()
         self.assertEqual(v3["version_no"], v2["version_no"] + 1)
-        self.assertNotIn("VERIFIED SUBJECT BADGES", "".join(p.get_text() for p in self.pdf(v3)))
+        self.assertNotIn("SUBJECT BADGE", "".join(p.get_text() for p in self.pdf(v3)))
         self.assertNotIn("subject_badges", json.loads(self.pdf(v3).embfile_get("passport-data.json")))
 
     def test_unfinished_subjects_and_low_scores_give_no_badge(self):
@@ -156,8 +161,9 @@ class BadgesTest(unittest.TestCase):
         v = self.current(p["id"])
         self.assertEqual(v["version_no"], 1)
         text = "".join(pg.get_text() for pg in self.pdf(v))
-        self.assertIn("NO CONFIRMED AI SKILLS RECORDED YET", text)
+        self.assertNotIn("NO CONFIRMED AI SKILLS RECORDED YET", text, "the subject badge fills the skill pages")
         self.assertIn("SCORE 77.00 / 100", text)
+        self.assertIn("AI-ASSISTED CODING", text)
 
     def test_an_import_without_marks_makes_no_new_versions(self):
         before = self.conn.execute("SELECT COUNT(*) FROM passport_versions").fetchone()[0]

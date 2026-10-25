@@ -1,14 +1,23 @@
 """Subject badges on the passport (subject stage 05).
 
-A student's completed passport subjects with a tier (score 60+) are printed as badges below their
-sheet skills. Each passport version records the badges it certifies (candidate_subjects ->
+A student's completed passport subjects with a tier (score 60+) are printed as badges after their sheet
+skills, on the skillset page (a stamp card each) and in the supplement table (with a short description). Each passport version records the badges it certifies (candidate_subjects ->
 version_subjects, migration 008), so a new version is made only when a badge appears, changes tier or
 score, or goes away after a corrected mark: sync.generate_if_needed compares the two.
 """
 from __future__ import annotations
 
+from functools import lru_cache
+
 from ..pdf.model import SubjectBadge
-from .grades import subject_results
+from . import read_catalog
+from .grades import latest_entries, student_syllabus, subject_results
+
+
+@lru_cache(maxsize=1)
+def _descriptions() -> dict[str, str]:
+    """Short course descriptions from the catalog (printed on the passport)."""
+    return {s["code"]: s.get("description", "") for s in read_catalog()["subjects"]}
 
 
 def current_badges(conn, student_fk: int) -> list[SubjectBadge]:
@@ -20,10 +29,12 @@ def current_badges(conn, student_fk: int) -> list[SubjectBadge]:
     for r in subject_results(conn, s["student_id"]):
         if r.status != "COMPLETE" or r.tier is None:
             continue
-        logo = conn.execute("SELECT logo_key FROM subjects WHERE code = ?", (r.subject_code,)).fetchone()["logo_key"]
-        out.append(SubjectBadge(code=r.subject_code, name_en=r.name_en, name_ka=r.name_ka, logo_key=logo or "",
+        subj = conn.execute("SELECT id, logo_key FROM subjects WHERE code = ?", (r.subject_code,)).fetchone()
+        syllabus = student_syllabus(conn, student_fk, subj["id"])
+        done = max(e["entered_at"] for e in latest_entries(conn, student_fk, syllabus["id"]).values())
+        out.append(SubjectBadge(code=r.subject_code, name_en=r.name_en, name_ka=r.name_ka, logo_key=subj["logo_key"] or "",
                                 credits=r.credits, syllabus_version=r.syllabus_version, score=f"{r.score:.2f}",
-                                tier=r.tier))
+                                tier=r.tier, description=_descriptions().get(r.subject_code, ""), date_earned=done[:10]))
     return out
 
 
