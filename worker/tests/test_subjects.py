@@ -95,6 +95,7 @@ class CatalogTests(unittest.TestCase):
             "weights add up to": lambda d: d["subjects"][0]["syllabus"].pop(),
             "kind must be one of": lambda d: d["subjects"][0]["syllabus"][0].update(kind="ESSAY"),
             "max_points must be above 0": lambda d: d["subjects"][0]["syllabus"][0].update(max_points=0),
+            "must equal its weight": lambda d: d["subjects"][0]["syllabus"][0].update(max_points=20),
             "code used twice": lambda d: d["subjects"][1].update(code=d["subjects"][0]["code"]),
             "used twice": lambda d: d["subjects"][1].update(name_ka=d["subjects"][0]["name_ka"]),
             "credits must be": lambda d: d["subjects"][0].update(credits=0),
@@ -141,10 +142,23 @@ class LoadTests(unittest.TestCase):
         before = {t: dump(conn, t) for t in ("subjects", "syllabi", "syllabus_components")}
         changed = read_catalog()
         changed["subjects"][0]["credits"] = 9
-        changed["subjects"][0]["syllabus"][0]["max_points"] = 99
+        changed["subjects"][0]["syllabus"][0]["label"] = "Short quizzes"
         r = load_catalog(conn, changed)
-        self.assertEqual(len(r.differences), 2, r.differences)
-        self.assertEqual({t: dump(conn, t) for t in before}, before)
+        self.assertEqual(len(r.differences), 1, r.differences)          # credits: reported, not applied
+        self.assertEqual(r.syllabi_added, ["SUBJ-VIBE-CODING v2"])    # syllabus: added as a new version
+        after = {t: dump(conn, t) for t in before}
+        for t in before:
+            self.assertEqual(after[t][:len(before[t])], before[t], t)  # every earlier row exactly as it was
+        self.assertEqual(len(after["syllabi"]), len(before["syllabi"]) + 1)
+        vibe = conn.execute("SELECT id FROM subjects WHERE code = 'SUBJ-VIBE-CODING'").fetchone()[0]
+        self.assertEqual([c["label"] for c in syllabus_components(conn, vibe)][0], "Short quizzes")
+        again = load_catalog(conn, changed)
+        self.assertEqual((again.syllabi_added, again.unchanged), ([], 29))
+
+    def test_every_component_is_worth_its_weight_in_points(self):
+        for s in read_catalog()["subjects"]:
+            self.assertEqual(sum(c["max_points"] for c in s["syllabus"]), 100, s["code"])
+            self.assertTrue(all(c["max_points"] == c["weight"] for c in s["syllabus"]), s["code"])
 
     def test_syllabi_and_subjects_are_append_only(self):
         conn = fresh("frozen")

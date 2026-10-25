@@ -7,6 +7,7 @@ import { getDb } from "./db";
  * 0..max with at most two decimals, a student stays on the syllabus version of their first mark, marks
  * are append-only (a different mark is a correction row), and the same mark again changes nothing.
  * Score = Σ weight × earned / max, rounded half up to 2 decimals; tiers 60 Silver, 70 Gold, 90 Platinum.
+ * Current syllabi give each component its weight as maximum, so the score is simply the sum of the marks.
  * The arithmetic is exact (BigInt fractions) so the web and the worker always agree.
  */
 
@@ -200,4 +201,40 @@ export function recordMarks(studentFk: number, code: string, marks: Record<strin
     }
   })();
   return { subject, added, corrected, unchanged };
+}
+
+export const KINDS = ["QUIZ", "ASSIGNMENT", "PROJECT", "MIDTERM", "FINAL"] as const;
+export type CourseRow = {
+  studentId: string; firstName: string; lastName: string; email: string; program: string | null;
+  educationLevel: string | null; status: string | null; subjectCode: string; subjectEn: string; subjectKa: string;
+  credits: number; syllabusVersion: number; points: Partial<Record<(typeof KINDS)[number], number | null>>;
+  total: string | null; tier: Tier | null; resultStatus: "COMPLETE" | "IN_PROGRESS";
+};
+
+/** One line per student per course they have marks in: the student's columns, the course, the latest
+ *  points per component kind (null = not marked yet; absent = not in that syllabus), total and badge. */
+export function courseRows(): CourseRow[] {
+  const students = getDb()
+    .prepare(
+      `SELECT id, student_id AS studentId, first_name AS firstName, last_name AS lastName, email, program,
+              education_level AS educationLevel, student_status AS status
+         FROM students WHERE id IN (SELECT student_fk FROM grade_entries) ORDER BY student_id`,
+    )
+    .all() as ({ id: number } & Omit<CourseRow, "subjectCode">)[];
+  return students.flatMap(({ id, ...s }) =>
+    studentResults(id).map((r) => {
+      const points: CourseRow["points"] = {};
+      for (const c of r.subject.components) {
+        const kind = c.kind as (typeof KINDS)[number];
+        points[kind] = (points[kind] ?? 0) + (r.marks[c.label] ?? NaN);
+      }
+      for (const k of Object.keys(points) as (typeof KINDS)[number][]) if (Number.isNaN(points[k])) points[k] = null;
+      return {
+        studentId: s.studentId, firstName: s.firstName, lastName: s.lastName, email: s.email, program: s.program,
+        educationLevel: s.educationLevel, status: s.status, subjectCode: r.subject.code, subjectEn: r.subject.nameEn,
+        subjectKa: r.subject.nameKa, credits: r.subject.credits, syllabusVersion: r.syllabusVersion, points,
+        total: r.score, tier: r.tier, resultStatus: r.status,
+      };
+    }),
+  );
 }

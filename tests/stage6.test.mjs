@@ -210,14 +210,15 @@ test("staff accounts can't use the student dashboard, and student sign-in refuse
   assert.match((await signIn("student", OPERATOR, accounts.get(OPERATOR))).location, /error=invalid/);
 });
 
-test("staff search works only with approved identifiers", async () => {
+test("staff search works with approved identifiers and names, not partial identifiers", async () => {
   const op = await signIn("staff", OPERATOR, accounts.get(OPERATOR));
   const v3 = current("BTU-AI-000125");
-  for (const q of ["BTU-T-0001", "btu-t-0001@example.org", "BTU-AI-000125", v3.verification_code, "btu-t-0001"]) {
+  for (const q of ["BTU-T-0001", "btu-t-0001@example.org", "BTU-AI-000125", v3.verification_code, "btu-t-0001",
+                   "Kapanadze", "giorgi kap", "Kapanadze Giorgi"]) {
     const html = await (await get(`/admin/students?q=${encodeURIComponent(q)}`, op.cookie)).text();
     assert.ok(html.includes('data-testid="hits"') && html.includes("/admin/students/BTU-T-0001"), q);
   }
-  for (const q of ["BTU-T", "Giorgi", "%", "example.org"]) {
+  for (const q of ["BTU-T", "%%%", "___", "example.org", "Gi"]) {
     const html = await (await get(`/admin/students?q=${encodeURIComponent(q)}`, op.cookie)).text();
     assert.ok(!html.includes('data-testid="hits"'), `no listing for ${q}`);
   }
@@ -346,10 +347,11 @@ test("held and rejected skills stay as they are: no admin route can confirm a sk
   const awarded = new Set(query("SELECT record_id FROM skill_awards").map((r) => r.record_id));
   for (const r of held) assert.ok(!awarded.has(r.record_id), r.record_id);
   // the only state-changing admin endpoints are sign-in, sign-out, retry, and (subject stage 03) adding a
-  // synthetic student and entering subject marks; none of them touches sheet records, skills or versions
+  // synthetic student and entering subject marks (plus the read-only course results CSV); none of them
+  // touches sheet records, skills or versions
   const routes = fs.readdirSync(path.resolve("src/app/api/admin")).sort();
-  assert.deepEqual(routes, ["login", "logout", "marks", "retry", "students"]);
-  for (const [route, libs] of [["retry", []], ["students", ["src/lib/students.ts"]], ["marks", ["src/lib/subjects.ts"]]]) {
+  assert.deepEqual(routes, ["courses", "login", "logout", "marks", "retry", "students"]);
+  for (const [route, libs] of [["retry", []], ["students", ["src/lib/students.ts"]], ["marks", ["src/lib/subjects.ts"]], ["courses", []]]) {
     for (const f of [`src/app/api/admin/${route}/route.ts`, ...libs]) {
       const src = fs.readFileSync(path.resolve(f), "utf8").replace(/^\s*(\/\/|\*).*$/gm, "");
       assert.ok(!/source_records|skill_awards|passport_versions/.test(src), f);

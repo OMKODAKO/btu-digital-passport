@@ -2,8 +2,10 @@
 
 catalog.json holds every course from the BTU course list with its ECTS credits, whether it counts
 toward the AI Skills Digital Passport, and a SIMULATED syllabus: BTU's real syllabi are not available,
-so each subject gets components (quizzes, assignments, project, midterm, final) whose weights add up
-to 100. load_catalog() adds what the database is missing and never changes or removes existing rows.
+so each subject gets components (quizzes, assignments, project, midterm, final) worth points that add
+up to 100 (e.g. quizzes 10, assignments 20, project 30, midterm 15, final 25): a component's maximum is
+its weight, and a subject's score is simply the sum of its marks. load_catalog() adds what the database
+is missing and never changes or removes existing rows; a changed syllabus is added as a new version.
 """
 from __future__ import annotations
 
@@ -26,7 +28,7 @@ class LoadResult:
     subjects_added: list[str]
     syllabi_added: list[str]
     unchanged: int
-    differences: list[str]   # catalog values that differ from rows already in the database (left as they are)
+    differences: list[str]   # subject values that differ from rows already in the database (left as they are)
 
 
 def read_catalog(path: Path = CATALOG_PATH) -> dict:
@@ -64,7 +66,8 @@ def validate_catalog(data: dict) -> list[str]:
 
 
 def validate_syllabus(components: list[dict]) -> list[str]:
-    """A syllabus: at least one component, known kinds, unique labels, positive maxima, weights summing to 100."""
+    """A syllabus: at least one component, known kinds, unique labels, each worth its weight in points
+    (max_points == weight), weights summing to 100."""
     problems = []
     if not components:
         return ["syllabus has no components"]
@@ -78,6 +81,8 @@ def validate_syllabus(components: list[dict]) -> list[str]:
             problems.append(f"component {c.get('label')!r}: weight must be above 0 and at most 100")
         if not (isinstance(c.get("max_points"), (int, float)) and c["max_points"] > 0):
             problems.append(f"component {c.get('label')!r}: max_points must be above 0")
+        elif c.get("max_points") != c.get("weight"):
+            problems.append(f"component {c.get('label')!r}: max_points must equal its weight (the points add up to 100)")
     total = sum(c.get("weight") or 0 for c in components if isinstance(c.get("weight"), (int, float)))
     if abs(total - 100) > 1e-9:
         problems.append(f"weights add up to {total:g}, not 100")
@@ -85,8 +90,9 @@ def validate_syllabus(components: list[dict]) -> list[str]:
 
 
 def load_catalog(conn, data: dict | None = None) -> LoadResult:
-    """Adds missing subjects and their first syllabus. Existing rows are never changed: a catalog value
-    that differs from the database is only reported."""
+    """Adds missing subjects and their first syllabus, and a new syllabus version when the catalog's differs
+    from the newest stored one. Existing rows are never changed: students already marked keep the version
+    they were marked under, and a subject value that differs from the database is only reported."""
     data = data or read_catalog()
     problems = validate_catalog(data)
     if problems:
@@ -111,26 +117,25 @@ def load_catalog(conn, data: dict | None = None) -> LoadResult:
                                  ("skill_area", s.get("skill_area")), ("logo_key", s.get("logo_key"))):
                     if row[key] != new:
                         result.differences.append(f"{s['code']}: {key} is {row[key]!r} in the database, {new!r} in the catalog")
-            if conn.execute("SELECT 1 FROM syllabi WHERE subject_fk = ?", (subject_fk,)).fetchone():
-                if s["code"] not in result.subjects_added:
+            latest = current_syllabus(conn, subject_fk)
+            if latest is not None:
+                stored = [dict(kind=c["kind"], label=c["label"], weight=c["weight"], max_points=c["max_points"])
+                          for c in syllabus_components(conn, subject_fk)]
+                wanted = [dict(kind=c["kind"], label=c["label"], weight=float(c["weight"]), max_points=float(c["max_points"]))
+                          for c in s["syllabus"]]
+                if stored == wanted:
                     result.unchanged += 1
-                    stored = [dict(kind=c["kind"], label=c["label"], weight=c["weight"], max_points=c["max_points"])
-                              for c in syllabus_components(conn, subject_fk)]
-                    wanted = [dict(kind=c["kind"], label=c["label"], weight=float(c["weight"]), max_points=float(c["max_points"]))
-                              for c in s["syllabus"]]
-                    if stored != wanted:
-                        result.differences.append(f"{s['code']}: the stored syllabus differs from the catalog "
-                                                  "(a change needs a new syllabus version)")
-                continue
+                    continue
+            version = latest["version"] + 1 if latest is not None else 1
             syllabus_fk = conn.execute(
-                "INSERT INTO syllabi (subject_fk, version, simulated, note) VALUES (?, 1, 1, ?)",
-                (subject_fk, "Simulated: BTU syllabus not available")).lastrowid
+                "INSERT INTO syllabi (subject_fk, version, simulated, note) VALUES (?, ?, 1, ?)",
+                (subject_fk, version, "Simulated: BTU syllabus not available")).lastrowid
             conn.executemany(
                 """INSERT INTO syllabus_components (syllabus_fk, position, kind, label, weight, max_points)
                    VALUES (?, ?, ?, ?, ?, ?)""",
                 [(syllabus_fk, i + 1, c["kind"], c["label"], c["weight"], c["max_points"])
                  for i, c in enumerate(s["syllabus"])])
-            result.syllabi_added.append(s["code"])
+            result.syllabi_added.append(s["code"] if version == 1 else f"{s['code']} v{version}")
         if result.subjects_added or result.syllabi_added:
             audit(conn, "SUBJECT_CATALOG_LOADED", source=data["source"], subjects_added=len(result.subjects_added),
                   syllabi_added=len(result.syllabi_added))

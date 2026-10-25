@@ -7,7 +7,7 @@
   python3 -m worker chain deploy|set-issuer|anchor ...                 registry administration (chain_admin.py)
   python3 -m worker retry                                              carry out retries requested in the admin area
   python3 -m worker subjects load|list                                 add the subject catalog + simulated syllabi / show them
-  python3 -m worker grades add --student BTU-T-0001 --subject SUBJ-VIBE-CODING "Quizzes=15" "Final exam=40" ...
+  python3 -m worker grades add --student BTU-T-0001 --subject SUBJ-VIBE-CODING "Quizzes=8" "Final exam=20" ...
   python3 -m worker grades show --student BTU-T-0001                   a student's subject scores and badge tiers
 """
 from __future__ import annotations

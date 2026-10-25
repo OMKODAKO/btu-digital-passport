@@ -41,7 +41,11 @@ if ! .venv/bin/python3 -c 'import openpyxl, fitz, qrcode, web3' 2>/dev/null; the
 fi
 export PATH="$PWD/.venv/bin:$PATH"
 
-if [ ! -f .next/BUILD_ID ]; then say "Building the web app"; npm run build; fi
+# rebuild when the code changed since the last build (e.g. after a git pull)
+HEAD_NOW=$(git rev-parse HEAD 2>/dev/null || echo none)
+if [ ! -f .next/BUILD_ID ] || [ "$(cat .next/.quickstart-head 2>/dev/null)" != "$HEAD_NOW" ]; then
+  say "Building the web app"; npm run build; echo "$HEAD_NOW" > .next/.quickstart-head
+fi
 
 devnet_up() { curl -s -m 2 -X POST "$RPC" -H 'content-type: application/json' \
   -d '{"jsonrpc":"2.0","id":1,"method":"eth_chainId","params":[]}' 2>/dev/null | grep -q '"0x7a69"'; }

@@ -16,8 +16,8 @@ const env = { ...process.env, DATA_DIR: dataDir, PASSPORT_ISSUANCE_MODE: "local-
 const OPERATOR = "ops.demo@staff.example.org";
 const VIEWER = "viewer.demo@staff.example.org";
 const ST = "BTU-T-0001";
-const VIBE = "SUBJ-VIBE-CODING"; // Quizzes /20 10%, Assignments /40 20%, Agent project /100 30%, Midterm exam /30 15%, Final exam /50 25%
-const FULL = { c1: "15", c2: "30", c3: "80", c4: "21", c5: "40" }; // 77.00, Gold
+const VIBE = "SUBJ-VIBE-CODING"; // points out of 100: Quizzes 10, Assignments 20, Agent project 30, Midterm exam 15, Final exam 25
+const FULL = { c1: "8", c2: "15", c3: "24", c4: "10", c5: "20" }; // 77.00, Gold
 const PASSPORT_TABLES = ["passports", "passport_versions", "version_source_records", "skill_awards", "catalog_skills", "source_records"];
 const accounts = new Map();
 let server, ops, viewer, before_;
@@ -179,26 +179,26 @@ test("a correction keeps the old mark; the same marks again change nothing", asy
   assert.equal((await marks(ops, FULL)).headers.get("location"), `/admin/students/${ST}?marks=0#subjects`);
   assert.equal(entries().length, before);
 
-  await marks(ops, { c5: "50", note: "re-marked" });
+  await marks(ops, { c5: "25", note: "re-marked" });
   const all = entries();
   assert.equal(all.length, before + 1);
   const finals = all.filter((e) => e.component_fk === all.at(-1).component_fk);
-  assert.deepEqual(finals.map((e) => e.points), [40, 50]);
+  assert.deepEqual(finals.map((e) => e.points), [20, 25]);
   assert.equal(finals[1].supersedes_fk, finals[0].id);
   assert.equal(finals[1].note, "re-marked");
   const html = await page(`/admin/students/${ST}`, ops);
   assert.ok(html.includes('data-testid="score">82.00<'));
   assert.match(run("python3", ["-m", "worker", "grades", "show", "--student", ST]), /82\.00/);
-  const comma = await marks(ops, { c1: "15,5" }, "BTU-T-0002");   // a decimal comma is accepted
+  const comma = await marks(ops, { c1: "5,5" }, "BTU-T-0002");   // a decimal comma is accepted
   assert.equal(comma.headers.get("location"), "/admin/students/BTU-T-0002?marks=1#subjects");
 });
 
 test("bad marks are refused with a message and nothing is stored", async () => {
   const before = entries().length;
   for (const [form, msg, subject] of [
-    [{ c1: "21" }, "outside 0–20"],
+    [{ c1: "11" }, "outside 0–10"],
     [{ c1: "-1" }, "outside"],
-    [{ c1: "12.345" }, "more than two decimals"],
+    [{ c1: "2.345" }, "more than two decimals"],
     [{ c1: "abc" }, "is not a number"],
     [{ c1: "" }, "Enter at least one mark"],
     [{ c1: "5" }, "does not count toward the passport", "SUBJ-CALCULUS-1"],
@@ -212,6 +212,29 @@ test("bad marks are refused with a message and nothing is stored", async () => {
   }
   assert.equal((await marks(ops, FULL, "BTU-T-9999")).status, 404);
   assert.equal(entries().length, before);
+});
+
+test("staff find a student by name", async () => {
+  for (const q of ["Testadze", "nino test", "Testadze Nino"]) {
+    const html = await page(`/admin/students?q=${encodeURIComponent(q)}`, viewer);
+    assert.ok(html.includes('data-testid="hits"') && html.includes("Nino Testadze") && html.includes(">Name<"), q);
+  }
+  assert.ok(!(await page("/admin/students?q=%25%25%25", viewer)).includes('data-testid="hits"'), "% is not a wildcard");
+});
+
+test("course results: one line per student per course, on the page and as CSV", async () => {
+  const html = await page("/admin/courses", viewer);
+  assert.ok(html.includes(`data-row="${ST}:${VIBE}"`) && html.includes(`data-row="BTU-T-0002:${VIBE}"`));
+  assert.ok(html.includes('data-testid="total">82.00<'));
+  const res = await get("/api/admin/courses", viewer);
+  assert.equal(res.headers.get("content-type"), "text/csv; charset=utf-8");
+  const lines = (await res.text()).replace(/^\uFEFF/, "").trim().split("\r\n");
+  assert.equal(lines.length, 3, "header + two student-course lines");
+  assert.match(lines[0], /^"Student ID","First name"/);
+  const one = lines.find((l) => l.startsWith(`"${ST}"`));
+  assert.ok(one.includes(`"${VIBE}"`) && one.includes('"8","15","24","10","25","82.00","Gold","Complete"'), one);
+  assert.equal((await get("/api/admin/courses")).status, 401);
+  assert.equal(query("SELECT COUNT(*) AS n FROM audit_log WHERE action = 'COURSE_RESULTS_EXPORTED'")[0].n, 1);
 });
 
 test("existing passports, versions and skills are untouched", () => {

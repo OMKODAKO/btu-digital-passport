@@ -15,15 +15,21 @@ subject list is real (BTU course names and ECTS credits), the syllabi and, later
 - Syllabi are append-only: a change is a new syllabus version, so grades keep the weights they were marked under.
 
 ```bash
-python3 -m worker subjects load    # adds missing subjects and syllabi; never changes existing rows
+python3 -m worker subjects load    # adds missing subjects and syllabi (a changed syllabus as a new version); never changes existing rows
 python3 -m worker subjects list    # the passport subjects and their syllabi
 ```
 
 ## Score and tier (`worker/subjects/scoring.py`)
 
+Each subject has 100 points in total, split across its components (Merabi, 2026-10-25: simpler than weights
+on a separate scale). A component's maximum equals its weight, so
+
 ```
-score = Σ weight × earned / max_points        (0–100, rounded half up to 2 decimals)
+score = sum of the points earned in every component        (0–100, at most 2 decimals)
 ```
+
+The code keeps the general form Σ weight × earned / max_points (rounded half up to 2 decimals), which gives
+exactly that sum for current syllabi and still scores marks entered under an older syllabus version.
 
 | Score | Badge |
 | --- | --- |
@@ -32,8 +38,8 @@ score = Σ weight × earned / max_points        (0–100, rounded half up to 2 d
 | 60–69.99 | Silver |
 | below 60 | no badge |
 
-Example (Vibe Coding): quizzes 15/20 (10%), assignments 30/40 (20%), project 80/100 (30%),
-midterm 21/30 (15%), final 40/50 (25%) → 7.5 + 15 + 24 + 10.5 + 20 = **77.00 → Gold**.
+Example (Vibe Coding): quizzes 8/10, assignments 15/20, project 24/30, midterm 10/15, final 20/25
+→ 8 + 15 + 24 + 10 + 20 = **77.00 → Gold**.
 
 ## Passport subjects
 
@@ -66,7 +72,7 @@ midterm 21/30 (15%), final 40/50 (25%) → 7.5 + 15 + 24 + 10.5 + 20 = **77.00 �
 
 ```bash
 python3 -m worker grades add --student BTU-T-0001 --subject SUBJ-VIBE-CODING \
-  "Quizzes=15" "Assignments=30" "Agent project=80" "Midterm exam=21" "Final exam=40"
+  "Quizzes=8" "Assignments=15" "Agent project=24" "Midterm exam=10" "Final exam=20"
 python3 -m worker grades show --student BTU-T-0001     # SUBJ-VIBE-CODING  77.00  GOLD
 ```
 

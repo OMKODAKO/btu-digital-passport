@@ -106,12 +106,15 @@ export function searchStudents(raw: string): SearchHit[] {
                   WHERE v.verification_code = ? COLLATE NOCASE
            UNION SELECT p.student_fk, 'Verification code (not issued)' FROM version_candidates c JOIN passports p ON p.id = c.passport_fk
                   WHERE c.verification_code = ? COLLATE NOCASE
+           UNION SELECT id, 'Name' FROM students
+                  WHERE first_name || ' ' || last_name LIKE @name ESCAPE '\\' OR last_name || ' ' || first_name LIKE @name ESCAPE '\\'
          ) m
          JOIN students s ON s.id = m.sfk
          LEFT JOIN passports p ON p.student_fk = s.id
-        ORDER BY s.student_id`,
+        ORDER BY s.student_id LIMIT 50`,
     )
-    .all(q, q, q, q, q) as SearchHit[];
+    // a name matches anywhere in "first last" or "last first", case-insensitive (ASCII); % and _ are literal
+    .all(q, q, q, q, q, { name: `%${q.replace(/[\\%_]/g, (c) => "\\" + c)}%` }) as SearchHit[];
 }
 
 export function studentDetail(studentId: string) {

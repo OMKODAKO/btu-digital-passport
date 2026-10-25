@@ -50,7 +50,7 @@ export default async function EnterMarks({ params, searchParams }: {
             {subject.components.map((c) => (
               <div key={c.label} style={{ display: "contents" }}>
                 <label htmlFor={`c${c.position}`}>
-                  {c.label} <span className="hint">· {c.weight}% · out of {c.maxPoints}</span>
+                  {c.label} <span className="hint">· out of {c.maxPoints}{c.maxPoints !== c.weight && ` (counts ${c.weight} of 100)`}</span>
                 </label>
                 <input id={`c${c.position}`} name={`c${c.position}`} inputMode="decimal" defaultValue={marks[c.label] ?? ""}
                   placeholder={`0–${c.maxPoints}`} />
