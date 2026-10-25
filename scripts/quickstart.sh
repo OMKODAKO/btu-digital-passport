@@ -57,6 +57,9 @@ if [ ! -e "$DEMO_DIR/portal.db" ]; then
   DEMO_DIR="$DEMO_DIR" PORT="$PORT" bash scripts/demo-setup.sh
 fi
 
+# the subject catalog with its simulated syllabi (adds only what is missing; never changes a stored subject)
+DATA_DIR="$DEMO_DIR" python3 -m worker subjects load >/dev/null
+
 say "Test logins (also in $DEMO_DIR/dev-credentials.txt)"
 echo "Students:  http://localhost:$PORT/login"
 head -n 3 "$DEMO_DIR/dev-credentials.txt" | grep -v staff | sed 's/^/  /'

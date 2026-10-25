@@ -99,6 +99,8 @@ def record_marks(conn, student_code: str, subject_code: str, marks: dict[str, fl
             raise GradeError(f"{label}: points must be a number")
         if points < 0 or points > comps[label]["max_points"]:
             raise GradeError(f"{label}: {points:g} is outside 0–{comps[label]['max_points']:g}")
+        if abs(points * 100 - round(points * 100)) > 1e-6:
+            raise GradeError(f"{label}: {points:g} has more than two decimals")
 
     added, corrected, unchanged = [], [], []
     with transaction(conn):

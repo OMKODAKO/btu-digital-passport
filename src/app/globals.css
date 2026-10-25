@@ -174,3 +174,23 @@ a:hover { color: var(--brand); }
   .facts dl { grid-template-columns: 1fr; }
   .viewer { padding: 10px; }
 }
+
+/* Subjects (stage 03): syllabus popup, tier labels, marks form */
+.button.small { padding: 5px 10px; font-size: 0.8rem; }
+.dialog { border: 1px solid var(--line); border-radius: var(--radius); padding: 0; width: min(640px, calc(100vw - 32px)); }
+.dialog::backdrop { background: rgb(20 20 24 / 0.45); }
+.dialog-body { padding: 20px; display: grid; gap: 12px; }
+.dialog-body h3 { margin: 0; }
+.tier { font: 700 0.72rem/1 var(--body); padding: 5px 10px; border-radius: 999px; white-space: nowrap; letter-spacing: 0.04em; text-transform: uppercase; }
+.tier-silver { background: linear-gradient(135deg, #f2f3f5, #c4c8cf); color: #3c4048; border: 1px solid #a9aeb7; }
+.tier-gold { background: linear-gradient(135deg, #fff2c2, #e2b33c); color: #5a3f00; border: 1px solid #c99a22; }
+.tier-platinum { background: linear-gradient(135deg, #f4f7fb, #b9c9de 55%, #e9eef5); color: #23324a; border: 1px solid #8fa3bf; }
+.marks { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 16px; align-items: center; margin-top: 12px; }
+.marks label { font-weight: 600; }
+.marks input { width: 7.5em; padding: 7px 9px; border: 1px solid var(--line); border-radius: 4px; font: inherit; }
+.marks .hint { color: var(--muted); font-weight: 400; font-size: 0.85rem; }
+.formgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 4px 20px; }
+.formgrid select, .form select { width: 100%; padding: 9px 10px; border: 1px solid var(--line); border-radius: 4px; font: inherit; background: #fff; }
+.check { display: flex; gap: 8px; align-items: center; font-weight: 400 !important; }
+.check input { width: auto !important; }
+.toolbar { display: flex; gap: 10px; align-items: center; justify-content: space-between; flex-wrap: wrap; }

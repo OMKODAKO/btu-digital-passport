@@ -1,7 +1,10 @@
+import TierBadge from "@/components/TierBadge";
 import { can, requireStaff } from "@/lib/auth/staff";
 import { SOURCE_LABEL, studentDetail } from "@/lib/admin";
 import { audit } from "@/lib/audit";
 import { txUrl } from "@/lib/explorer";
+import { takeFlash } from "@/lib/flash";
+import { listSubjects, studentResults } from "@/lib/subjects";
 import { verifyVersion } from "@/lib/verify";
 import AuditTable from "../../AuditTable";
 import { day, fmt } from "../../../format";
@@ -13,7 +16,7 @@ export default async function StudentRecord({
   searchParams,
 }: {
   params: Promise<{ studentId: string }>;
-  searchParams: Promise<{ retry?: string }>;
+  searchParams: Promise<{ retry?: string; new?: string; created?: string; marks?: string }>;
 }) {
   const staff = await requireStaff();
   const { studentId } = await params;
@@ -34,7 +37,10 @@ export default async function StudentRecord({
       d.versions.filter((v) => v.txHash).map(async (v) => [v.versionNo, await verifyVersion(v.verificationCode, null)] as const),
     ),
   );
-  const { retry } = await searchParams;
+  const { retry, created, marks } = await searchParams;
+  const login = takeFlash(created)?.split("\t");
+  const results = studentResults(d.student.id);
+  const subjects = listSubjects();
 
   return (
     <>
@@ -50,6 +56,51 @@ export default async function StudentRecord({
           <div><dt>Passport ID</dt><dd className="mono">{passport?.passportId ?? "none yet"}</dd></div>
           <div><dt>First issued</dt><dd>{passport ? day(passport.firstIssuedOn) : "not yet"}</dd></div>
         </dl>
+      </section>
+
+      {login && (
+        <section className="card" data-testid="new-login">
+          <h2>Test login created</h2>
+          <p className="alert info" role="status">
+            Email <strong className="mono">{login[0]}</strong> · password <strong className="mono" data-testid="new-password">{login[1]}</strong>
+          </p>
+          <p className="fine">Shown only now. It is also saved in the data folder&apos;s dev-credentials.txt, like every test login.</p>
+        </section>
+      )}
+
+      <section className="card" id="subjects" data-testid="subject-results">
+        <h2>Subject results</h2>
+        {marks !== undefined && <p className="alert info" role="status">{Number(marks) ? `${marks} mark(s) saved.` : "Nothing changed: the marks were already saved."}</p>}
+        {results.length === 0 ? (
+          <p className="muted">No marks yet.</p>
+        ) : (
+          <table className="table">
+            <thead><tr><th>Subject</th><th>Score</th><th>Badge</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              {results.map((r) => (
+                <tr key={r.subject.code} data-code={r.subject.code}>
+                  <td>{r.subject.nameEn}</td>
+                  <td className="mono" data-testid="score">{r.score ?? "—"}</td>
+                  <td>{r.status === "COMPLETE" ? <TierBadge tier={r.tier} /> : <span className="pill">Pending</span>}</td>
+                  <td>{r.status === "COMPLETE" ? "Complete" : `Missing: ${r.missing.join(", ")}`}</td>
+                  <td><a href={`/admin/students/${encodeURIComponent(student.studentId)}/marks/${encodeURIComponent(r.subject.code)}`}>
+                    {can(staff, "manage") ? "Edit marks" : "View"}</a></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+        {can(staff, "manage") && subjects.length > 0 && (
+          <form method="get" className="searchbar" style={{ marginTop: 14 }}
+            action={`/admin/students/${encodeURIComponent(student.studentId)}/marks/go`}>
+            <select name="subject" aria-label="Subject" defaultValue="">
+              <option value="" disabled>Choose a passport subject…</option>
+              {subjects.map((s) => <option key={s.code} value={s.code}>{s.nameEn}</option>)}
+            </select>
+            <button type="submit" className="button primary">Enter marks</button>
+          </form>
+        )}
+        <p className="fine">Badges: 60+ Silver, 70+ Gold, 90+ Platinum. A subject gets its score once every syllabus component has a mark.</p>
       </section>
 
       {passport && (

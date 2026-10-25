@@ -102,6 +102,7 @@ class GradesTest(unittest.TestCase):
                  (ST1, VIBE, {"Quizzes": -1}, "outside"),
                  (ST1, VIBE, {"Essay": 5}, "not in SUBJ-VIBE-CODING syllabus v1"),
                  (ST1, VIBE, {"Quizzes": "15"}, "must be a number"),
+                 (ST1, VIBE, {"Quizzes": 12.345}, "more than two decimals"),
                  (ST1, VIBE, {}, "no marks"),
                  ("BTU-T-9999", VIBE, FULL, "no student"),
                  (ST1, "SUBJ-NOPE", FULL, "no subject"),

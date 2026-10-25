@@ -1,13 +1,16 @@
-import { requireStaff } from "@/lib/auth/staff";
+import { can, requireStaff } from "@/lib/auth/staff";
 import { searchStudents, SOURCE_LABEL } from "@/lib/admin";
 
 export default async function FindStudent({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
-  await requireStaff();
+  const staff = await requireStaff();
   const q = String((await searchParams).q ?? "").slice(0, 120);
   const hits = q ? searchStudents(q) : [];
   return (
     <section className="card">
-      <h2>Find a student</h2>
+      <div className="toolbar">
+        <h2>Find a student</h2>
+        {can(staff, "manage") && <a className="button primary" href="/admin/students/new" data-testid="add-student">Add student</a>}
+      </div>
       <form method="get" className="searchbar">
         <input name="q" defaultValue={q} placeholder="Student ID, BTU email, Passport ID or verification code"
           aria-label="Identifier" autoComplete="off" spellCheck={false} />

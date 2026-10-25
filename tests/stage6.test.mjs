@@ -345,11 +345,16 @@ test("held and rejected skills stay as they are: no admin route can confirm a sk
   assert.ok(!page.includes('data-testid="retry-button"'), "nothing to retry: a held skill isn't a failure");
   const awarded = new Set(query("SELECT record_id FROM skill_awards").map((r) => r.record_id));
   for (const r of held) assert.ok(!awarded.has(r.record_id), r.record_id);
-  // the only state-changing admin endpoints are sign-in, sign-out and retry
+  // the only state-changing admin endpoints are sign-in, sign-out, retry, and (subject stage 03) adding a
+  // synthetic student and entering subject marks; none of them touches sheet records, skills or versions
   const routes = fs.readdirSync(path.resolve("src/app/api/admin")).sort();
-  assert.deepEqual(routes, ["login", "logout", "retry"]);
-  const retrySrc = fs.readFileSync(path.resolve("src/app/api/admin/retry/route.ts"), "utf8");
-  assert.ok(!/source_records|skill_awards|passport_versions/.test(retrySrc.replace(/^\s*\/\/.*$/gm, "")));
+  assert.deepEqual(routes, ["login", "logout", "marks", "retry", "students"]);
+  for (const [route, libs] of [["retry", []], ["students", ["src/lib/students.ts"]], ["marks", ["src/lib/subjects.ts"]]]) {
+    for (const f of [`src/app/api/admin/${route}/route.ts`, ...libs]) {
+      const src = fs.readFileSync(path.resolve(f), "utf8").replace(/^\s*(\/\/|\*).*$/gm, "");
+      assert.ok(!/source_records|skill_awards|passport_versions/.test(src), f);
+    }
+  }
 });
 
 test("the audit log records issuance and staff actions, can't be edited, and holds no secrets", async () => {
