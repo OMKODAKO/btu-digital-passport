@@ -16,8 +16,8 @@ const env = { ...process.env, DATA_DIR: dataDir, PASSPORT_ISSUANCE_MODE: "local-
 const OPERATOR = "ops.demo@staff.example.org";
 const VIEWER = "viewer.demo@staff.example.org";
 const ST = "BTU-T-0001";
-const VIBE = "SUBJ-VIBE-CODING"; // points out of 100: Quizzes 10, Assignments 20, Agent project 30, Midterm exam 15, Final exam 25
-const FULL = { c1: "8", c2: "15", c3: "24", c4: "10", c5: "20" }; // 77.00, Gold
+const VIBE = "SUBJ-VIBE-CODING"; // points out of 100: Quizzes 15, Assignments 20, Agent project 10, Midterm exam 25, Final exam 30
+const FULL = { c1: "12", c2: "15", c3: "8", c4: "19", c5: "23" }; // 77.00, Gold
 const PASSPORT_TABLES = ["passports", "passport_versions", "version_source_records", "skill_awards", "catalog_skills", "source_records"];
 const accounts = new Map();
 let server, ops, viewer, before_;
@@ -179,11 +179,11 @@ test("a correction keeps the old mark; the same marks again change nothing", asy
   assert.equal((await marks(ops, FULL)).headers.get("location"), `/admin/students/${ST}?marks=0#subjects`);
   assert.equal(entries().length, before);
 
-  await marks(ops, { c5: "25", note: "re-marked" });
+  await marks(ops, { c5: "28", note: "re-marked" });
   const all = entries();
   assert.equal(all.length, before + 1);
   const finals = all.filter((e) => e.component_fk === all.at(-1).component_fk);
-  assert.deepEqual(finals.map((e) => e.points), [20, 25]);
+  assert.deepEqual(finals.map((e) => e.points), [23, 28]);
   assert.equal(finals[1].supersedes_fk, finals[0].id);
   assert.equal(finals[1].note, "re-marked");
   const html = await page(`/admin/students/${ST}`, ops);
@@ -196,7 +196,7 @@ test("a correction keeps the old mark; the same marks again change nothing", asy
 test("bad marks are refused with a message and nothing is stored", async () => {
   const before = entries().length;
   for (const [form, msg, subject] of [
-    [{ c1: "11" }, "outside 0–10"],
+    [{ c1: "16" }, "outside 0–15"],
     [{ c1: "-1" }, "outside"],
     [{ c1: "2.345" }, "more than two decimals"],
     [{ c1: "abc" }, "is not a number"],
@@ -232,7 +232,7 @@ test("course results: one line per student per course, on the page and as CSV", 
   assert.equal(lines.length, 3, "header + two student-course lines");
   assert.match(lines[0], /^"Student ID","First name"/);
   const one = lines.find((l) => l.startsWith(`"${ST}"`));
-  assert.ok(one.includes(`"${VIBE}"`) && one.includes('"8","15","24","10","25","82.00","Gold","Complete"'), one);
+  assert.ok(one.includes(`"${VIBE}"`) && one.includes('"12","15","8","19","28","82.00","Gold","Complete"'), one);
   assert.equal((await get("/api/admin/courses")).status, 401);
   assert.equal(query("SELECT COUNT(*) AS n FROM audit_log WHERE action = 'COURSE_RESULTS_EXPORTED'")[0].n, 1);
 });

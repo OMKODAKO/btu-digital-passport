@@ -38,8 +38,8 @@ exactly that sum for current syllabi and still scores marks entered under an old
 | 60–69.99 | Silver |
 | below 60 | no badge |
 
-Example (Vibe Coding): quizzes 8/10, assignments 15/20, project 24/30, midterm 10/15, final 20/25
-→ 8 + 15 + 24 + 10 + 20 = **77.00 → Gold**.
+Every subject uses the same split (Merabi, 2026-10-25): **quizzes 15, assignments 20, project 10,
+midterm 25, final 30**. Example: 12 + 15 + 8 + 19 + 23 = **77.00 → Gold**.
 
 ## Passport subjects
 
@@ -72,7 +72,7 @@ Example (Vibe Coding): quizzes 8/10, assignments 15/20, project 24/30, midterm 1
 
 ```bash
 python3 -m worker grades add --student BTU-T-0001 --subject SUBJ-VIBE-CODING \
-  "Quizzes=8" "Assignments=15" "Agent project=24" "Midterm exam=10" "Final exam=20"
+  "Quizzes=12" "Assignments=15" "Agent project=8" "Midterm exam=19" "Final exam=23"
 python3 -m worker grades show --student BTU-T-0001     # SUBJ-VIBE-CODING  77.00  GOLD
 ```
 

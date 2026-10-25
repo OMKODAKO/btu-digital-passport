@@ -14,8 +14,8 @@
         {
           "kind": "QUIZ",
           "label": "Quizzes",
-          "weight": 10,
-          "max_points": 10
+          "weight": 15,
+          "max_points": 15
         },
         {
           "kind": "ASSIGNMENT",
@@ -26,20 +26,20 @@
         {
           "kind": "PROJECT",
           "label": "Agent project",
-          "weight": 30,
-          "max_points": 30
+          "weight": 10,
+          "max_points": 10
         },
         {
           "kind": "MIDTERM",
           "label": "Midterm exam",
-          "weight": 15,
-          "max_points": 15
+          "weight": 25,
+          "max_points": 25
         },
         {
           "kind": "FINAL",
           "label": "Final exam",
-          "weight": 25,
-          "max_points": 25
+          "weight": 30,
+          "max_points": 30
         }
       ]
     },
@@ -55,8 +55,8 @@
         {
           "kind": "QUIZ",
           "label": "Quizzes",
-          "weight": 10,
-          "max_points": 10
+          "weight": 15,
+          "max_points": 15
         },
         {
           "kind": "ASSIGNMENT",
@@ -67,20 +67,20 @@
         {
           "kind": "PROJECT",
           "label": "Course project",
-          "weight": 25,
-          "max_points": 25
+          "weight": 10,
+          "max_points": 10
         },
         {
           "kind": "MIDTERM",
           "label": "Midterm exam",
-          "weight": 20,
-          "max_points": 20
+          "weight": 25,
+          "max_points": 25
         },
         {
           "kind": "FINAL",
           "label": "Final exam",
-          "weight": 25,
-          "max_points": 25
+          "weight": 30,
+          "max_points": 30
         }
       ]
     },
@@ -96,8 +96,8 @@
         {
           "kind": "QUIZ",
           "label": "Quizzes",
-          "weight": 10,
-          "max_points": 10
+          "weight": 15,
+          "max_points": 15
         },
         {
           "kind": "ASSIGNMENT",
@@ -108,20 +108,20 @@
         {
           "kind": "PROJECT",
           "label": "Course project",
-          "weight": 25,
-          "max_points": 25
+          "weight": 10,
+          "max_points": 10
         },
         {
           "kind": "MIDTERM",
           "label": "Midterm exam",
-          "weight": 20,
-          "max_points": 20
+          "weight": 25,
+          "max_points": 25
         },
         {
           "kind": "FINAL",
           "label": "Final exam",
-          "weight": 25,
-          "max_points": 25
+          "weight": 30,
+          "max_points": 30
         }
       ]
     },
@@ -137,8 +137,8 @@
         {
           "kind": "QUIZ",
           "label": "Quizzes",
-          "weight": 10,
-          "max_points": 10
+          "weight": 15,
+          "max_points": 15
         },
         {
           "kind": "ASSIGNMENT",
@@ -149,20 +149,20 @@
         {
           "kind": "PROJECT",
           "label": "Course project",
-          "weight": 25,
-          "max_points": 25
+          "weight": 10,
+          "max_points": 10
         },
         {
           "kind": "MIDTERM",
           "label": "Midterm exam",
-          "weight": 20,
-          "max_points": 20
+          "weight": 25,
+          "max_points": 25
         },
         {
           "kind": "FINAL",
           "label": "Final exam",
-          "weight": 25,
-          "max_points": 25
+          "weight": 30,
+          "max_points": 30
         }
       ]
     },
@@ -178,26 +178,26 @@
         {
           "kind": "QUIZ",
           "label": "Quizzes",
-          "weight": 10,
-          "max_points": 10
-        },
-        {
-          "kind": "ASSIGNMENT",
-          "label": "Programming assignments",
-          "weight": 25,
-          "max_points": 25
-        },
-        {
-          "kind": "PROJECT",
-          "label": "Project",
           "weight": 15,
           "max_points": 15
         },
         {
-          "kind": "MIDTERM",
-          "label": "Midterm exam",
+          "kind": "ASSIGNMENT",
+          "label": "Programming assignments",
           "weight": 20,
           "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
         },
         {
           "kind": "FINAL",
@@ -219,26 +219,26 @@
         {
           "kind": "QUIZ",
           "label": "Quizzes",
-          "weight": 10,
-          "max_points": 10
-        },
-        {
-          "kind": "ASSIGNMENT",
-          "label": "Programming assignments",
-          "weight": 25,
-          "max_points": 25
-        },
-        {
-          "kind": "PROJECT",
-          "label": "Project",
           "weight": 15,
           "max_points": 15
         },
         {
-          "kind": "MIDTERM",
-          "label": "Midterm exam",
+          "kind": "ASSIGNMENT",
+          "label": "Programming assignments",
           "weight": 20,
           "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
         },
         {
           "kind": "FINAL",
@@ -260,26 +260,26 @@
         {
           "kind": "QUIZ",
           "label": "Quizzes",
-          "weight": 10,
-          "max_points": 10
-        },
-        {
-          "kind": "ASSIGNMENT",
-          "label": "Programming assignments",
-          "weight": 25,
-          "max_points": 25
-        },
-        {
-          "kind": "PROJECT",
-          "label": "Project",
           "weight": 15,
           "max_points": 15
         },
         {
-          "kind": "MIDTERM",
-          "label": "Midterm exam",
+          "kind": "ASSIGNMENT",
+          "label": "Programming assignments",
           "weight": 20,
           "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
         },
         {
           "kind": "FINAL",
@@ -301,26 +301,26 @@
         {
           "kind": "QUIZ",
           "label": "Quizzes",
-          "weight": 10,
-          "max_points": 10
-        },
-        {
-          "kind": "ASSIGNMENT",
-          "label": "Labs",
-          "weight": 25,
-          "max_points": 25
-        },
-        {
-          "kind": "PROJECT",
-          "label": "Project",
           "weight": 15,
           "max_points": 15
         },
         {
-          "kind": "MIDTERM",
-          "label": "Midterm exam",
+          "kind": "ASSIGNMENT",
+          "label": "Labs",
           "weight": 20,
           "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
         },
         {
           "kind": "FINAL",
@@ -348,20 +348,26 @@
         {
           "kind": "ASSIGNMENT",
           "label": "Problem sets",
-          "weight": 15,
-          "max_points": 15
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
         },
         {
           "kind": "MIDTERM",
           "label": "Midterm exam",
-          "weight": 30,
-          "max_points": 30
+          "weight": 25,
+          "max_points": 25
         },
         {
           "kind": "FINAL",
           "label": "Final exam",
-          "weight": 40,
-          "max_points": 40
+          "weight": 30,
+          "max_points": 30
         }
       ]
     },
@@ -383,20 +389,26 @@
         {
           "kind": "ASSIGNMENT",
           "label": "Problem sets",
-          "weight": 15,
-          "max_points": 15
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
         },
         {
           "kind": "MIDTERM",
           "label": "Midterm exam",
-          "weight": 30,
-          "max_points": 30
+          "weight": 25,
+          "max_points": 25
         },
         {
           "kind": "FINAL",
           "label": "Final exam",
-          "weight": 40,
-          "max_points": 40
+          "weight": 30,
+          "max_points": 30
         }
       ]
     },
@@ -412,26 +424,26 @@
         {
           "kind": "QUIZ",
           "label": "Quizzes",
-          "weight": 10,
-          "max_points": 10
-        },
-        {
-          "kind": "ASSIGNMENT",
-          "label": "Labs",
-          "weight": 25,
-          "max_points": 25
-        },
-        {
-          "kind": "PROJECT",
-          "label": "Project",
           "weight": 15,
           "max_points": 15
         },
         {
-          "kind": "MIDTERM",
-          "label": "Midterm exam",
+          "kind": "ASSIGNMENT",
+          "label": "Labs",
           "weight": 20,
           "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
         },
         {
           "kind": "FINAL",
@@ -453,26 +465,26 @@
         {
           "kind": "QUIZ",
           "label": "Quizzes",
-          "weight": 10,
-          "max_points": 10
-        },
-        {
-          "kind": "ASSIGNMENT",
-          "label": "Labs",
-          "weight": 25,
-          "max_points": 25
-        },
-        {
-          "kind": "PROJECT",
-          "label": "Project",
           "weight": 15,
           "max_points": 15
         },
         {
-          "kind": "MIDTERM",
-          "label": "Midterm exam",
+          "kind": "ASSIGNMENT",
+          "label": "Labs",
           "weight": 20,
           "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
         },
         {
           "kind": "FINAL",
@@ -494,32 +506,32 @@
         {
           "kind": "QUIZ",
           "label": "Quizzes",
-          "weight": 10,
-          "max_points": 10
-        },
-        {
-          "kind": "ASSIGNMENT",
-          "label": "Assignments",
-          "weight": 30,
-          "max_points": 30
-        },
-        {
-          "kind": "PROJECT",
-          "label": "Project",
-          "weight": 20,
-          "max_points": 20
-        },
-        {
-          "kind": "MIDTERM",
-          "label": "Midterm exam",
           "weight": 15,
           "max_points": 15
         },
         {
-          "kind": "FINAL",
-          "label": "Final exam",
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
           "weight": 25,
           "max_points": 25
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 30
         }
       ]
     },
@@ -541,20 +553,26 @@
         {
           "kind": "ASSIGNMENT",
           "label": "Problem sets",
-          "weight": 15,
-          "max_points": 15
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
         },
         {
           "kind": "MIDTERM",
           "label": "Midterm exam",
-          "weight": 30,
-          "max_points": 30
+          "weight": 25,
+          "max_points": 25
         },
         {
           "kind": "FINAL",
           "label": "Final exam",
-          "weight": 40,
-          "max_points": 40
+          "weight": 30,
+          "max_points": 30
         }
       ]
     },
@@ -570,26 +588,26 @@
         {
           "kind": "QUIZ",
           "label": "Quizzes",
-          "weight": 10,
-          "max_points": 10
-        },
-        {
-          "kind": "ASSIGNMENT",
-          "label": "Labs",
-          "weight": 25,
-          "max_points": 25
-        },
-        {
-          "kind": "PROJECT",
-          "label": "Project",
           "weight": 15,
           "max_points": 15
         },
         {
-          "kind": "MIDTERM",
-          "label": "Midterm exam",
+          "kind": "ASSIGNMENT",
+          "label": "Labs",
           "weight": 20,
           "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
         },
         {
           "kind": "FINAL",
@@ -617,20 +635,26 @@
         {
           "kind": "ASSIGNMENT",
           "label": "Problem sets",
-          "weight": 15,
-          "max_points": 15
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
         },
         {
           "kind": "MIDTERM",
           "label": "Midterm exam",
-          "weight": 30,
-          "max_points": 30
+          "weight": 25,
+          "max_points": 25
         },
         {
           "kind": "FINAL",
           "label": "Final exam",
-          "weight": 40,
-          "max_points": 40
+          "weight": 30,
+          "max_points": 30
         }
       ]
     },
@@ -646,26 +670,26 @@
         {
           "kind": "QUIZ",
           "label": "Quizzes",
-          "weight": 10,
-          "max_points": 10
-        },
-        {
-          "kind": "ASSIGNMENT",
-          "label": "Labs",
-          "weight": 25,
-          "max_points": 25
-        },
-        {
-          "kind": "PROJECT",
-          "label": "Project",
           "weight": 15,
           "max_points": 15
         },
         {
-          "kind": "MIDTERM",
-          "label": "Midterm exam",
+          "kind": "ASSIGNMENT",
+          "label": "Labs",
           "weight": 20,
           "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
         },
         {
           "kind": "FINAL",
@@ -687,26 +711,26 @@
         {
           "kind": "QUIZ",
           "label": "Quizzes",
-          "weight": 10,
-          "max_points": 10
-        },
-        {
-          "kind": "ASSIGNMENT",
-          "label": "Programming assignments",
-          "weight": 25,
-          "max_points": 25
-        },
-        {
-          "kind": "PROJECT",
-          "label": "Project",
           "weight": 15,
           "max_points": 15
         },
         {
-          "kind": "MIDTERM",
-          "label": "Midterm exam",
+          "kind": "ASSIGNMENT",
+          "label": "Programming assignments",
           "weight": 20,
           "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
         },
         {
           "kind": "FINAL",
@@ -728,26 +752,26 @@
         {
           "kind": "QUIZ",
           "label": "Quizzes",
-          "weight": 10,
-          "max_points": 10
-        },
-        {
-          "kind": "ASSIGNMENT",
-          "label": "Labs",
-          "weight": 25,
-          "max_points": 25
-        },
-        {
-          "kind": "PROJECT",
-          "label": "Project",
           "weight": 15,
           "max_points": 15
         },
         {
-          "kind": "MIDTERM",
-          "label": "Midterm exam",
+          "kind": "ASSIGNMENT",
+          "label": "Labs",
           "weight": 20,
           "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
         },
         {
           "kind": "FINAL",
@@ -769,26 +793,26 @@
         {
           "kind": "QUIZ",
           "label": "Quizzes",
-          "weight": 10,
-          "max_points": 10
-        },
-        {
-          "kind": "ASSIGNMENT",
-          "label": "Programming assignments",
-          "weight": 25,
-          "max_points": 25
-        },
-        {
-          "kind": "PROJECT",
-          "label": "Project",
           "weight": 15,
           "max_points": 15
         },
         {
-          "kind": "MIDTERM",
-          "label": "Midterm exam",
+          "kind": "ASSIGNMENT",
+          "label": "Programming assignments",
           "weight": 20,
           "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
         },
         {
           "kind": "FINAL",
@@ -810,32 +834,32 @@
         {
           "kind": "QUIZ",
           "label": "Quizzes",
-          "weight": 10,
-          "max_points": 10
-        },
-        {
-          "kind": "ASSIGNMENT",
-          "label": "Assignments",
-          "weight": 30,
-          "max_points": 30
-        },
-        {
-          "kind": "PROJECT",
-          "label": "Project",
-          "weight": 20,
-          "max_points": 20
-        },
-        {
-          "kind": "MIDTERM",
-          "label": "Midterm exam",
           "weight": 15,
           "max_points": 15
         },
         {
-          "kind": "FINAL",
-          "label": "Final exam",
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
           "weight": 25,
           "max_points": 25
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 30
         }
       ]
     },
@@ -851,32 +875,32 @@
         {
           "kind": "QUIZ",
           "label": "Quizzes",
-          "weight": 10,
-          "max_points": 10
-        },
-        {
-          "kind": "ASSIGNMENT",
-          "label": "Assignments",
-          "weight": 30,
-          "max_points": 30
-        },
-        {
-          "kind": "PROJECT",
-          "label": "Project",
-          "weight": 20,
-          "max_points": 20
-        },
-        {
-          "kind": "MIDTERM",
-          "label": "Midterm exam",
           "weight": 15,
           "max_points": 15
         },
         {
-          "kind": "FINAL",
-          "label": "Final exam",
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
           "weight": 25,
           "max_points": 25
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 30
         }
       ]
     },
@@ -892,32 +916,32 @@
         {
           "kind": "QUIZ",
           "label": "Quizzes",
-          "weight": 10,
-          "max_points": 10
-        },
-        {
-          "kind": "ASSIGNMENT",
-          "label": "Assignments",
-          "weight": 30,
-          "max_points": 30
-        },
-        {
-          "kind": "PROJECT",
-          "label": "Project",
-          "weight": 20,
-          "max_points": 20
-        },
-        {
-          "kind": "MIDTERM",
-          "label": "Midterm exam",
           "weight": 15,
           "max_points": 15
         },
         {
-          "kind": "FINAL",
-          "label": "Final exam",
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
           "weight": 25,
           "max_points": 25
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 30
         }
       ]
     },
@@ -933,32 +957,32 @@
         {
           "kind": "QUIZ",
           "label": "Quizzes",
-          "weight": 10,
-          "max_points": 10
-        },
-        {
-          "kind": "ASSIGNMENT",
-          "label": "Assignments",
-          "weight": 30,
-          "max_points": 30
-        },
-        {
-          "kind": "PROJECT",
-          "label": "Project",
-          "weight": 20,
-          "max_points": 20
-        },
-        {
-          "kind": "MIDTERM",
-          "label": "Midterm exam",
           "weight": 15,
           "max_points": 15
         },
         {
-          "kind": "FINAL",
-          "label": "Final exam",
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
           "weight": 25,
           "max_points": 25
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 30
         }
       ]
     },
@@ -980,20 +1004,26 @@
         {
           "kind": "ASSIGNMENT",
           "label": "Problem sets",
-          "weight": 15,
-          "max_points": 15
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
         },
         {
           "kind": "MIDTERM",
           "label": "Midterm exam",
-          "weight": 30,
-          "max_points": 30
+          "weight": 25,
+          "max_points": 25
         },
         {
           "kind": "FINAL",
           "label": "Final exam",
-          "weight": 40,
-          "max_points": 40
+          "weight": 30,
+          "max_points": 30
         }
       ]
     },
@@ -1015,20 +1045,26 @@
         {
           "kind": "ASSIGNMENT",
           "label": "Problem sets",
-          "weight": 15,
-          "max_points": 15
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
         },
         {
           "kind": "MIDTERM",
           "label": "Midterm exam",
-          "weight": 30,
-          "max_points": 30
+          "weight": 25,
+          "max_points": 25
         },
         {
           "kind": "FINAL",
           "label": "Final exam",
-          "weight": 40,
-          "max_points": 40
+          "weight": 30,
+          "max_points": 30
         }
       ]
     },
@@ -1044,32 +1080,32 @@
         {
           "kind": "QUIZ",
           "label": "Quizzes",
-          "weight": 10,
-          "max_points": 10
-        },
-        {
-          "kind": "ASSIGNMENT",
-          "label": "Assignments",
-          "weight": 30,
-          "max_points": 30
-        },
-        {
-          "kind": "PROJECT",
-          "label": "Project",
-          "weight": 20,
-          "max_points": 20
-        },
-        {
-          "kind": "MIDTERM",
-          "label": "Midterm exam",
           "weight": 15,
           "max_points": 15
         },
         {
-          "kind": "FINAL",
-          "label": "Final exam",
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
           "weight": 25,
           "max_points": 25
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 30
         }
       ]
     },
@@ -1085,32 +1121,32 @@
         {
           "kind": "QUIZ",
           "label": "Quizzes",
-          "weight": 10,
-          "max_points": 10
-        },
-        {
-          "kind": "ASSIGNMENT",
-          "label": "Assignments",
-          "weight": 30,
-          "max_points": 30
-        },
-        {
-          "kind": "PROJECT",
-          "label": "Project",
-          "weight": 20,
-          "max_points": 20
-        },
-        {
-          "kind": "MIDTERM",
-          "label": "Midterm exam",
           "weight": 15,
           "max_points": 15
         },
         {
-          "kind": "FINAL",
-          "label": "Final exam",
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
           "weight": 25,
           "max_points": 25
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 30
         }
       ]
     },
@@ -1132,20 +1168,26 @@
         {
           "kind": "ASSIGNMENT",
           "label": "Problem sets",
-          "weight": 15,
-          "max_points": 15
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
         },
         {
           "kind": "MIDTERM",
           "label": "Midterm exam",
-          "weight": 30,
-          "max_points": 30
+          "weight": 25,
+          "max_points": 25
         },
         {
           "kind": "FINAL",
           "label": "Final exam",
-          "weight": 40,
-          "max_points": 40
+          "weight": 30,
+          "max_points": 30
         }
       ]
     }

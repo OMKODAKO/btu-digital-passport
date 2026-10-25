@@ -25,8 +25,8 @@ from worker.tests.test_subjects import EXISTING, dump
 
 TMP_ROOT = Path(tempfile.mkdtemp(prefix="bdp-grades-"))
 ST1, ST2 = "BTU-T-0001", "BTU-T-0002"
-VIBE = "SUBJ-VIBE-CODING"   # points out of 100: Quizzes 10, Assignments 20, Agent project 30, Midterm exam 15, Final exam 25
-FULL = {"Quizzes": 8, "Assignments": 15, "Agent project": 24, "Midterm exam": 10, "Final exam": 20}   # 77.00
+VIBE = "SUBJ-VIBE-CODING"   # points out of 100: Quizzes 15, Assignments 20, Agent project 10, Midterm exam 25, Final exam 30
+FULL = {"Quizzes": 12, "Assignments": 15, "Agent project": 8, "Midterm exam": 19, "Final exam": 23}   # 77.00
 
 
 def setUpModule():
@@ -62,10 +62,10 @@ class GradesTest(unittest.TestCase):
         self.assertEqual((res.status, res.score, res.tier, res.syllabus_version), ("COMPLETE", Decimal("77.00"), "GOLD", 1))
 
     def test_tiers_from_real_marks(self):
-        cases = [({**FULL, "Agent project": 14.1}, Decimal("67.10"), "SILVER"),
-                 ({"Quizzes": 10, "Assignments": 20, "Agent project": 28.5, "Midterm exam": 13.5, "Final exam": 23},
+        cases = [({**FULL, "Final exam": 13.1}, Decimal("67.10"), "SILVER"),
+                 ({"Quizzes": 15, "Assignments": 20, "Agent project": 9, "Midterm exam": 23, "Final exam": 28},
                   Decimal("95.00"), "PLATINUM"),
-                 ({"Quizzes": 5, "Assignments": 10, "Agent project": 15, "Midterm exam": 7.5, "Final exam": 12.5},
+                 ({"Quizzes": 7.5, "Assignments": 10, "Agent project": 5, "Midterm exam": 12.5, "Final exam": 15},
                   Decimal("50.00"), None)]
         for i, (marks, score, tier) in enumerate(cases):
             with self.subTest(tier):
@@ -75,18 +75,18 @@ class GradesTest(unittest.TestCase):
                 self.assertEqual((res.score, res.tier), (score, tier))
 
     def test_partial_marks_are_in_progress_without_a_badge(self):
-        record_marks(self.conn, ST1, VIBE, {"Quizzes": 10, "Midterm exam": 15}, entered_by="t")
+        record_marks(self.conn, ST1, VIBE, {"Quizzes": 15, "Midterm exam": 25}, entered_by="t")
         res = self.result()
         self.assertEqual((res.status, res.score, res.tier), ("IN_PROGRESS", None, None))
         self.assertEqual(res.missing, ["Assignments", "Agent project", "Final exam"])
 
     def test_a_correction_is_a_new_row_and_the_old_mark_stays(self):
         record_marks(self.conn, ST1, VIBE, FULL, entered_by="t")
-        r = record_marks(self.conn, ST1, VIBE, {"Final exam": 25, "Quizzes": 8}, entered_by="t2", note="re-marked")
+        r = record_marks(self.conn, ST1, VIBE, {"Final exam": 28, "Quizzes": 12}, entered_by="t2", note="re-marked")
         self.assertEqual((r["added"], r["corrected"], r["unchanged"]), ([], ["Final exam"], ["Quizzes"]))
         self.assertEqual(self.result().score, Decimal("82.00"))
         finals = [h for h in mark_history(self.conn, ST1, VIBE) if h["label"] == "Final exam"]
-        self.assertEqual([h["points"] for h in finals], [20, 25])
+        self.assertEqual([h["points"] for h in finals], [23, 28])
         self.assertEqual(finals[1]["supersedes_fk"], finals[0]["id"])
         self.assertEqual(self.conn.execute("SELECT COUNT(*) FROM audit_log WHERE action = 'GRADES_RECORDED'").fetchone()[0], 2)
 
@@ -98,7 +98,7 @@ class GradesTest(unittest.TestCase):
         self.assertEqual((dump(self.conn, "grade_entries"), dump(self.conn, "audit_log")), before)
 
     def test_bad_input_stores_nothing(self):
-        cases = [(ST1, VIBE, {**FULL, "Quizzes": 11}, "outside 0–10"),
+        cases = [(ST1, VIBE, {**FULL, "Quizzes": 16}, "outside 0–15"),
                  (ST1, VIBE, {"Quizzes": -1}, "outside"),
                  (ST1, VIBE, {"Essay": 5}, "not in SUBJ-VIBE-CODING syllabus v1"),
                  (ST1, VIBE, {"Quizzes": "8"}, "must be a number"),
@@ -138,14 +138,14 @@ class GradesTest(unittest.TestCase):
     def test_existing_passport_data_is_untouched(self):
         before = {t: dump(self.conn, t) for t in EXISTING}
         record_marks(self.conn, ST1, VIBE, FULL, entered_by="t")
-        record_marks(self.conn, ST1, VIBE, {"Final exam": 25}, entered_by="t")
+        record_marks(self.conn, ST1, VIBE, {"Final exam": 28}, entered_by="t")
         self.assertEqual({t: dump(self.conn, t) for t in EXISTING}, before)
 
     def test_command_line(self):
         self.conn.close()
-        self.assertEqual(cli(["grades", "add", "--student", ST1, "--subject", VIBE, "Quizzes=8", "Assignments=15",
-                              "Agent project=24", "Midterm exam=10", "Final exam=20"]), 0)
-        self.assertEqual(cli(["grades", "add", "--student", ST1, "--subject", VIBE, "Quizzes=11"]), 2)
+        self.assertEqual(cli(["grades", "add", "--student", ST1, "--subject", VIBE, "Quizzes=12", "Assignments=15",
+                              "Agent project=8", "Midterm exam=19", "Final exam=23"]), 0)
+        self.assertEqual(cli(["grades", "add", "--student", ST1, "--subject", VIBE, "Quizzes=16"]), 2)
         self.assertEqual(cli(["grades", "add", "--student", ST1, "--subject", VIBE, "Quizzes"]), 2)
         self.assertEqual(cli(["grades", "show", "--student", ST1]), 0)
         self.conn = connect()

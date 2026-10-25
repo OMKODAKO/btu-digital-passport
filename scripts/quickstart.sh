@@ -79,4 +79,6 @@ echo "More:      npm run demo:add-skill   (in a second terminal: adds a CONFIRME
 
 say "Starting the app on http://localhost:$PORT  (Ctrl+C stops it; the devnet keeps running)"
 set -a; . "$DEMO_DIR/demo.env"; set +a
+# own cookie names, so signing in here never signs you out of another copy of the portal on localhost
+export PASSPORT_COOKIE_PREFIX="${PASSPORT_COOKIE_PREFIX:-bdp_demo_$PORT}"
 exec node_modules/.bin/next start -p "$PORT"

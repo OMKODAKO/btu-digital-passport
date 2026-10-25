@@ -3,7 +3,7 @@
 catalog.json holds every course from the BTU course list with its ECTS credits, whether it counts
 toward the AI Skills Digital Passport, and a SIMULATED syllabus: BTU's real syllabi are not available,
 so each subject gets components (quizzes, assignments, project, midterm, final) worth points that add
-up to 100 (e.g. quizzes 10, assignments 20, project 30, midterm 15, final 25): a component's maximum is
+up to 100 (quizzes 15, assignments 20, project 10, midterm 25, final 30): a component's maximum is
 its weight, and a subject's score is simply the sum of its marks. load_catalog() adds what the database
 is missing and never changes or removes existing rows; a changed syllabus is added as a new version.
 """

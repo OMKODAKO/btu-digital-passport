@@ -159,6 +159,9 @@ class LoadTests(unittest.TestCase):
         for s in read_catalog()["subjects"]:
             self.assertEqual(sum(c["max_points"] for c in s["syllabus"]), 100, s["code"])
             self.assertTrue(all(c["max_points"] == c["weight"] for c in s["syllabus"]), s["code"])
+            # Merabi's split (2026-10-25): quizzes 15, assignments 20, project 10, midterm 25, final 30
+            self.assertEqual({c["kind"]: c["weight"] for c in s["syllabus"]},
+                             {"QUIZ": 15, "ASSIGNMENT": 20, "PROJECT": 10, "MIDTERM": 25, "FINAL": 30}, s["code"])
 
     def test_syllabi_and_subjects_are_append_only(self):
         conn = fresh("frozen")
