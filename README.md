@@ -111,7 +111,7 @@ them; the web app and worker also apply them on start. Moving to Postgres is pla
 **Sign-in.** No passwords. Google sign-in (OpenID Connect, code flow with PKCE, checked on the server; the first
 sign-in links the Google account to the student or staff record with the same verified email) needs an OAuth client
 for BTU's Google Workspace: [docs/GOOGLE-SIGNIN.md](docs/GOOGLE-SIGNIN.md). The local demo adds one-click sign-in
-(`PASSPORT_DEMO_LOGIN=1`, set by `quickstart`). The old password forms return only with `PASSPORT_PASSWORD_LOGIN=1`,
+(`PASSPORT_DEMO_LOGIN=1`, set by `quickstart` and `npm run demo:start`, which then listen on 127.0.0.1 only). The old password forms return only with `PASSPORT_PASSWORD_LOGIN=1`,
 which the automated tests use.
 
 **Blockchain and issuer.** See [chain/README.md](chain/README.md): deploy, `set-issuer`, write the trust anchor, set

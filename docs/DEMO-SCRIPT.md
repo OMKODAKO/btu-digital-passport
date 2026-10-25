@@ -2,8 +2,9 @@
 
 Everything runs on one laptop: a **local Hardhat devnet** (not a public test network), the worker, and the web app.
 Say this at the start: *"Blockchain records are on a local test chain, and the issuer is a BTU TEST issuer. BTU has
-not authorised an official issuer yet. Sign-in uses test passwords, and the source is the Excel workbook: Google
-sign-in and the Google Sheets reader are not built."*
+not authorised an official issuer yet. There are no passwords: in this local demo you pick a student from a list;
+a real deployment uses Google sign-in (built, needs BTU's OAuth client). The source is the Excel workbook: the
+Google Sheets reader is not built."*
 
 ## Before the demo (once, ~2 minutes)
 
@@ -14,14 +15,14 @@ npm run quickstart        # installs, builds, devnet + registry + TEST issuer, 1
 (The same by hand: `npm ci && (cd chain && npm ci)`, a `.venv` with `worker/requirements.txt`, `npm run build`,
 `npm run demo:setup`, `npm run demo:start`.)
 
-Open `data-demo/dev-credentials.txt` for the passwords. Keep two browser windows: a normal one (student) and a
+Sign in by picking a student on `/login` (staff: **Demo Operator** on `/admin/login`). Keep two browser windows: a normal one (student) and a
 private one (employer, no login). To rehearse again from zero: move `data-demo/` away and run `demo:setup` again.
 
 ## The script
 
 | # | Do | Show / say | Status |
 | --- | --- | --- | --- |
-| 1 | Sign in as `btu-t-0001@example.org` with its test password | "BTU Google sign-in would sit here. Today: test passwords." | BLOCKED (Google), equivalent works |
+| 1 | Sign in as Giorgi Kapanadze (BTU-T-0001) from the demo list | "A real deployment signs in with Google; the demo list stands in for it." | Google built, needs BTU's OAuth client |
 | 2 | Sign in as `someone@gmail.com` | Refused. Only `STUDENT_EMAIL_DOMAINS` (example.org for the test data) may sign in | BLOCKED (Google hosted-domain check), equivalent works |
 | 3–4 | Student 1 signs in | Lands straight on the dashboard: Giorgi Kapanadze, Passport ID **BTU-AI-000125**, first issued 15 Sept 2026 | PASS |
 | 5 | Scroll the PDF, click **Download PDF** | 4-page PDF on BTU's template; V1 with its verification code | PASS |
