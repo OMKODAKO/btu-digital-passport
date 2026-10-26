@@ -1,5 +1,6 @@
 import AppHeader from "@/components/AppHeader";
 import PassportFrame from "@/components/PassportFrame";
+import PassportStickers from "@/components/PassportStickers";
 import { getCurrentStudent } from "@/lib/auth/session";
 
 export const metadata = {
@@ -69,13 +70,7 @@ export default async function Home() {
           </div>
           <div className="lp-hero-art">
             <span className="lp-stars" aria-hidden="true">✱<br />✱<br />✱</span>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/brand/passport-stickers.png"
-              width={804}
-              height={492}
-              alt="პასპორტის სტიკერები: Issued by Business and Technology University, Blockchain verified, Latest AI skillset"
-            />
+            <PassportStickers label="პასპორტის სტიკერები: Issued by Business and Technology University, Blockchain verified, Latest AI skillset" />
           </div>
         </section>
 
