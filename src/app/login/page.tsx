@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import AppHeader from "@/components/AppHeader";
 import PassportFrame from "@/components/PassportFrame";
+import PassportStickers from "@/components/PassportStickers";
 import { getCurrentStudent } from "@/lib/auth/session";
 import { DEMO_LOGIN, GOOGLE_LOGIN, PASSWORD_LOGIN } from "@/lib/config";
 import { getDb } from "@/lib/db";
@@ -44,10 +45,9 @@ export default async function LoginPage({
         <h1 className="lp-title pp-auth-title"><strong>Your AI skills,</strong> verified by BTU</h1>
         <hr className="lp-rule" />
         <p className="lp-lead">
-          ციფრული პასპორტი: ნახე და ჩამოტვირთე შენი BTU AI Skills Digital Passport, რომლის ნამდვილობა ბლოკჩეინზე მოწმდება.
+          შენი უნიკალური პასპორტი: ყოველი უნარი, რომელსაც BTU-ში დაეუფლები, აქ შტამპად ემატება. ნახე, ჩამოტვირთე და გაუზიარე ნებისმიერს, ნამდვილობას კი ბლოკჩეინი დაადასტურებს.
         </p>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img className="pp-auth-art" src="/brand/passport-stickers.png" width={804} height={492} alt="" />
+        <PassportStickers className="pp-auth-art" />
       </section>
       <div className="pp-login">
         <h2 className="pp-login-title">Sign in</h2>
