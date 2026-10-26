@@ -38,7 +38,6 @@ npm run quickstart
 | სტუდენტის პასპორტი | http://localhost:3000/login | სიიდან აირჩიე სტუდენტი, პაროლი არ სჭირდება (ან Google) |
 | ადმინის პანელი | http://localhost:3000/admin/login | ერთი დაჭერა: Demo Operator (ან Google) |
 | საჯარო ვერიფიკაცია | http://localhost:3000/verify | ლოგინი არ სჭირდება: კოდი სტუდენტის დაფიდან + PDF |
-| დემო პასპორტი (3D წიგნაკი) | http://localhost:3000/passport | ლოგინი არ სჭირდება: გამოგონილი სტუდენტი |
 
 Google-ით შესვლის ჩართვა: [docs/GOOGLE-SIGNIN.md](docs/GOOGLE-SIGNIN.md). ახალი უნარის დამატება (V2 ბლოკჩეინზე): მეორე ტერმინალში
 `npm run demo:add-skill`. გაჩერება: Ctrl+C. ხელახლა გაშვება: ისევ `npm run quickstart`. ნულიდან დაწყება: წაშალე
@@ -69,7 +68,6 @@ serves **http://localhost:3000**.
 | Student passport | http://localhost:3000/login | pick a student from the list, no password (or Google) |
 | Staff admin area | http://localhost:3000/admin/login | one click on Demo Operator (or Google) |
 | Public verification | http://localhost:3000/verify | no sign-in: a code from a student dashboard + the PDF |
-| Demo passport (3D booklet) | http://localhost:3000/passport | no sign-in: a fictional student |
 
 The one-click sign-in exists only in this local demo (the app listens on 127.0.0.1 only). Google sign-in:
 [docs/GOOGLE-SIGNIN.md](docs/GOOGLE-SIGNIN.md). More:
@@ -444,21 +442,3 @@ Still needed before real use:
 - a persistent rate limiter;
 - HTTPS, and `PUBLIC_BASE_URL` set to BTU's domain;
 - official BTU issuer setup (see `chain/README.md`).
-
-## Interactive passport booklet
-
-The passport as a booklet you open and page through (`src/components/PassportBook.tsx`, CSS 3D transforms, no
-library): cover, 01 Identity, 02 Academic journey, 03 Skills, 04 Evidence, 05 Achievements & verification,
-06 About this passport, back cover. Two-page spreads from 900 px wide, one page at a time below that. Next/previous
-buttons, page tabs, the page edges, ← → keys (Esc closes), swipes on touch screens; `prefers-reduced-motion` turns pages
-without animation. Controls sit outside the pages, so selecting a skill never turns a page.
-
-- **Dashboard:** above the PDF, built by `bookForStudent` (`src/lib/passport-book.ts`) from the student's own
-  records: the shown version and its status, the version's sheet skills, the passport subjects' marks (each syllabus
-  component is a line of evidence: quizzes/assignments/exams = grade evidence, the project = practical evidence)
-  and the subject badges the version certifies. Missing data (study year) is shown as "Not recorded". No email or
-  student number. Test records carry the "BTU test data" label.
-- **`/passport`:** a public demo with the isolated fixture `src/demo/passport-book-demo.ts` (a fictional student,
-  labelled on every page; no passport ID, code or chain record).
-- Tests: `tests/stage9.test.mjs` (what the server renders). The page turning was checked in Chromium at 1366, 820 and
-  390 px and with reduced motion.
