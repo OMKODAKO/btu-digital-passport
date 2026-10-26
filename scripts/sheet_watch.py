@@ -7,7 +7,8 @@ The sheet must be shared as "Anyone with the link can view". Every few seconds t
   1. fills the ID columns of rows where someone typed only a name (DEMO HELPER, see fill_demo_rows),
   2. runs the normal import (python -m worker import --assign-new-passport-ids), which validates the rows,
      generates the PDF and registers it on the chain configured in <demo-dir>/demo.env,
-  3. creates a login for every student who has none yet and prints email + password in large type.
+  3. announces every new student in large type (with a test password only when PASSPORT_PASSWORD_LOGIN=1;
+     otherwise the student is picked from the list on the sign-in page).
 The original Google Sheet is never written to; the filled copy lives in <demo-dir>/sheet/.
 """
 from __future__ import annotations
@@ -404,10 +405,12 @@ def banner(name: str, email: str, pw: str, port: str, title: str = "NEW PASSPORT
     print(f"\n\033[1;32m{bar}\n  {title}: {name}\n{bar}\033[0m")
     print(f"  Open:      http://localhost:{port}/login")
     print(f"  Email:     \033[1m{email}\033[0m")
-    print(f"  Password:  \033[1m{pw}\033[0m")
+    # passwords are off unless PASSPORT_PASSWORD_LOGIN=1: the student is picked from the list on the sign-in page
+    sign_in = f"Password: {pw}" if os.environ.get("PASSPORT_PASSWORD_LOGIN") == "1" else f"Sign in: choose {name} from the list"
+    print(f"  {sign_in}")
     print(f"\033[1;32m{bar}\033[0m\n", flush=True)
     if sys.platform == "darwin":  # a popup on screen too, so the presenter sees it without the terminal
-        msg = f"{name}\n\nhttp://localhost:{port}/login\nEmail: {email}\nPassword: {pw}".replace('"', "'")
+        msg = f"{name}\n\nhttp://localhost:{port}/login\nEmail: {email}\n{sign_in}".replace('"', "'")
         subprocess.Popen(["osascript", "-e",
                           f'display dialog "{msg}" with title "{title.capitalize()}" buttons {{"OK"}} default button 1'],
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)

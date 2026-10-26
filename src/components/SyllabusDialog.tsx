@@ -1,0 +1,48 @@
+"use client";
+
+import { useRef } from "react";
+
+type Component = { kind: string; label: string; weight: number; maxPoints: number };
+const KIND: Record<string, string> = {
+  QUIZ: "Quiz", ASSIGNMENT: "Assignment", PROJECT: "Project", MIDTERM: "Midterm", FINAL: "Final",
+};
+
+/** A button that opens the subject's (simulated) syllabus in a popup: components, weights and maxima. */
+export default function SyllabusDialog({ name, version, simulated, components }: {
+  name: string; version: number | null; simulated: boolean; components: Component[];
+}) {
+  const ref = useRef<HTMLDialogElement>(null);
+  // current syllabi: each component is worth its weight in points, so the score is just the sum of the marks
+  const simple = components.every((c) => c.maxPoints === c.weight);
+  return (
+    <>
+      <button type="button" className="button small" onClick={() => ref.current?.showModal()} data-testid="syllabus-open">
+        Syllabus
+      </button>
+      <dialog ref={ref} className="dialog" aria-label={`Syllabus: ${name}`} onClick={(e) => e.target === ref.current && ref.current?.close()}>
+        <div className="dialog-body">
+          <h3>{name}</h3>
+          <p className="muted">
+            Syllabus v{version ?? "–"}{simulated && <> · <span className="pill">Simulated</span> BTU&apos;s syllabus isn&apos;t available, so this one is made up for the demo.</>}
+          </p>
+          <table className="table">
+            <thead><tr><th>Component</th><th>Type</th><th>Points</th>{!simple && <th>Marked out of</th>}</tr></thead>
+            <tbody>
+              {components.map((c) => (
+                <tr key={c.label}><td>{c.label}</td><td>{KIND[c.kind] ?? c.kind}</td><td>{c.weight}</td>{!simple && <td>{c.maxPoints}</td>}</tr>
+              ))}
+              <tr><td><strong>Total</strong></td><td></td><td><strong>{components.reduce((a, c) => a + c.weight, 0)}</strong></td>{!simple && <td></td>}</tr>
+            </tbody>
+          </table>
+          <p className="fine">
+            {simple
+              ? "Score = the points earned in every component added up, out of 100."
+              : "Older syllabus version: score = Σ points × component points ÷ marked out of, out of 100."}{" "}
+            Badge: 60+ Silver, 70+ Gold, 90+ Platinum.
+          </p>
+          <form method="dialog"><button className="button primary" type="submit">Close</button></form>
+        </div>
+      </dialog>
+    </>
+  );
+}

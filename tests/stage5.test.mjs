@@ -21,7 +21,7 @@ const key = () => "0x" + randomBytes(32).toString("hex"); // fresh keys, in memo
 const adminKey = key();
 const issuerKey = key();
 const rogueKey = key();
-let env = { ...process.env, DATA_DIR: dataDir };
+let env = { ...process.env, PASSPORT_PASSWORD_LOGIN: "1", DATA_DIR: dataDir };
 let server, node, registry, admin, issuer, anchorPath;
 let v3, v4; // student 1's versions: V3 superseded by V4
 

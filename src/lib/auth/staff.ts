@@ -68,7 +68,8 @@ export const getCurrentStaff = cache(async (): Promise<Staff | null> => {
   return row ? { ...row, isDemo: row.isDemo === 1 } : null;
 });
 
-export const can = (staff: Staff | null, action: "view" | "retry") =>
+/** view: any staff. retry and manage (add students, enter marks): OPERATOR only. */
+export const can = (staff: Staff | null, action: "view" | "retry" | "manage") =>
   !!staff && (action === "view" || staff.role === "OPERATOR");
 
 /** For admin pages: the signed-in staff member, or a redirect to the staff sign-in page. */

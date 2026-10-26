@@ -22,7 +22,7 @@ const key = () => "0x" + randomBytes(32).toString("hex"); // fresh keys, in memo
 const adminKey = key();
 const issuerKey = key();
 const rogueKey = key(); // funded but never authorised as an issuer
-let env = { ...process.env, DATA_DIR: dataDir };
+let env = { ...process.env, PASSPORT_PASSWORD_LOGIN: "1", DATA_DIR: dataDir };
 let server, node;
 const accounts = new Map();
 const S1 = "btu-t-0001@example.org"; // BTU-AI-000125
@@ -210,14 +210,15 @@ test("staff accounts can't use the student dashboard, and student sign-in refuse
   assert.match((await signIn("student", OPERATOR, accounts.get(OPERATOR))).location, /error=invalid/);
 });
 
-test("staff search works only with approved identifiers", async () => {
+test("staff search works with approved identifiers and names, not partial identifiers", async () => {
   const op = await signIn("staff", OPERATOR, accounts.get(OPERATOR));
   const v3 = current("BTU-AI-000125");
-  for (const q of ["BTU-T-0001", "btu-t-0001@example.org", "BTU-AI-000125", v3.verification_code, "btu-t-0001"]) {
+  for (const q of ["BTU-T-0001", "btu-t-0001@example.org", "BTU-AI-000125", v3.verification_code, "btu-t-0001",
+                   "Kapanadze", "giorgi kap", "Kapanadze Giorgi"]) {
     const html = await (await get(`/admin/students?q=${encodeURIComponent(q)}`, op.cookie)).text();
     assert.ok(html.includes('data-testid="hits"') && html.includes("/admin/students/BTU-T-0001"), q);
   }
-  for (const q of ["BTU-T", "Giorgi", "%", "example.org"]) {
+  for (const q of ["BTU-T", "%%%", "___", "example.org", "Gi"]) {
     const html = await (await get(`/admin/students?q=${encodeURIComponent(q)}`, op.cookie)).text();
     assert.ok(!html.includes('data-testid="hits"'), `no listing for ${q}`);
   }
@@ -345,11 +346,17 @@ test("held and rejected skills stay as they are: no admin route can confirm a sk
   assert.ok(!page.includes('data-testid="retry-button"'), "nothing to retry: a held skill isn't a failure");
   const awarded = new Set(query("SELECT record_id FROM skill_awards").map((r) => r.record_id));
   for (const r of held) assert.ok(!awarded.has(r.record_id), r.record_id);
-  // the only state-changing admin endpoints are sign-in, sign-out and retry
+  // the only state-changing admin endpoints are sign-in, sign-out, retry, and (subject stage 03) adding a
+  // synthetic student and entering subject marks (plus the read-only course results CSV, and the local demo
+  // sign-in); none of them touches sheet records, skills or versions
   const routes = fs.readdirSync(path.resolve("src/app/api/admin")).sort();
-  assert.deepEqual(routes, ["login", "logout", "retry"]);
-  const retrySrc = fs.readFileSync(path.resolve("src/app/api/admin/retry/route.ts"), "utf8");
-  assert.ok(!/source_records|skill_awards|passport_versions/.test(retrySrc.replace(/^\s*\/\/.*$/gm, "")));
+  assert.deepEqual(routes, ["courses", "demo", "login", "logout", "marks", "retry", "students"]);
+  for (const [route, libs] of [["retry", []], ["demo", ["src/lib/auth/signin.ts"]], ["students", ["src/lib/students.ts"]], ["marks", ["src/lib/subjects.ts"]], ["courses", []]]) {
+    for (const f of [`src/app/api/admin/${route}/route.ts`, ...libs]) {
+      const src = fs.readFileSync(path.resolve(f), "utf8").replace(/^\s*(\/\/|\*).*$/gm, "");
+      assert.ok(!/source_records|skill_awards|passport_versions/.test(src), f);
+    }
+  }
 });
 
 test("the audit log records issuance and staff actions, can't be edited, and holds no secrets", async () => {

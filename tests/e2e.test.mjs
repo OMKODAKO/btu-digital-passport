@@ -28,7 +28,7 @@ const evidenceDir = process.env.EVIDENCE_DIR ? path.resolve(process.env.EVIDENCE
 const key = () => "0x" + randomBytes(32).toString("hex"); // fresh keys, in memory only
 const adminKey = key();
 const issuerKey = key();
-let env = { ...process.env, DATA_DIR: dataDir, STUDENT_EMAIL_DOMAINS: "example.org" };
+let env = { ...process.env, PASSPORT_PASSWORD_LOGIN: "1", DATA_DIR: dataDir, STUDENT_EMAIL_DOMAINS: "example.org" };
 let server, node, registry, issuer;
 const passwords = new Map();
 const evidence = [];
@@ -307,4 +307,18 @@ test("step 16: re-running synchronization changes nothing", async () => {
   assert.deepEqual(counts(), before);
   assert.equal(Number(await rpc("eth_blockNumber")), blocks, "no new transactions");
   record(16, "PASS", { before, after: counts(), note: "two more runs: 0 new awards, 0 versions, 0 transactions" });
+});
+
+test("extra: on the local devnet the transaction links open the portal's page, read live from the chain", async () => {
+  const dash = await dashboard(cookie);
+  const href = dash.match(/href="(\/chain\/tx\/0x[0-9a-f]{64})"/)?.[1];
+  assert.ok(href, "the dashboard links the transaction to the local page");
+  assert.equal(href, `/chain/tx/${v2.chain_tx_hash}`);
+  const page = clean(await (await fetch(`${BASE}${href}`)).text());
+  assert.ok(page.includes('data-testid="local-tx"') && page.includes(">success<"));
+  assert.ok(page.includes(v2.pdf_sha256.toLowerCase()) && page.includes('data-testid="local-tx-match"'), "on-chain hash matches the stored PDF");
+  assert.ok(page.includes(STUDENT.passportId) && !page.includes(STUDENT.email), "Passport ID only, no email");
+  const unknown = clean(await (await fetch(`${BASE}/chain/tx/0x${"ab".repeat(32)}`)).text());
+  assert.ok(unknown.includes('data-testid="local-tx-error"'));
+  assert.equal((await fetch(`${BASE}/chain/tx/not-a-hash`)).status, 404);
 });

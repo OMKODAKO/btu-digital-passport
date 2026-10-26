@@ -20,7 +20,7 @@ const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "bdp-s4-"));
 const key = () => "0x" + randomBytes(32).toString("hex"); // fresh keys, held in memory only
 const adminKey = key();
 const issuerKey = key();
-let env = { ...process.env, DATA_DIR: dataDir };
+let env = { ...process.env, PASSPORT_PASSWORD_LOGIN: "1", DATA_DIR: dataDir };
 let server, node, registry, anchorPath;
 const accounts = new Map();
 

@@ -5,7 +5,7 @@ multi-page PDF on BTU's template, which is registered on a blockchain before it 
 passport with its code and the PDF, without an account.
 
 **Status (final audit, 2026-10-21).** The full flow works end to end and is covered by automated tests, but with
-these limits. Sign-in uses test passwords: **BTU Google sign-in is not built**. The source is the Excel workbook:
+these limits. Sign-in has no passwords: Google sign-in (needs BTU's OAuth client, see [docs/GOOGLE-SIGNIN.md](docs/GOOGLE-SIGNIN.md)) and, in the local demo, one-click sign-in. The source is the Excel workbook:
 **the Google Sheets reader is not built**. The blockchain is a **local Hardhat devnet**, and the issuer is a
 **TEST issuer** with no BTU authorisation. Full PASS / FAIL / BLOCKED list with evidence:
 [docs/FINAL-AUDIT.md](docs/FINAL-AUDIT.md).
@@ -31,18 +31,18 @@ npm run quickstart
 ```
 
 პირველად 3–5 წუთი სჭირდება (ინსტალაცია, build, 18 დემო სტუდენტის პასპორტი ბლოკჩეინზე). ბოლოს ტერმინალში
-დაიბეჭდება ტესტ-ლოგინები და გაიხსნება **http://localhost:3000**.
+გაიხსნება **http://localhost:3000**.
 
 | რა | სად | შესვლა |
 | --- | --- | --- |
-| სტუდენტის პასპორტი | http://localhost:3000/login | მაგ. `btu-t-0001@example.org` + პაროლი ტერმინალიდან |
-| ადმინის პანელი | http://localhost:3000/admin/login | `ops.demo@staff.example.org` + პაროლი ტერმინალიდან |
+| სტუდენტის პასპორტი | http://localhost:3000/login | სიიდან აირჩიე სტუდენტი, პაროლი არ სჭირდება (ან Google) |
+| ადმინის პანელი | http://localhost:3000/admin/login | ერთი დაჭერა: Demo Operator (ან Google) |
 | საჯარო ვერიფიკაცია | http://localhost:3000/verify | ლოგინი არ სჭირდება: კოდი სტუდენტის დაფიდან + PDF |
 
-ყველა პაროლი ინახება `data-demo/dev-credentials.txt`-ში. ახალი უნარის დამატება (V2 ბლოკჩეინზე): მეორე ტერმინალში
+Google-ით შესვლის ჩართვა: [docs/GOOGLE-SIGNIN.md](docs/GOOGLE-SIGNIN.md). ახალი უნარის დამატება (V2 ბლოკჩეინზე): მეორე ტერმინალში
 `npm run demo:add-skill`. გაჩერება: Ctrl+C. ხელახლა გაშვება: ისევ `npm run quickstart`. ნულიდან დაწყება: წაშალე
 `data-demo/` და გაუშვი `npm run quickstart`. კომპიუტერის გადატვირთვის შემდეგ ლოკალური ბლოკჩეინი ცარიელდება, ამიტომ
-`quickstart` ძველ დემოს გადაიტანს `data-demo-old-…`-ში და ახალს შექმნის, ახალი პაროლებით.
+`quickstart` ძველ დემოს გადაიტანს `data-demo-old-…`-ში და ახალს შექმნის.
 
 **კომპიუტერის გარეშე (ბრაუზერში):** GitHub-ზე რეპოში **Code → Codespaces → Create codespace**, ტერმინალში
 `npm run quickstart`, შემდეგ Ports ჩანართში გახსენი 3000 პორტი.
@@ -61,20 +61,21 @@ npm run quickstart
 The first run takes 3–5 minutes: it installs the web app, the local chain tooling and the Python worker (in `.venv/`),
 builds the app, starts a local Hardhat devnet, deploys the registry with a TEST issuer, imports the demo workbook
 (`samples/demo/workbook.xlsx`, BTU's fictional hackathon test data) and registers 18 passports (V1) on-chain. It then
-prints the test logins and serves **http://localhost:3000**.
+serves **http://localhost:3000**.
 
 | What | Where | Sign in |
 | --- | --- | --- |
-| Student passport | http://localhost:3000/login | e.g. `btu-t-0001@example.org` + the password printed in the terminal |
-| Staff admin area | http://localhost:3000/admin/login | `ops.demo@staff.example.org` + the printed password |
+| Student passport | http://localhost:3000/login | pick a student from the list, no password (or Google) |
+| Staff admin area | http://localhost:3000/admin/login | one click on Demo Operator (or Google) |
 | Public verification | http://localhost:3000/verify | no sign-in: a code from a student dashboard + the PDF |
 
-All passwords are generated fresh and kept in `data-demo/dev-credentials.txt`. More:
+The one-click sign-in exists only in this local demo (the app listens on 127.0.0.1 only). Google sign-in:
+[docs/GOOGLE-SIGNIN.md](docs/GOOGLE-SIGNIN.md). More:
 
 - `npm run demo:add-skill` (second terminal): adds a CONFIRMED skill for BTU-T-0001, V2 is registered and becomes current.
 - Stop with Ctrl+C; run `npm run quickstart` again to restart. To start from zero, delete `data-demo/`.
 - The devnet keeps nothing across a reboot, so `quickstart` then moves the old demo to `data-demo-old-…` and makes a
-  new one, with new passwords.
+  new one.
 - **No computer at hand:** on GitHub, **Code → Codespaces → Create codespace**, run `npm run quickstart` in its
   terminal, and open port 3000 from the Ports tab.
 - Full walkthrough: [docs/DEMO-SCRIPT.md](docs/DEMO-SCRIPT.md). Manual steps (what `quickstart` runs):
@@ -84,8 +85,10 @@ All passwords are generated fresh and kept in `data-demo/dev-credentials.txt`. M
 Everything the demo writes (database, PDFs, throwaway devnet keys, passwords) goes to `data-demo/`, which is
 git-ignored. Never commit it.
 
-Tests (after `npm run quickstart`): `source .venv/bin/activate`, then `npm test` (web, 49 pass) and
-`npm run test:worker` (Python, 78 pass).
+Tests (after `npm run quickstart`): `source .venv/bin/activate`, then `npm run build && npm test` (web, 67 pass;
+the tests start the built app, so without a build they all fail) and `npm run test:worker` (Python, 113 pass).
+
+Subject scores and badges (in progress): [docs/SUBJECTS.md](docs/SUBJECTS.md).
 
 ## Setup reference
 
@@ -105,9 +108,11 @@ them; the web app and worker also apply them on start. Moving to Postgres is pla
   (Sheets API enabled, read access; write access for Q–T), keep its JSON key in a secret manager, and write a reader
   that returns the same `SourceTable` as `worker/sources/xlsx.py`. Validation, sync, PDF and chain code don't change.
 
-**Sign-in.** Test passwords today (`npm run create-login -- <email>`; staff: `npm run create-staff`). Google sign-in
-(**not built**) needs an OAuth client for BTU's Google Workspace. Check the verified `hd`/email domain, then call
-`createSession(studentId, "google")`.
+**Sign-in.** No passwords. Google sign-in (OpenID Connect, code flow with PKCE, checked on the server; the first
+sign-in links the Google account to the student or staff record with the same verified email) needs an OAuth client
+for BTU's Google Workspace: [docs/GOOGLE-SIGNIN.md](docs/GOOGLE-SIGNIN.md). The local demo adds one-click sign-in
+(`PASSPORT_DEMO_LOGIN=1`, set by `quickstart` and `npm run demo:start`, which then listen on 127.0.0.1 only). The old password forms return only with `PASSPORT_PASSWORD_LOGIN=1`,
+which the automated tests use.
 
 **Blockchain and issuer.** See [chain/README.md](chain/README.md): deploy, `set-issuer`, write the trust anchor, set
 `PASSPORT_ISSUER_PRIVATE_KEY` for the worker. `scripts/demo-setup.sh` does all of this on the local devnet. A public

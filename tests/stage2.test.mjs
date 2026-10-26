@@ -16,7 +16,7 @@ const WORKBOOK = path.resolve(
   process.env.BTU_WORKBOOK ?? "samples/demo/workbook.xlsx",
 );
 const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "bdp-s2-"));
-const env = { ...process.env, DATA_DIR: dataDir };
+const env = { ...process.env, PASSPORT_PASSWORD_LOGIN: "1", DATA_DIR: dataDir };
 const accounts = new Map();
 let server;
 let newSkillName;

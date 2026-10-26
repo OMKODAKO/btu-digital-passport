@@ -25,7 +25,7 @@ from pathlib import Path
 from . import config
 from .db import audit, transaction, utc_now
 from .pdf.check import check_pdf
-from .pdf.model import Holder, Skill, canonical_payload
+from .pdf.model import Holder, Skill, SubjectBadge, canonical_payload
 from .pdf.render import render_passport
 
 CODE_ALPHABET = "0123456789ABCDEFGHJKMNPQRSTVWXYZ"  # Crockford base32: no I, L, O, U
@@ -52,7 +52,7 @@ def waiting_candidate(conn: sqlite3.Connection, passport_fk: int):
                         (passport_fk,)).fetchone()
 
 
-def _holder(conn, passport_fk: int, record_ids: list[str]) -> Holder:
+def _holder(conn, passport_fk: int, record_ids: list[str], subjects: list[SubjectBadge] | None = None) -> Holder:
     p = conn.execute("SELECT * FROM passports WHERE id = ?", (passport_fk,)).fetchone()
     awards = conn.execute(
         f"SELECT * FROM skill_awards WHERE student_fk = ? AND record_id IN ({','.join('?' * len(record_ids))})",
@@ -70,14 +70,16 @@ def _holder(conn, passport_fk: int, record_ids: list[str]) -> Holder:
     s = conn.execute("SELECT program, education_level FROM students WHERE id = ?", (p["student_fk"],)).fetchone()
     return Holder(passport_id=p["passport_id"], first_name=p["holder_first_name"], last_name=p["holder_last_name"],
                   first_issued=date.fromisoformat(p["first_issued_on"]), skills=skills,
-                  program=(s["program"] or "") if s else "", education_level=(s["education_level"] or "") if s else "")
+                  program=(s["program"] or "") if s else "", education_level=(s["education_level"] or "") if s else "",
+                  subjects=list(subjects or []))
 
 
-def generate_candidate(conn: sqlite3.Connection, passport_fk: int, record_ids: list[str], renderer=None) -> dict:
-    """Renders, checks and stores version N+1 containing exactly these source records, as a candidate.
-    A waiting candidate it replaces becomes VOID (kept, never issued). Raises on any failure."""
+def generate_candidate(conn: sqlite3.Connection, passport_fk: int, record_ids: list[str], renderer=None,
+                       subjects: list[SubjectBadge] | None = None) -> dict:
+    """Renders, checks and stores version N+1 containing exactly these source records (and subject badges),
+    as a candidate. A waiting candidate it replaces becomes VOID (kept, never issued). Raises on any failure."""
     renderer = renderer or render_passport
-    holder = _holder(conn, passport_fk, record_ids)
+    holder = _holder(conn, passport_fk, record_ids, subjects)
     version_no = conn.execute(
         """SELECT MAX(n) + 1 FROM (SELECT COALESCE(MAX(version_no), 0) AS n FROM passport_versions WHERE passport_fk = ?
                                    UNION ALL SELECT COALESCE(MAX(version_no), 0) FROM version_candidates WHERE passport_fk = ?)""",
@@ -114,8 +116,12 @@ def generate_candidate(conn: sqlite3.Connection, passport_fk: int, record_ids: l
                 (passport_fk, version_no, code, generated_at, key, digest, json.dumps(checked))).lastrowid
             conn.executemany("INSERT INTO candidate_records (candidate_fk, record_id) VALUES (?, ?)",
                              [(cid, rid) for rid in record_ids])
+            if holder.subjects:
+                conn.executemany(
+                    "INSERT INTO candidate_subjects (candidate_fk, subject_code, syllabus_version, score, tier) VALUES (?, ?, ?, ?, ?)",
+                    [(cid, b.code, b.syllabus_version, b.score, b.tier) for b in holder.subjects])
             audit(conn, "VERSION_GENERATED", passport_fk, version_no=version_no, verification_code=code,
-                  pdf_sha256=digest, records=len(record_ids),
+                  pdf_sha256=digest, records=len(record_ids), subject_badges=len(holder.subjects),
                   **({"voided_version_no": old["version_no"]} if old else {}))
     except BaseException:
         if placed:
@@ -158,6 +164,10 @@ def issue_candidate(conn: sqlite3.Connection, candidate_id: int, registration=No
                 int(r.issuer_test_only), r.registered_at, r.confirmations) if r else (None,) * 10))).lastrowid
         conn.execute("""INSERT INTO version_source_records (version_fk, record_id)
                         SELECT ?, record_id FROM candidate_records WHERE candidate_fk = ?""", (vid, c["id"]))
+        if conn.execute("SELECT 1 FROM sqlite_master WHERE name = 'version_subjects'").fetchone():  # migration 008
+            conn.execute("""INSERT INTO version_subjects (version_fk, subject_code, syllabus_version, score, tier)
+                            SELECT ?, subject_code, syllabus_version, score, tier FROM candidate_subjects WHERE candidate_fk = ?""",
+                         (vid, c["id"]))
         conn.execute("UPDATE version_candidates SET state = 'ISSUED', issued_version_fk = ? WHERE id = ?", (vid, c["id"]))
         audit(conn, "VERSION_ISSUED", c["passport_fk"], version_no=c["version_no"],
               verification_code=c["verification_code"], chain_tx_hash=r.tx_hash if r else None,

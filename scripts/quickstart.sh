@@ -6,7 +6,8 @@
 #   4. sets up the demo in data-demo/ (local Hardhat devnet, TEST issuer, 18 demo students, V1 on-chain)
 #      If data-demo/ exists but its devnet is gone (after a reboot, the devnet keeps nothing), the old demo is
 #      moved to data-demo-old-<time>/ and a fresh one is made, with new passwords.
-#   5. prints the test logins and starts the app on http://localhost:3000
+#   5. starts the app on http://localhost:3000 with one-click demo sign-in (no passwords; Google sign-in when
+#      data-demo/google.env holds an OAuth client, see docs/GOOGLE-SIGNIN.md)
 #
 # Nothing here needs a key, a wallet or a Google account. Every key and password is generated fresh for a
 # throwaway local devnet and stays in data-demo/ (git-ignored).
@@ -25,6 +26,10 @@ command -v node >/dev/null || die "Node.js is missing. Install Node.js 22 or new
 command -v python3 >/dev/null || die "Python 3 is missing. Install Python 3.10 or newer: https://www.python.org"
 python3 -c 'import sys; sys.exit(sys.version_info < (3, 10))' || die "Python $(python3 -V) is too old; install 3.10 or newer."
 command -v curl >/dev/null || die "curl is missing; install it first."
+# another app (e.g. a second copy of the portal) already on this port would answer the browser instead
+if curl -s -m 2 -o /dev/null "http://127.0.0.1:$PORT/"; then
+  die "Port $PORT is already in use by another app. Stop it, or pick another port: PORT=3100 npm run quickstart"
+fi
 echo "node $(node -v), $(python3 -V)"
 
 if [ ! -d node_modules ]; then say "Installing the web app (npm ci)"; npm ci; fi
@@ -37,7 +42,11 @@ if ! .venv/bin/python3 -c 'import openpyxl, fitz, qrcode, web3' 2>/dev/null; the
 fi
 export PATH="$PWD/.venv/bin:$PATH"
 
-if [ ! -f .next/BUILD_ID ]; then say "Building the web app"; npm run build; fi
+# rebuild when the code changed since the last build (e.g. after a git pull)
+HEAD_NOW=$(git rev-parse HEAD 2>/dev/null || echo none)
+if [ ! -f .next/BUILD_ID ] || [ "$(cat .next/.quickstart-head 2>/dev/null)" != "$HEAD_NOW" ]; then
+  say "Building the web app"; npm run build; echo "$HEAD_NOW" > .next/.quickstart-head
+fi
 
 devnet_up() { curl -s -m 2 -X POST "$RPC" -H 'content-type: application/json' \
   -d '{"jsonrpc":"2.0","id":1,"method":"eth_chainId","params":[]}' 2>/dev/null | grep -q '"0x7a69"'; }
@@ -57,15 +66,28 @@ if [ ! -e "$DEMO_DIR/portal.db" ]; then
   DEMO_DIR="$DEMO_DIR" PORT="$PORT" bash scripts/demo-setup.sh
 fi
 
-say "Test logins (also in $DEMO_DIR/dev-credentials.txt)"
-echo "Students:  http://localhost:$PORT/login"
-head -n 3 "$DEMO_DIR/dev-credentials.txt" | grep -v staff | sed 's/^/  /'
-echo "  … $(grep -vc staff "$DEMO_DIR/dev-credentials.txt") student logins in total"
-echo "Staff:     http://localhost:$PORT/admin/login"
-grep staff "$DEMO_DIR/dev-credentials.txt" | sed 's/^/  /' || true
+# the subject catalog with its simulated syllabi (adds only what is missing; never changes a stored subject)
+DATA_DIR="$DEMO_DIR" python3 -m worker subjects load >/dev/null
+
+say "Signing in: no passwords"
+echo "Students:  http://localhost:$PORT/login        pick any student from the list"
+echo "Staff:     http://localhost:$PORT/admin/login  one click on Demo Operator"
+if [ -f "$DEMO_DIR/google.env" ]; then echo "Google:    on (settings from $DEMO_DIR/google.env)"; fi
 echo "Verify:    http://localhost:$PORT/verify   (no login; use a code from a student's dashboard)"
 echo "More:      npm run demo:add-skill   (in a second terminal: adds a CONFIRMED skill, V2 goes on-chain)"
 
-say "Starting the app on http://localhost:$PORT  (Ctrl+C stops it; the devnet keeps running)"
+say "Starting the app on http://localhost:$PORT  (Ctrl+C stops it and the badge publisher; the devnet keeps running)"
 set -a; . "$DEMO_DIR/demo.env"; set +a
-exec node_modules/.bin/next start -p "$PORT"
+# Google sign-in, when an OAuth client is set up (see docs/GOOGLE-SIGNIN.md); it may also widen STUDENT_EMAIL_DOMAINS
+if [ -f "$DEMO_DIR/google.env" ]; then set -a; . "$DEMO_DIR/google.env"; set +a; fi
+# one-click demo sign-in instead of passwords; the app listens on 127.0.0.1 only, so no other computer can use it
+export PASSPORT_DEMO_LOGIN=1
+# own cookie names, so signing in here never signs you out of another copy of the portal on localhost
+export PASSPORT_COOKIE_PREFIX="${PASSPORT_COOKIE_PREFIX:-bdp_demo_$PORT}"
+# subject badges: when marks give a new or different badge, a new passport version is made and registered on the
+# local devnet within ~10 s (demo data only; a marked student without a passport gets the next Passport ID)
+echo "Badges:    new passport versions follow subject marks every 10 s (log: $DEMO_DIR/badges.log)"
+python3 -m worker subjects publish --assign-new-passport-ids --watch 10 >>"$DEMO_DIR/badges.log" 2>&1 &
+BADGES_PID=$!
+trap 'kill $BADGES_PID 2>/dev/null' EXIT INT TERM
+node_modules/.bin/next start -p "$PORT" -H 127.0.0.1

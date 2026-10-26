@@ -55,7 +55,8 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
   // The student's own QR to this version's registration transaction on the public explorer. It can't be
   // printed in the PDF itself: the transaction records the PDF's hash, so it only exists after the PDF.
   const chainUrl = selected ? txUrl(selected.chainId, selected.chainTxHash) : null;
-  const chainQr = chainUrl ? await QRCode.toString(chainUrl, { type: "svg", margin: 0, errorCorrectionLevel: "M" }) : null;
+  // (a local-devnet link is a page of this portal on this computer, which a phone can't open: no QR for it)
+  const chainQr = chainUrl?.startsWith("https://") ? await QRCode.toString(chainUrl, { type: "svg", margin: 0, errorCorrectionLevel: "M" }) : null;
   const lastUpdated = passport?.current?.issuedAt ?? null;
   const demo = student.source === "BTU_TEST_DATA" || student.source === "SEED_SYNTHETIC";
 

@@ -12,7 +12,7 @@ const PORT = 3917;
 const BASE = `http://127.0.0.1:${PORT}`;
 const REGISTRY = path.resolve(process.env.SEED_REGISTRY ?? "tests/fixtures/seed/registry.json");
 const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "bdp-test-"));
-const env = { ...process.env, DATA_DIR: dataDir, SEED_REGISTRY: REGISTRY };
+const env = { ...process.env, PASSPORT_PASSWORD_LOGIN: "1", DATA_DIR: dataDir, SEED_REGISTRY: REGISTRY };
 let server;
 const accounts = new Map(); // email -> password
 const registry = JSON.parse(fs.readFileSync(REGISTRY, "utf8")).passports;
