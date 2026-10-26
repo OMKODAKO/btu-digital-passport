@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import AppHeader from "@/components/AppHeader";
+import PassportFrame from "@/components/PassportFrame";
 import { getCurrentStaff } from "@/lib/auth/staff";
 import { DEMO_LOGIN, GOOGLE_LOGIN, PASSWORD_LOGIN } from "@/lib/config";
 import { getDb } from "@/lib/db";
@@ -30,10 +31,16 @@ export default async function AdminLogin({ searchParams }: { searchParams: Promi
   return (
     <>
     <AppHeader area="staff" home="/admin/login" />
-    <main className="auth auth-staff">
-      <div className="card login">
-        <p className="eyebrow">BTU staff</p>
-        <h1>Passport administration</h1>
+    <PassportFrame>
+      <div className="lp-sheet pp-auth">
+      <section className="pp-auth-intro">
+        <p className="lp-who">BTU staff · პერსონალი</p>
+        <h1 className="lp-title pp-auth-title"><strong>Passport</strong> administration</h1>
+        <hr className="lp-rule" />
+        <p className="lp-lead">სტუდენტები, საგნები, ქულები და პასპორტების გაცემა ერთ ადგილას. მხოლოდ BTU-ის უფლებამოსილი პერსონალისთვის.</p>
+      </section>
+      <div className="pp-login">
+        <h2 className="pp-login-title">Staff sign-in</h2>
         <p className="muted">For authorised BTU staff. Student accounts can&apos;t sign in here.</p>
         {message && (
           <p className="alert error" role="alert">
@@ -79,7 +86,8 @@ export default async function AdminLogin({ searchParams }: { searchParams: Promi
           <p className="alert info" role="status">Sign-in isn&apos;t set up on this server yet (Google sign-in needs its client ID).</p>
         )}
       </div>
-    </main>
+      </div>
+    </PassportFrame>
     </>
   );
 }

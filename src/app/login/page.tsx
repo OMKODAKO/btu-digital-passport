@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import AppHeader from "@/components/AppHeader";
+import PassportFrame from "@/components/PassportFrame";
 import { getCurrentStudent } from "@/lib/auth/session";
 import { DEMO_LOGIN, GOOGLE_LOGIN, PASSWORD_LOGIN } from "@/lib/config";
 import { getDb } from "@/lib/db";
@@ -36,16 +37,20 @@ export default async function LoginPage({
     <AppHeader area="public" home="/">
       <a className="appbar-link" href="/verify">Verify a passport</a>
     </AppHeader>
-    <main className="auth">
-      <section className="auth-intro">
-        <p className="eyebrow">Students · სტუდენტები</p>
-        <h1 className="display">Your AI skills, verified by BTU</h1>
-        <p className="lead">
+    <PassportFrame>
+      <div className="lp-sheet pp-auth">
+      <section className="pp-auth-intro">
+        <p className="lp-who">Students · სტუდენტები</p>
+        <h1 className="lp-title pp-auth-title"><strong>Your AI skills,</strong> verified by BTU</h1>
+        <hr className="lp-rule" />
+        <p className="lp-lead">
           ციფრული პასპორტი: ნახე და ჩამოტვირთე შენი BTU AI Skills Digital Passport, რომლის ნამდვილობა ბლოკჩეინზე მოწმდება.
         </p>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className="pp-auth-art" src="/brand/passport-stickers.png" width={804} height={492} alt="" />
       </section>
-      <div className="card login">
-        <h2>Sign in</h2>
+      <div className="pp-login">
+        <h2 className="pp-login-title">Sign in</h2>
 
         {message && (
           <p className="alert error" role="alert">
@@ -97,7 +102,8 @@ export default async function LoginPage({
           Checking someone&apos;s passport? <a href="/verify">Verify a passport</a> (no account needed).
         </p>
       </div>
-    </main>
+      </div>
+    </PassportFrame>
     </>
   );
 }
