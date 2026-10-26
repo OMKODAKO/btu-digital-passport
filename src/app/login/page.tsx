@@ -33,7 +33,7 @@ export default async function LoginPage({
 
   return (
     <>
-    <AppHeader area="public" home="/login">
+    <AppHeader area="public" home="/">
       <a className="appbar-link" href="/verify">Verify a passport</a>
     </AppHeader>
     <main className="auth">

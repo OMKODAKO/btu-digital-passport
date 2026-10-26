@@ -15,7 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Heading/body fonts; without a connection the pages fall back to system fonts and still work. */}
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Noto+Sans+Georgian:wght@400;600&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600&family=Outfit:wght@300;400;600;800;900&family=Inter:wght@400;500;600;700&family=Noto+Sans+Georgian:wght@400;600&display=swap"
         />
       </head>
       <body>{children}</body>

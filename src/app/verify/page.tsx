@@ -10,7 +10,7 @@ export default function VerifyPage() {
 export function VerifyShell({ code }: { code?: string }) {
   return (
     <>
-    <AppHeader area="public" home="/verify">
+    <AppHeader area="public" home="/">
       <a className="appbar-link" href="/login">Student sign-in</a>
     </AppHeader>
     <main className="page narrow">
