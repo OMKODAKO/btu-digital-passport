@@ -1,6 +1,6 @@
 import TierBadge from "@/components/TierBadge";
 import { requireStaff } from "@/lib/auth/staff";
-import { courseRows, KINDS } from "@/lib/subjects";
+import { courseRows, ectsLabel, KINDS } from "@/lib/subjects";
 
 const KIND_LABEL = { QUIZ: "Quizzes", ASSIGNMENT: "Assignments", PROJECT: "Project", MIDTERM: "Midterm", FINAL: "Final" };
 
@@ -33,7 +33,7 @@ export default async function CourseResults() {
                   <td>{r.firstName} {r.lastName}</td>
                   <td>{[r.program, r.educationLevel].filter(Boolean).join(", ") || "—"}</td>
                   <td>{r.subjectEn}</td>
-                  <td>{r.credits}</td>
+                  <td>{ectsLabel(r.subjectCode, r.credits)}</td>
                   {KINDS.map((k) => <td key={k} className="mono">{k in r.points ? (r.points[k] ?? "…") : "—"}</td>)}
                   <td className="mono" data-testid="total">{r.total ?? "…"}</td>
                   <td>{r.resultStatus === "COMPLETE" ? <TierBadge tier={r.tier} /> : <span className="pill">Pending</span>}</td>

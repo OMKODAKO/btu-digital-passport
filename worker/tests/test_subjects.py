@@ -77,15 +77,19 @@ class CatalogTests(unittest.TestCase):
 
     def test_catalog_is_valid(self):
         self.assertEqual(validate_catalog(self.data), [])
-        self.assertEqual(len(self.data["subjects"]), 29)
+        self.assertEqual(len(self.data["subjects"]), 45)   # 29 BTU courses + the 16 skills of the skill sheet
 
     def test_every_syllabus_adds_up_to_100(self):
         for s in self.data["subjects"]:
             self.assertEqual(sum(c["weight"] for c in s["syllabus"]), 100, s["code"])
 
-    def test_passport_subjects_are_the_13_ai_relevant_ones(self):
+    def test_passport_subjects_are_the_13_ai_relevant_courses_and_the_16_sheet_skills(self):
         relevant = {s["name_en"] for s in self.data["subjects"] if s["passport_relevant"]}
-        self.assertEqual(len(relevant), 13)
+        self.assertEqual(len(relevant), 29)
+        sheet = {s["code"]: s for s in self.data["subjects"] if s.get("sheet_skill")}
+        self.assertEqual(sorted(sheet), [f"SKL-{i:03d}" for i in range(1, 17)])
+        self.assertEqual(sheet["SKL-001"]["name_en"], "AI Literacy")
+        self.assertEqual(sheet["SKL-012"]["sheet_skill"], {"category": "AI Advanced Skill", "badge_code": "BDG-AI-003"})
         self.assertIn("Vibe Coding and AI-Agentic Engineering", relevant)
         self.assertIn("Artificial Intelligence and Machine Learning", relevant)
         self.assertNotIn("Practical English (B1)", relevant)
@@ -101,6 +105,11 @@ class CatalogTests(unittest.TestCase):
             "credits must be": lambda d: d["subjects"][0].update(credits=0),
             "needs a skill_area": lambda d: d["subjects"][0].update(skill_area=None),
             "needs a short description": lambda d: d["subjects"][0].update(description=""),
+            "Skill ID, SKL-NNN": lambda d: d["subjects"][-1].update(code="SKILL-1"),
+            "badge_code must be BDG-AI-003": lambda d: d["subjects"][-1]["sheet_skill"].update(badge_code="BDG-AI-001"),
+            "category must be one of": lambda d: d["subjects"][-1]["sheet_skill"].update(category="AI Magic"),
+            "counts toward the passport": lambda d: d["subjects"][-1].update(passport_relevant=False),
+            "placeholder 1": lambda d: d["subjects"][-1].update(credits=3),
             "label twice": lambda d: d["subjects"][0]["syllabus"][1].update(label=d["subjects"][0]["syllabus"][0]["label"]),
         }
         for expected, break_it in cases.items():
@@ -119,8 +128,8 @@ class LoadTests(unittest.TestCase):
     def test_load_adds_every_subject_with_a_simulated_syllabus(self):
         conn = fresh("load")
         r = load_catalog(conn)
-        self.assertEqual((len(r.subjects_added), len(r.syllabi_added), r.differences), (29, 29, []))
-        self.assertEqual(len(passport_subjects(conn)), 13)
+        self.assertEqual((len(r.subjects_added), len(r.syllabi_added), r.differences), (45, 45, []))
+        self.assertEqual(len(passport_subjects(conn)), 29)
         vibe = conn.execute("SELECT * FROM subjects WHERE code = 'SUBJ-VIBE-CODING'").fetchone()
         self.assertEqual((vibe["credits"], vibe["passport_relevant"], vibe["skill_area"]), (3, 1, "AI & ML"))
         comps = syllabus_components(conn, vibe["id"])
@@ -134,7 +143,7 @@ class LoadTests(unittest.TestCase):
         load_catalog(conn)
         before = {t: dump(conn, t) for t in ("subjects", "syllabi", "syllabus_components", "audit_log")}
         r = load_catalog(conn)
-        self.assertEqual((r.subjects_added, r.syllabi_added, r.unchanged, r.differences), ([], [], 29, []))
+        self.assertEqual((r.subjects_added, r.syllabi_added, r.unchanged, r.differences), ([], [], 45, []))
         self.assertEqual({t: dump(conn, t) for t in before}, before)
 
     def test_catalog_changes_never_overwrite_the_database(self):
@@ -154,7 +163,7 @@ class LoadTests(unittest.TestCase):
         vibe = conn.execute("SELECT id FROM subjects WHERE code = 'SUBJ-VIBE-CODING'").fetchone()[0]
         self.assertEqual([c["label"] for c in syllabus_components(conn, vibe)][0], "Short quizzes")
         again = load_catalog(conn, changed)
-        self.assertEqual((again.syllabi_added, again.unchanged), ([], 29))
+        self.assertEqual((again.syllabi_added, again.unchanged), ([], 45))
 
     def test_every_component_is_worth_its_weight_in_points(self):
         for s in read_catalog()["subjects"]:

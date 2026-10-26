@@ -105,6 +105,26 @@ class BadgesTest(unittest.TestCase):
         cards = [ln for ln in skillset.splitlines() if ln.startswith("EARNED ") or ln.startswith("SCORE ")]
         self.assertTrue(cards[-1].startswith("SCORE"), "the subject card comes after the skill cards")
 
+    def test_a_sheet_skill_course_carries_its_own_category_badge(self):
+        # SKL-007 "Marketing Content with Generative AI" (AI Applied Skill, BDG-AI-002), 15/20/10/25/30 points
+        record_marks(self.conn, ST1, "SKL-007", {"Quizzes": 14, "Assignments": 19, "Project": 9, "Midterm exam": 24,
+                                                 "Final exam": 27}, entered_by="t")   # 93.00
+        self.publish()
+        doc = self.pdf(self.current())
+        data = json.loads(doc.embfile_get("passport-data.json"))
+        b = data["subject_badges"][0]
+        self.assertEqual((b["code"], b["score"], b["tier"], b["category"], b["badge_code"]),
+                         ("SKL-007", "93.00", "PLATINUM", "AI Applied Skill", "BDG-AI-002"))
+        skillset = doc[2].get_text()
+        self.assertIn("MARKETING CONTENT WITH GENERATIVE AI", skillset.replace("\n", " "))
+        self.assertIn("PLATINUM\nAI APPLIED SKILL", skillset)   # the stamp says its category where a course says SUBJECT BADGE
+        self.assertIn("BDG-AI-002", skillset)
+        self.assertNotIn("ECTS", skillset, "a sheet skill has no ECTS")
+        supplement = "".join(doc[i].get_text() for i in range(3, doc.page_count))
+        self.assertIn("AI APPLIED SKILL COURSE", supplement)
+        self.assertIn("BADGE BDG-AI-002", supplement)
+        self.assertIn("GENERATING, EDITING, AND ASSESSING MARKETING CONTENT", supplement.replace("\n", " "))
+
     def test_publishing_again_changes_nothing(self):
         record_marks(self.conn, ST1, VIBE, GOLD, entered_by="t")
         self.publish()

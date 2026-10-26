@@ -208,7 +208,8 @@ class _SubjectRow:
         self.badge_code = f"{b.tier}-{b.code}"
         self.description = b.description or b.name_en
         self.date_earned = date.fromisoformat(b.date_earned)
-        self.earned_through = f"BTU course  ·  {b.credits} ECTS  ·  score {b.score} / 100"
+        self.earned_through = (f"{b.category} course  ·  score {b.score} / 100" if b.category   # a sheet skill: no ECTS
+                               else f"BTU course  ·  {b.credits} ECTS  ·  score {b.score} / 100")
 
 
 def place_stamp(page, stamps_doc, category, center_x, center_y, scale=1.0):
@@ -397,7 +398,9 @@ def draw_supplement(d: _Doc, page, page_idx, stamps, cache, h: Holder, rows, pag
                 layout.placed.append(Placed(page_idx, tuple(cell.rect), cell.text, f"{sk.record_id} {key}"))
             else:
                 _draw_overflow_cell(d, page, cell, cont_page_of[sk.record_id] + 1, sizes)
-        badge = (f"{TIER_LABEL[sk.badge.tier].upper()} SUBJECT BADGE  ·  {sk.record_id}" if isinstance(sk, _SubjectRow)
+        badge = (f"BADGE {sk.badge.badge_code}  ·  {TIER_LABEL[sk.badge.tier].upper()}  ·  {sk.record_id}"
+                 if isinstance(sk, _SubjectRow) and sk.badge.badge_code
+                 else f"{TIER_LABEL[sk.badge.tier].upper()} SUBJECT BADGE  ·  {sk.record_id}" if isinstance(sk, _SubjectRow)
                  else f"BADGE {sk.badge_code}  ·  {sk.record_id}")
         d.text(page, (COL_X[3] + COL_X[4]) / 2, y1 - 6, badge, "light", 5.8, GREY, align="center")
         layout.placed.append(Placed(page_idx, (COL_X[3] + 4, y1 - 12, COL_X[4] - 4, y1 - 2), badge, f"{sk.record_id} badge"))
