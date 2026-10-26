@@ -3,10 +3,8 @@ import { redirect } from "next/navigation";
 import QRCode from "qrcode";
 import AppHeader from "@/components/AppHeader";
 import Checks, { headline } from "@/components/Checks";
-import PassportBook from "@/components/PassportBook";
 import { getCurrentStudent } from "@/lib/auth/session";
 import { txUrl } from "@/lib/explorer";
-import { bookForStudent } from "@/lib/passport-book";
 import {
   getPassportForStudent,
   getPendingInfo,
@@ -61,7 +59,6 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
   const chainQr = chainUrl?.startsWith("https://") ? await QRCode.toString(chainUrl, { type: "svg", margin: 0, errorCorrectionLevel: "M" }) : null;
   const lastUpdated = passport?.current?.issuedAt ?? null;
   const demo = student.source === "BTU_TEST_DATA" || student.source === "SEED_SYNTHETIC";
-  const book = passport && selected ? bookForStudent({ student, passport, version: selected, sheetSkills: skills }) : null;
 
   return (
     <>
@@ -157,15 +154,6 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
 
       {passport && selected && (
         <>
-          {book && (
-            <section className="card book-card" aria-labelledby="book-heading" data-testid="dashboard-book">
-              <div className="book-card-head">
-                <h2 id="book-heading">Your passport booklet · V{selected.versionNo}</h2>
-                <p className="muted">Open and turn the pages. The official document is the PDF below.</p>
-              </div>
-              <PassportBook data={book} homeHref="/" homeLabel="Home" />
-            </section>
-          )}
           <div className="passport-layout">
             <div className="passport-main">
           {pdf?.ok ? (
