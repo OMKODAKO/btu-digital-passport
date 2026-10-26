@@ -113,6 +113,21 @@ Nothing in stage 03 changes passports, versions, sheet records or skills; badges
   for every marked student and issues the new version like an import does. The quickstart runs it every 10 s in
   the background on the local demo data, so marks entered in the admin reach the PDF on their own.
 
+## Sheet skills as courses
+
+Merabi asked, on 2026-10-26, for the 16 skills of BTU's skill sheet (hackathon test data) to be offered as courses
+next to the BTU subjects, each with its own badge.
+
+- **Catalog:** they are catalog entries with code = their Skill ID (`SKL-001` … `SKL-016`). The name, category,
+  badge code and description are copied from the sheet; the Georgian names were translated here.
+- **Marks and badges:** they use the same 100-point split and tiers as every subject. The badge stamp shows the
+  skill's category (for example AI APPLIED SKILL) where a BTU course shows SUBJECT BADGE. The card and the supplement
+  row also show the category's badge code (BDG-AI-001/002/003).
+- **ECTS:** the sheet gives no ECTS, so none is shown. The stored `credits` value 1 is only a placeholder that the
+  database requires.
+- **No overlap with sheet records:** the sheet's own skill records are unchanged and still come only from the sheet.
+  A student can hold both, for example the AI Literacy skill from the sheet and the AI Literacy course badge.
+
 ## Next stages
 
 4. Synthetic data generator.

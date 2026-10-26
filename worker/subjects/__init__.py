@@ -10,6 +10,7 @@ is missing and never changes or removes existing rows; a changed syllabus is add
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -61,9 +62,32 @@ def validate_catalog(data: dict) -> list[str]:
             problems.append(f"{code}: a passport subject needs a skill_area")
         if s.get("passport_relevant") and not str(s.get("description") or "").strip():
             problems.append(f"{code}: a passport subject needs a short description (printed on the passport)")
+        if s.get("sheet_skill") is not None:
+            problems += [f"{code}: {p}" for p in validate_sheet_skill(s)]
         problems += [f"{code}: {p}" for p in validate_syllabus(s.get("syllabus") or [])]
     if not seen_codes:
         problems.append("catalog has no subjects")
+    return problems
+
+
+# a sheet skill's badge follows its category, as in the skill sheet (validate.BADGE_BY_CATEGORY)
+SHEET_BADGES = {"AI Skill": "BDG-AI-001", "AI Applied Skill": "BDG-AI-002", "AI Advanced Skill": "BDG-AI-003"}
+
+
+def validate_sheet_skill(s: dict) -> list[str]:
+    """A skill from the skill sheet offered as a course: code SKL-NNN (its sheet Skill ID), a known category with
+    its badge code, a passport subject, and the placeholder credits value 1 (the sheet gives no ECTS)."""
+    sk, problems = s["sheet_skill"], []
+    if not re.fullmatch(r"SKL-\d{3}", str(s.get("code"))):
+        problems.append("a sheet skill's code must be its Skill ID, SKL-NNN")
+    if not isinstance(sk, dict) or sk.get("category") not in SHEET_BADGES:
+        problems.append(f"sheet_skill.category must be one of {', '.join(SHEET_BADGES)}")
+    elif sk.get("badge_code") != SHEET_BADGES[sk["category"]]:
+        problems.append(f"sheet_skill.badge_code must be {SHEET_BADGES[sk['category']]} for {sk['category']}")
+    if not s.get("passport_relevant"):
+        problems.append("a sheet skill counts toward the passport")
+    if s.get("credits") != 1:
+        problems.append("a sheet skill has no ECTS: credits must be the placeholder 1")
     return problems
 
 

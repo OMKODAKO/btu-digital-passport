@@ -40,6 +40,8 @@ class SubjectBadge:
     tier: str              # SILVER | GOLD | PLATINUM
     description: str = ""  # a short phrase about the course, from the catalog
     date_earned: str = ""  # ISO date the last mark was entered (when the subject was completed)
+    category: str = ""     # for a skill from the skill sheet offered as a course: its category, e.g. "AI Applied Skill"
+    badge_code: str = ""   # ... and that category's badge code, e.g. "BDG-AI-002" (both empty for a BTU course)
 
 
 @dataclass

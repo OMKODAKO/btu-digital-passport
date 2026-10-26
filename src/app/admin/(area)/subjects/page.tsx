@@ -1,6 +1,6 @@
 import SyllabusDialog from "@/components/SyllabusDialog";
 import { requireStaff } from "@/lib/auth/staff";
-import { listSubjects } from "@/lib/subjects";
+import { ectsLabel, listSubjects } from "@/lib/subjects";
 
 export default async function Subjects({ searchParams }: { searchParams: Promise<{ all?: string }> }) {
   await requireStaff();
@@ -30,7 +30,7 @@ export default async function Subjects({ searchParams }: { searchParams: Promise
               <tr key={s.code} data-code={s.code}>
                 <td>{s.nameEn}<div className="fine" lang="ka" style={{ margin: 0 }}>{s.nameKa}</div></td>
                 <td>{s.skillArea ?? "—"}</td>
-                <td>{s.credits}</td>
+                <td>{ectsLabel(s.code, s.credits)}</td>
                 <td>
                   <SyllabusDialog name={s.nameEn} version={s.syllabusVersion} simulated={s.simulated}
                     components={s.components.map(({ kind, label, weight, maxPoints }) => ({ kind, label, weight, maxPoints }))} />

@@ -1,6 +1,6 @@
 {
   "source": "BTU_COURSE_LIST_2026-10-25",
-  "note": "Course names and ECTS credits from the BTU course list Merabi shared on 2026-10-25 (no grades taken from it). Syllabi are SIMULATED (each component is worth its share of the subject's 100 points): BTU syllabi are not available to this project. passport_relevant marks the subjects that count toward the AI Skills Digital Passport.",
+  "note": "Course names and ECTS credits from the BTU course list Merabi shared on 2026-10-25 (no grades taken from it). Syllabi are SIMULATED (each component is worth its share of the subject's 100 points): BTU syllabi are not available to this project. passport_relevant marks the subjects that count toward the AI Skills Digital Passport. The SKL-0xx entries are the 16 skills of BTU's hackathon test sheet (Skill ID, name, category, badge code and description copied from it, Georgian names translated here), offered as courses so they can be marked and earn a badge like a subject. The sheet gives them no ECTS: their credits value 1 is only a placeholder the database needs and is never shown.",
   "subjects": [
     {
       "code": "SUBJ-VIBE-CODING",
@@ -1197,6 +1197,742 @@
         {
           "kind": "ASSIGNMENT",
           "label": "Problem sets",
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 30
+        }
+      ]
+    },
+    {
+      "code": "SKL-001",
+      "name_ka": "AI წიგნიერება",
+      "name_en": "AI Literacy",
+      "description": "Fundamentals of AI capabilities, limitations, and responsible use.",
+      "credits": 1,
+      "passport_relevant": true,
+      "skill_area": "AI Skill",
+      "logo_key": "spark",
+      "sheet_skill": {
+        "category": "AI Skill",
+        "badge_code": "BDG-AI-001"
+      },
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 15,
+          "max_points": 15
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 30
+        }
+      ]
+    },
+    {
+      "code": "SKL-002",
+      "name_ka": "პრომპტ-ინჟინერიის საფუძვლები",
+      "name_en": "Prompt Engineering Fundamentals",
+      "description": "Writing effective prompts for generative AI and evaluating responses.",
+      "credits": 1,
+      "passport_relevant": true,
+      "skill_area": "AI Skill",
+      "logo_key": "code",
+      "sheet_skill": {
+        "category": "AI Skill",
+        "badge_code": "BDG-AI-001"
+      },
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 15,
+          "max_points": 15
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 30
+        }
+      ]
+    },
+    {
+      "code": "SKL-003",
+      "name_ka": "AI ეთიკა და პასუხისმგებლიანი გამოყენება",
+      "name_en": "AI Ethics & Responsible Use",
+      "description": "Identifying bias, privacy issues, and ethical risks in AI use.",
+      "credits": 1,
+      "passport_relevant": true,
+      "skill_area": "AI Skill",
+      "logo_key": "shield",
+      "sheet_skill": {
+        "category": "AI Skill",
+        "badge_code": "BDG-AI-001"
+      },
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 15,
+          "max_points": 15
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 30
+        }
+      ]
+    },
+    {
+      "code": "SKL-004",
+      "name_ka": "AI პროდუქტიულობის ინსტრუმენტები",
+      "name_en": "AI Productivity Tools",
+      "description": "Using AI tools to improve efficiency in routine tasks.",
+      "credits": 1,
+      "passport_relevant": true,
+      "skill_area": "AI Skill",
+      "logo_key": "layers",
+      "sheet_skill": {
+        "category": "AI Skill",
+        "badge_code": "BDG-AI-001"
+      },
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 15,
+          "max_points": 15
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 30
+        }
+      ]
+    },
+    {
+      "code": "SKL-005",
+      "name_ka": "AI-ით დახმარებული კვლევა",
+      "name_en": "AI-Assisted Research",
+      "description": "Researching information with AI assistance and critically verifying sources.",
+      "credits": 1,
+      "passport_relevant": true,
+      "skill_area": "AI Skill",
+      "logo_key": "tree",
+      "sheet_skill": {
+        "category": "AI Skill",
+        "badge_code": "BDG-AI-001"
+      },
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 15,
+          "max_points": 15
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 30
+        }
+      ]
+    },
+    {
+      "code": "SKL-006",
+      "name_ka": "მონაცემთა ანალიზი AI-ით",
+      "name_en": "AI Data Analysis",
+      "description": "Cleaning, analyzing, and interpreting data using AI tools.",
+      "credits": 1,
+      "passport_relevant": true,
+      "skill_area": "AI Applied Skill",
+      "logo_key": "chart",
+      "sheet_skill": {
+        "category": "AI Applied Skill",
+        "badge_code": "BDG-AI-002"
+      },
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 15,
+          "max_points": 15
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 30
+        }
+      ]
+    },
+    {
+      "code": "SKL-007",
+      "name_ka": "მარკეტინგული კონტენტი გენერაციული AI-ით",
+      "name_en": "Marketing Content with Generative AI",
+      "description": "Generating, editing, and assessing marketing content with generative AI.",
+      "credits": 1,
+      "passport_relevant": true,
+      "skill_area": "AI Applied Skill",
+      "logo_key": "spark",
+      "sheet_skill": {
+        "category": "AI Applied Skill",
+        "badge_code": "BDG-AI-002"
+      },
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 15,
+          "max_points": 15
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 30
+        }
+      ]
+    },
+    {
+      "code": "SKL-008",
+      "name_ka": "სამუშაო პროცესების ავტომატიზაცია AI-ით",
+      "name_en": "AI Workflow Automation",
+      "description": "Automating workflows using AI tools and system integrations.",
+      "credits": 1,
+      "passport_relevant": true,
+      "skill_area": "AI Applied Skill",
+      "logo_key": "agent",
+      "sheet_skill": {
+        "category": "AI Applied Skill",
+        "badge_code": "BDG-AI-002"
+      },
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 15,
+          "max_points": 15
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 30
+        }
+      ]
+    },
+    {
+      "code": "SKL-009",
+      "name_ka": "ფინანსური ანალიზი AI-ით",
+      "name_en": "AI Financial Analysis",
+      "description": "Analyzing financial data and supporting evidence-based conclusions with AI.",
+      "credits": 1,
+      "passport_relevant": true,
+      "skill_area": "AI Applied Skill",
+      "logo_key": "chart",
+      "sheet_skill": {
+        "category": "AI Applied Skill",
+        "badge_code": "BDG-AI-002"
+      },
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 15,
+          "max_points": 15
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 30
+        }
+      ]
+    },
+    {
+      "code": "SKL-010",
+      "name_ka": "ბიზნეს-გადაწყვეტილებების მხარდაჭერა AI-ით",
+      "name_en": "AI Business Decision Support",
+      "description": "Using AI-driven analytics to support business decisions.",
+      "credits": 1,
+      "passport_relevant": true,
+      "skill_area": "AI Applied Skill",
+      "logo_key": "distribution",
+      "sheet_skill": {
+        "category": "AI Applied Skill",
+        "badge_code": "BDG-AI-002"
+      },
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 15,
+          "max_points": 15
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 30
+        }
+      ]
+    },
+    {
+      "code": "SKL-011",
+      "name_ka": "მომხმარებელთა ანალიტიკა AI-ით",
+      "name_en": "AI-Powered Customer Insights",
+      "description": "Analyzing customer data and deriving marketing insights with AI.",
+      "credits": 1,
+      "passport_relevant": true,
+      "skill_area": "AI Applied Skill",
+      "logo_key": "database",
+      "sheet_skill": {
+        "category": "AI Applied Skill",
+        "badge_code": "BDG-AI-002"
+      },
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 15,
+          "max_points": 15
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 30
+        }
+      ]
+    },
+    {
+      "code": "SKL-012",
+      "name_ka": "მანქანური სწავლების მოდელების შემუშავება",
+      "name_en": "Machine Learning Model Development",
+      "description": "Building, training, and evaluating machine-learning models.",
+      "credits": 1,
+      "passport_relevant": true,
+      "skill_area": "AI Advanced Skill",
+      "logo_key": "neural",
+      "sheet_skill": {
+        "category": "AI Advanced Skill",
+        "badge_code": "BDG-AI-003"
+      },
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 15,
+          "max_points": 15
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 30
+        }
+      ]
+    },
+    {
+      "code": "SKL-013",
+      "name_ka": "ბუნებრივი ენის დამუშავება",
+      "name_en": "Natural Language Processing",
+      "description": "Applying natural language processing methods to textual data.",
+      "credits": 1,
+      "passport_relevant": true,
+      "skill_area": "AI Advanced Skill",
+      "logo_key": "brackets",
+      "sheet_skill": {
+        "category": "AI Advanced Skill",
+        "badge_code": "BDG-AI-003"
+      },
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 15,
+          "max_points": 15
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 30
+        }
+      ]
+    },
+    {
+      "code": "SKL-014",
+      "name_ka": "AI სისტემების დანერგვა",
+      "name_en": "AI Systems Deployment",
+      "description": "Deploying and monitoring AI solutions in operational environments.",
+      "credits": 1,
+      "passport_relevant": true,
+      "skill_area": "AI Advanced Skill",
+      "logo_key": "chip",
+      "sheet_skill": {
+        "category": "AI Advanced Skill",
+        "badge_code": "BDG-AI-003"
+      },
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 15,
+          "max_points": 15
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 30
+        }
+      ]
+    },
+    {
+      "code": "SKL-015",
+      "name_ka": "პროგნოზული ანალიტიკა AI-ით",
+      "name_en": "Predictive Analytics with AI",
+      "description": "Developing predictive models and evaluating their performance.",
+      "credits": 1,
+      "passport_relevant": true,
+      "skill_area": "AI Advanced Skill",
+      "logo_key": "distribution",
+      "sheet_skill": {
+        "category": "AI Advanced Skill",
+        "badge_code": "BDG-AI-003"
+      },
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 15,
+          "max_points": 15
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
+          "weight": 20,
+          "max_points": 20
+        },
+        {
+          "kind": "PROJECT",
+          "label": "Project",
+          "weight": 10,
+          "max_points": 10
+        },
+        {
+          "kind": "MIDTERM",
+          "label": "Midterm exam",
+          "weight": 25,
+          "max_points": 25
+        },
+        {
+          "kind": "FINAL",
+          "label": "Final exam",
+          "weight": 30,
+          "max_points": 30
+        }
+      ]
+    },
+    {
+      "code": "SKL-016",
+      "name_ka": "MLOps-ის საფუძვლები",
+      "name_en": "MLOps Fundamentals",
+      "description": "Versioning, automating, and maintaining machine-learning workflows.",
+      "credits": 1,
+      "passport_relevant": true,
+      "skill_area": "AI Advanced Skill",
+      "logo_key": "layers",
+      "sheet_skill": {
+        "category": "AI Advanced Skill",
+        "badge_code": "BDG-AI-003"
+      },
+      "syllabus": [
+        {
+          "kind": "QUIZ",
+          "label": "Quizzes",
+          "weight": 15,
+          "max_points": 15
+        },
+        {
+          "kind": "ASSIGNMENT",
+          "label": "Assignments",
           "weight": 20,
           "max_points": 20
         },

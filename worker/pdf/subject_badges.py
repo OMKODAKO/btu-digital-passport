@@ -108,8 +108,9 @@ SUBJECT_ICONS = ("agent", "neural", "spark", "layers", "code", "brackets", "tree
 
 # ---------------------------------------------------------------- stamp
 
-def stamp_doc(fonts, logo_key: str, tier: str) -> fitz.Document:
-    """One badge as a one-page PDF (STAMP_W x STAMP_H), to be placed tilted with show_pdf_page."""
+def stamp_doc(fonts, logo_key: str, tier: str, subtitle: str = "SUBJECT BADGE") -> fitz.Document:
+    """One badge as a one-page PDF (STAMP_W x STAMP_H), to be placed tilted with show_pdf_page. A skill from the
+    skill sheet shows its category (e.g. AI APPLIED SKILL) where a BTU course says SUBJECT BADGE."""
     fill, edge = TIER_COLORS[tier]
     doc = fitz.open()
     page = doc.new_page(width=STAMP_W, height=STAMP_H)
@@ -131,7 +132,10 @@ def stamp_doc(fonts, logo_key: str, tier: str) -> fitz.Document:
     while fonts.width(label, "bold", size) > STAMP_W - 72 and size > 9:
         size -= 0.5
     page.insert_text((57, 31), label, fontname="stampbold", fontfile=str(fonts.files["bold"]), fontsize=size, color=WHITE)
-    page.insert_text((57, 42), "SUBJECT BADGE", fontname="stamplight", fontfile=str(fonts.files["light"]), fontsize=7.6,
+    sub = 7.6
+    while fonts.width(subtitle, "light", sub) > STAMP_W - 66 and sub > 5:
+        sub -= 0.2
+    page.insert_text((57, 42), subtitle, fontname="stamplight", fontfile=str(fonts.files["light"]), fontsize=sub,
                      color=WHITE)
     return doc
 
@@ -139,12 +143,13 @@ def stamp_doc(fonts, logo_key: str, tier: str) -> fitz.Document:
 # ---------------------------------------------------------------- placing
 
 class StampCache(dict):
-    """(logo_key, tier) -> stamp document, made once per rendered passport."""
+    """(logo_key, tier, subtitle) -> stamp document, made once per rendered passport."""
 
     def get_stamp(self, fonts, b: SubjectBadge) -> fitz.Document:
-        key = (b.logo_key, b.tier)
+        subtitle = b.category.upper() if b.category else "SUBJECT BADGE"
+        key = (b.logo_key, b.tier, subtitle)
         if key not in self:
-            self[key] = stamp_doc(fonts, b.logo_key, b.tier)
+            self[key] = stamp_doc(fonts, b.logo_key, b.tier, subtitle)
         return self[key]
 
 
@@ -177,8 +182,9 @@ def draw_subject_card(d, page, page_idx, b: SubjectBadge, slot: int, cx, cy, car
     sy = cy + 131
     d.text(page, mid, sy, score, "light", 9.0, align="center")
     layout.placed.append(placed_cls(page_idx, (cx + 4, sy - 9, cx + card_w - 4, sy + 2.5), score, f"{b.code} score"))
-    d.text(page, mid, sy + 9, f"{TIER_LABEL[b.tier].upper()} SUBJECT BADGE  ·  {b.credits} ECTS", "light", 6.4, GREY,
-           align="center")
+    detail = (f"{TIER_LABEL[b.tier].upper()}  ·  {b.category.upper()}  ·  {b.badge_code}" if b.category
+              else f"{TIER_LABEL[b.tier].upper()} SUBJECT BADGE  ·  {b.credits} ECTS")
+    d.text(page, mid, sy + 9, detail, "light", 6.4 if not b.category else 5.6, GREY, align="center")
 
 
 def draw_demo_note(d, page):

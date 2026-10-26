@@ -15,9 +15,11 @@ from .grades import latest_entries, student_syllabus, subject_results
 
 
 @lru_cache(maxsize=1)
-def _descriptions() -> dict[str, str]:
-    """Short course descriptions from the catalog (printed on the passport)."""
-    return {s["code"]: s.get("description", "") for s in read_catalog()["subjects"]}
+def _catalog_info() -> dict[str, dict]:
+    """Per course, from the catalog: its short description (printed on the passport) and, for a skill from the
+    skill sheet, its category and badge code."""
+    return {s["code"]: {"description": s.get("description", ""), **(s.get("sheet_skill") or {})}
+            for s in read_catalog()["subjects"]}
 
 
 def current_badges(conn, student_fk: int) -> list[SubjectBadge]:
@@ -31,10 +33,12 @@ def current_badges(conn, student_fk: int) -> list[SubjectBadge]:
             continue
         subj = conn.execute("SELECT id, logo_key FROM subjects WHERE code = ?", (r.subject_code,)).fetchone()
         syllabus = student_syllabus(conn, student_fk, subj["id"])
+        info = _catalog_info().get(r.subject_code, {})
         done = max(e["entered_at"] for e in latest_entries(conn, student_fk, syllabus["id"]).values())
         out.append(SubjectBadge(code=r.subject_code, name_en=r.name_en, name_ka=r.name_ka, logo_key=subj["logo_key"] or "",
                                 credits=r.credits, syllabus_version=r.syllabus_version, score=f"{r.score:.2f}",
-                                tier=r.tier, description=_descriptions().get(r.subject_code, ""), date_earned=done[:10]))
+                                tier=r.tier, description=info.get("description", ""), date_earned=done[:10],
+                                category=info.get("category", ""), badge_code=info.get("badge_code", "")))
     return out
 
 

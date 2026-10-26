@@ -203,6 +203,11 @@ export function recordMarks(studentFk: number, code: string, marks: Record<strin
   return { subject, added, corrected, unchanged };
 }
 
+/** A skill from the skill sheet offered as a course (catalog code = its Skill ID). The sheet gives it no ECTS. */
+export const isSheetSkill = (code: string) => /^SKL-\d{3}$/.test(code);
+/** ECTS as shown: a sheet skill's stored credits are only a placeholder. */
+export const ectsLabel = (code: string, credits: number) => (isSheetSkill(code) ? "—" : String(credits));
+
 export const KINDS = ["QUIZ", "ASSIGNMENT", "PROJECT", "MIDTERM", "FINAL"] as const;
 export type CourseRow = {
   studentId: string; firstName: string; lastName: string; email: string; program: string | null;
