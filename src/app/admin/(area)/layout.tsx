@@ -1,5 +1,6 @@
 import AdminTabs from "@/components/AdminTabs";
 import AppHeader from "@/components/AppHeader";
+import PassportFrame from "@/components/PassportFrame";
 import { requireStaff } from "@/lib/auth/staff";
 import { getDb } from "@/lib/db";
 
@@ -23,8 +24,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </button>
         </form>
       </AppHeader>
-      <AdminTabs />
-      <main className="page wide">
+      <PassportFrame>
+        <AdminTabs />
+        <div className="lp-sheet pp-admin">
         {real === 0 && (
           <p className="alert info" data-testid="demo-banner">
             Demo environment: every record here is BTU hackathon test data or synthetic demo data, not real institutional
@@ -32,7 +34,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </p>
         )}
         {children}
-      </main>
+        </div>
+      </PassportFrame>
     </>
   );
 }

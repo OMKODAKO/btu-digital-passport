@@ -203,7 +203,7 @@ a:hover { color: var(--brand); }
 .landing {
   --lp-frame: #2d2d2d; --lp-sheet-line: #e2dfe5; --lp-orange: #ff6a00; --lp-red: #ff3f3f; --lp-violet: #5e00ff; --lp-navy: #07207e;
   --lp-font: "Outfit", "Noto Sans Georgian", system-ui, sans-serif;
-  background: var(--lp-frame); font-family: var(--lp-font);
+  background: var(--lp-frame); font-family: var(--lp-font); min-height: calc(100vh - 66px);
 }
 .lp-frame { max-width: 1240px; margin: 0 auto; padding: 18px 20px 28px; display: grid; gap: 22px; }
 .lp-initiative { margin: 0; color: #cfcdd2; font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase; text-align: right; border-bottom: 1px solid #6c6b6d; padding-bottom: 8px; }
@@ -272,4 +272,47 @@ a:hover { color: var(--brand); }
   .lp-frame { padding: 12px 10px 20px; gap: 14px; }
   .lp-sheet { border-width: 5px; border-radius: 16px; }
   .lp-initiative { text-align: left; font-size: 0.7rem; }
+}
+
+/* ---- sign-in pages and staff area in the passport frame (PassportFrame + .lp-sheet) ------------- */
+.landing .button { font: 600 0.92rem/1 var(--lp-font); text-transform: none; letter-spacing: 0; border: 2px solid var(--ink); border-radius: 4px; padding: 11px 16px; }
+.landing .button:hover { background: var(--ink); border-color: var(--ink); color: #fff; }
+.landing .button.primary { background: var(--lp-orange); border-color: var(--lp-orange); color: #111; }
+.landing .button.primary:hover { background: #111; border-color: #111; color: #fff; }
+.landing .button.small { padding: 6px 10px; font-size: 0.82rem; border-width: 1px; }
+.landing .form input, .landing .form select, .landing .searchbar input, .landing .searchbar select, .landing .marks input, .landing textarea { border: 2px solid #d5d4d6; border-radius: 4px; }
+.landing .form input:focus, .landing .form select:focus, .landing .searchbar input:focus, .landing .marks input:focus { outline: 2px solid var(--lp-orange); outline-offset: 0; border-color: var(--lp-orange); }
+.landing :focus-visible { outline-color: var(--lp-orange); }
+.landing .eyebrow { color: var(--lp-orange); font-family: var(--lp-font); font-weight: 800; }
+
+.pp-auth { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); gap: 48px; align-items: center; }
+.pp-auth-title { font-size: clamp(2.2rem, 5vw, 3.9rem); margin-top: 6px; }
+.pp-auth-art { display: block; width: 100%; max-width: 440px; height: auto; margin-top: 28px; }
+.pp-login { border-left: 2px solid var(--ink); padding-left: 44px; }
+.pp-login-title { font: 900 1.7rem/1 var(--lp-font); text-transform: uppercase; letter-spacing: 0; margin: 0 0 6px; }
+.pp-login .form label { font-family: var(--lp-font); font-weight: 600; }
+.pp-login a, .pp-admin a:not(.button) { color: #b34700; }
+.pp-login a:hover, .pp-admin a:not(.button):hover { color: var(--ink); }
+
+.pp-tabs-inner { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 2px; }
+.pp-tabs a { flex: none; padding: 10px 16px; border: 1px solid #6c6b6d; border-radius: 999px; color: #e2dfe5; text-decoration: none; font: 600 0.88rem/1 var(--lp-font); text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+.pp-tabs a:hover { border-color: #fff; color: #fff; }
+.pp-tabs a.active { background: var(--lp-orange); border-color: var(--lp-orange); color: #111; }
+.pp-admin { display: grid; gap: 18px; padding: clamp(16px, 3vw, 32px); }
+.pp-admin h1 { font: 900 clamp(1.7rem, 3vw, 2.4rem)/1.05 var(--lp-font); letter-spacing: 0; }
+.pp-admin h2 { font-family: var(--lp-font); font-weight: 800; letter-spacing: 0.02em; }
+.pp-admin .card { border: 2px solid var(--lp-sheet-line); border-radius: 14px; }
+.pp-admin .card > h2::before { content: "✱ "; color: var(--lp-orange); }
+.pp-admin .stats > div { border-left-color: var(--lp-orange); }
+.pp-admin .stats dt, .pp-admin .facts dt, .pp-admin .check-group { font-family: var(--lp-font); }
+.pp-admin .stats dd { font: 800 1.9rem/1 var(--lp-font); }
+.pp-admin .table { border: 0; }
+.pp-admin .table th { font-family: var(--lp-font); background: #f3f2f5; }
+.pp-admin .table tbody tr:hover td { background: #fff1e6; }
+.pp-admin .pill { font-family: var(--lp-font); }
+.pp-admin .alert.info { background: #f3f2f5; color: var(--ink); border-left: 4px solid var(--lp-orange); }
+@media (max-width: 860px) {
+  .pp-auth { grid-template-columns: 1fr; gap: 28px; }
+  .pp-login { border-left: 0; padding-left: 0; border-top: 2px solid var(--ink); padding-top: 24px; }
+  .pp-auth-art { display: none; }
 }
