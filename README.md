@@ -17,6 +17,22 @@ these limits. Sign-in has no passwords: Google sign-in (needs BTU's OAuth client
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Components, data flow, identifiers, capacity analysis |
 | [chain/README.md](chain/README.md) | Contract, registrar, issuer identity model, public test network and production setup |
 
+## What a student sees / რას ხედავს სტუდენტი
+
+The passport page shows the student's current passport version as an interactive booklet: it opens around the spine,
+pages turn one at a time, and on a phone it shows one page at a time. Beside it, the verification claims are listed
+separately (the issuer here is a hackathon TEST issuer, so official BTU issuance shows as pending). The data is the
+fictional demo data that `npm run quickstart` creates.
+
+სტუდენტის გვერდზე პასპორტი ინტერაქტიული წიგნაკის სახით ჩანს: იხსნება ყდა, გვერდები სათითაოდ გადაიშლება, ტელეფონზე
+ერთი გვერდი ჩანს. მონაცემები გამოგონილი სადემო მონაცემებია.
+
+| Closed / დახურული | Skills and evidence / უნარები და მტკიცებულება |
+| --- | --- |
+| ![Closed passport booklet](docs/booklet/1-closed.jpg) | ![Skills and evidence spread](docs/booklet/2-skills-evidence.jpg) |
+| **Verification / ვერიფიკაცია** | **Phone / ტელეფონი** |
+| ![Verification and version record spread](docs/booklet/3-verification.jpg) | <img src="docs/booklet/4-mobile.jpg" alt="Booklet on a phone" width="260"> |
+
 ## Quick start / სწრაფი დაწყება
 
 ### ქართულად
