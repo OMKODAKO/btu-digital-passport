@@ -5,16 +5,17 @@ import { useEffect, useRef, useState } from "react";
 /**
  * Draws every page of the PDF with PDF.js, so the passport looks the same on every
  * browser (an <iframe> shows only page 1 on iPhone and nothing on Android Chrome).
- * The file comes from our own authenticated route, with the session cookie.
+ * The file comes from our own authenticated route, with the session cookie. Nothing is fetched until
+ * `active` (the dashboard keeps the PDF folded away under the booklet until the student opens it).
  */
-export default function PdfViewer({ src, title }: { src: string; title: string }) {
+export default function PdfViewer({ src, title, active = true }: { src: string; title: string; active?: boolean }) {
   const box = useRef<HTMLDivElement>(null);
   const [state, setState] = useState<"loading" | "ready" | "error">("loading");
 
   useEffect(() => {
     let cancelled = false;
     const container = box.current;
-    if (!container) return;
+    if (!container || !active) return;
 
     (async () => {
       try {
@@ -46,11 +47,11 @@ export default function PdfViewer({ src, title }: { src: string; title: string }
     return () => {
       cancelled = true;
     };
-  }, [src, title]);
+  }, [src, title, active]);
 
   return (
     <div className="pdf" data-testid="pdf-viewer" data-state={state}>
-      {state === "loading" && <p className="muted">Loading your passport…</p>}
+      {state === "loading" && active && <p className="muted">Loading your passport…</p>}
       {state === "error" && (
         <p className="alert error">The preview could not be shown. Use Download PDF or Open in a new tab instead.</p>
       )}

@@ -2,18 +2,20 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import QRCode from "qrcode";
 import AppHeader from "@/components/AppHeader";
-import Checks, { headline } from "@/components/Checks";
+import PassportBook from "@/components/PassportBook";
 import { getCurrentStudent } from "@/lib/auth/session";
 import { txUrl } from "@/lib/explorer";
+import { bookForVersion, claimsFor } from "@/lib/passport-book";
 import {
   getPassportForStudent,
   getPendingInfo,
   getUnresolvedFailure,
-  getVersionSkills,
   getWaitingVersion,
   readVersionPdf,
 } from "@/lib/passports";
 import { verifyVersion } from "@/lib/verify";
+import CompanionPanel from "./CompanionPanel";
+import PdfDocument from "./PdfDocument";
 import PdfViewer from "./PdfViewer";
 
 export const dynamic = "force-dynamic";
@@ -33,7 +35,6 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
       : (passport.versions.find((x) => String(x.versionNo) === v) ?? null)
     : null;
   const pdf = selected ? readVersionPdf(selected) : null;
-  const skills = selected ? getVersionSkills(student.id, selected.versionNo) : [];
   const pending = passport ? null : getPendingInfo(student.id);
   const failure = passport ? getUnresolvedFailure(student.id) : null;
   const waiting = passport ? getWaitingVersion(student.id) : null;
@@ -57,7 +58,10 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
   const chainUrl = selected ? txUrl(selected.chainId, selected.chainTxHash) : null;
   // (a local-devnet link is a page of this portal on this computer, which a phone can't open: no QR for it)
   const chainQr = chainUrl?.startsWith("https://") ? await QRCode.toString(chainUrl, { type: "svg", margin: 0, errorCorrectionLevel: "M" }) : null;
-  const lastUpdated = passport?.current?.issuedAt ?? null;
+  // The booklet shows the data embedded in this version's PDF, read from the bytes that just passed the
+  // integrity check, so it can't show anything the download doesn't contain.
+  const claims = selected ? claimsFor(selected, !!pdf?.ok, verification) : null;
+  const book = passport && selected && pdf?.ok && claims ? bookForVersion({ student, passport, version: selected, pdf: pdf.bytes, claims }) : null;
   const demo = student.source === "BTU_TEST_DATA" || student.source === "SEED_SYNTHETIC";
 
   return (
@@ -153,181 +157,58 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
       )}
 
       {passport && selected && (
-        <>
-          <div className="passport-layout">
-            <div className="passport-main">
-          {pdf?.ok ? (
-            <section className="card viewer">
-              <div className="viewer-bar">
-                <p className="viewer-title">
-                  Passport <span className="mono">{passport.passportId}</span> · V{selected.versionNo}
-                  {selected.status !== "CURRENT" && " (superseded)"}
-                </p>
-                <a className="button" href={pdfUrl} target="_blank" rel="noopener">
-                  Open in new tab
-                </a>
-                <a className="button primary" href={downloadUrl}>
-                  Download PDF
-                </a>
-              </div>
-              <PdfViewer src={pdfUrl} title={`Passport ${passport.passportId} V${selected.versionNo}`} />
-            </section>
-          ) : (
-            <section className="card notice" data-testid="pdf-unavailable">
-              <h2>{pdf?.reason === "integrity" ? "This PDF failed its integrity check" : "The PDF file is missing"}</h2>
-              <p className="muted">
-                Your passport record exists, but its PDF can&apos;t be shown right now. No other document is shown in its
-                place. Please contact BTU.
+        <div className="passport-stage">
+          <section className="passport-main" aria-labelledby="viewer-title">
+            <div className="viewer-bar">
+              <p className="viewer-title" id="viewer-title">
+                Passport <span className="mono">{passport.passportId}</span> · V{selected.versionNo}
+                {selected.status !== "CURRENT" && " (superseded)"}
               </p>
-            </section>
-          )}
-
-            </div>
-            <aside className="passport-side">
-          <section className="card facts" aria-label="Passport details">
-            <dl>
-              <div>
-                <dt>Passport ID</dt>
-                <dd data-testid="passport-id">{passport.passportId}</dd>
-              </div>
-              <div>
-                <dt>Version</dt>
-                <dd>
-                  V{selected.versionNo}{" "}
-                  <span className={`pill ${selected.status === "CURRENT" ? "ok" : ""}`}>
-                    {selected.status === "CURRENT" ? "Current" : "Superseded"}
-                  </span>
-                </dd>
-              </div>
-              <div>
-                <dt>Version issued</dt>
-                <dd>{formatDate(selected.issuedAt)}</dd>
-              </div>
-              <div>
-                <dt>First issued</dt>
-                <dd data-testid="first-issued">{formatDate(passport.firstIssuedOn)}</dd>
-              </div>
-              {lastUpdated && (
-                <div>
-                  <dt>Last updated</dt>
-                  <dd data-testid="last-updated">{formatDate(lastUpdated)}</dd>
-                </div>
-              )}
-              <div>
-                <dt>Verification code</dt>
-                <dd className="mono" data-testid="verification-code">{selected.verificationCode}</dd>
-              </div>
-            </dl>
-            {selected.chainTxHash && (
-              <p className="fine" data-testid="chain-record">
-                Registered on {selected.chainNetwork ?? "a blockchain"}, block {selected.chainBlockNumber}, transaction{" "}
-                {chainUrl ? (
-                  <a className="mono" href={chainUrl} target="_blank" rel="noopener" data-testid="tx-link">
-                    {selected.chainTxHash.slice(0, 10)}…{selected.chainTxHash.slice(-6)}
+              {pdf?.ok && (
+                <>
+                  <a className="button" href={pdfUrl} target="_blank" rel="noopener">
+                    Open in new tab
                   </a>
-                ) : (
-                  <span className="mono">{selected.chainTxHash.slice(0, 10)}…{selected.chainTxHash.slice(-6)}</span>
-                )}
-                .
-                {selected.chainIssuerTestOnly !== 0 &&
-                  " Issued by a test issuer: official BTU issuer verification is still pending."}
-              </p>
-            )}
-            {chainUrl && chainQr && (
-              <div className="verifyrow" data-testid="chain-qr-block">
-                <div className="qr" data-testid="chain-qr" role="img" aria-label="QR code for this version's blockchain transaction" dangerouslySetInnerHTML={{ __html: chainQr }} />
-                <p className="muted">
-                  Scan to see V{selected.versionNo} of your passport on the public blockchain explorer:{" "}
-                  <a href={chainUrl} target="_blank" rel="noopener">open the transaction</a>. It shows the PDF&apos;s
-                  SHA-256 and the issuer; no name or email is stored there.
-                </p>
-              </div>
-            )}
-            {!selected.chainTxHash && (
-              <p className="fine">
-                Prototype document: this version is not registered on a blockchain yet, so it cannot be publicly
-                verified.
-              </p>
-            )}
-          </section>
-
-          <section className="card status-block" data-testid="authenticity" data-overall={verification?.overall ?? "NOT_REGISTERED"}>
-            <h2>Authenticity</h2>
-            {verification ? (
-              <>
-                <p className={`verdict-line ${headline(verification).tone}`}>
-                  <strong>{headline(verification).title}</strong>
-                </p>
-                <Checks result={verification} stored />
-                <p className="fine">Checked just now against the blockchain record and BTU&apos;s issuer statement.</p>
-              </>
+                  <a className="button primary" href={downloadUrl}>
+                    Download PDF
+                  </a>
+                </>
+              )}
+            </div>
+            {pdf?.ok ? (
+              book ? (
+                <>
+                  <PassportBook data={book} />
+                  <PdfDocument src={pdfUrl} title={`Passport ${passport.passportId} V${selected.versionNo}`} />
+                </>
+              ) : (
+                <div className="card viewer">
+                  <PdfViewer src={pdfUrl} title={`Passport ${passport.passportId} V${selected.versionNo}`} />
+                </div>
+              )
             ) : (
-              <p className="muted">
-                Not registered on a blockchain, so this version can&apos;t be verified. It is not shown as authentic.
-              </p>
-            )}
-            {verification && verifyPath && (
-              <div className="verifyrow">
-                {qr && <div className="qr" data-testid="verify-qr" role="img" aria-label="QR code for the public verification page" dangerouslySetInnerHTML={{ __html: qr }} />}
+              <section className="card notice" data-testid="pdf-unavailable">
+                <h2>{pdf?.reason === "integrity" ? "This PDF failed its integrity check" : "The PDF file is missing"}</h2>
                 <p className="muted">
-                  Anyone can check this version, with no account, on the{" "}
-                  <a href={verifyPath} data-testid="verify-link">public verification page</a>. Share the code or the PDF;
-                  your email and other details are never shown there.
+                  Your passport record exists, but its PDF can&apos;t be shown right now. No other document is shown in its
+                  place. Please contact BTU.
                 </p>
-              </div>
+              </section>
             )}
           </section>
-
-          {skills.length > 0 && (
-            <section className="card">
-              <h2>Skills in V{selected.versionNo}</h2>
-              <ul className="skills" data-testid="skills">
-                {skills.map((k) => (
-                  <li key={k.recordId}>
-                    <span className="skill-name">{k.name}</span>
-                    <span className="muted">
-                      {k.category} · {k.badgeCode} · earned {formatDate(k.dateEarned)}
-                    </span>
-                    {k.description && <span className="skill-desc">{k.description}</span>}
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-
-          {passport.versions.length > 0 && (
-            <section className="card">
-              <h2>Version history</h2>
-              <ul className="versions" data-testid="history">
-                {passport.versions.map((ver) => (
-                  <li key={ver.versionNo} data-version={ver.versionNo} data-status={ver.status}>
-                    <a href={ver.status === "CURRENT" ? "/dashboard" : `/dashboard?v=${ver.versionNo}`}>
-                      V{ver.versionNo}
-                    </a>{" "}
-                    <span className="muted">
-                      issued {formatDate(ver.issuedAt)} ·{" "}
-                      {ver.status === "CURRENT" ? <span className="pill ok">current</span> : <span className="pill">superseded</span>}
-                      {txUrl(ver.chainId, ver.chainTxHash) ? (
-                        <>
-                          {" · "}
-                          <a href={txUrl(ver.chainId, ver.chainTxHash)!} target="_blank" rel="noopener" data-testid="history-tx-link">
-                            transaction
-                          </a>
-                        </>
-                      ) : ver.chainTxHash ? (
-                        ""
-                      ) : (
-                        " · not registered on a blockchain"
-                      )}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-            </aside>
-          </div>
-        </>
+          <aside className="passport-side">
+            <CompanionPanel
+              passport={passport}
+              selected={selected}
+              verification={verification}
+              claims={claims!}
+              verifyPath={verifyPath!}
+              qr={qr}
+              chainUrl={chainUrl}
+              chainQr={chainQr}
+            />
+          </aside>
+        </div>
       )}
     </main>
     </>

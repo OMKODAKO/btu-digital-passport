@@ -178,7 +178,7 @@ All names and emails are BTU's fictional hackathon test data.
 | `src/lib/passports.ts` | finds the passport for a student id; reads a PDF and checks it against its recorded SHA-256 |
 | `src/app/api/auth/login`, `logout` | form POST endpoints; refuse cross-site posts |
 | `src/app/api/passport/pdf` | streams the signed-in student's own PDF (inline or download) |
-| `src/app/login`, `src/app/dashboard` | the two pages; `PdfViewer.tsx` renders pages with PDF.js |
+| `src/app/login`, `src/app/dashboard` | the two pages; the dashboard shows the selected version as a booklet (`src/components/PassportBook.tsx`, data from the PDF's embedded passport-data.json via `src/lib/passport-book.ts`) beside `CompanionPanel.tsx`; `PdfViewer.tsx` renders the PDF itself with PDF.js |
 | `scripts/seed.ts` | idempotent seed from `passport-generator/out/registry.json` |
 | `tests/stage1.test.mjs`, `tests/stage2.test.mjs` | web acceptance tests |
 | `worker/` | Python import worker (stage 2) and PDF generator + issuance (stage 3), below |

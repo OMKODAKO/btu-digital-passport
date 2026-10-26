@@ -103,25 +103,61 @@ a:hover { color: var(--brand); }
 .pill { font: 600 0.72rem/1 var(--body); padding: 4px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
 .pill.ok { color: var(--ok); border-color: currentColor; }
 
-/* ---- student passport ------------------------------------------------------------------------- */
-.passport-layout { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 20px; align-items: start; }
-.passport-side { display: grid; gap: 16px; position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow: auto; }
-@media (max-width: 1000px) { .passport-layout { grid-template-columns: 1fr; } .passport-side { position: static; max-height: none; } }
+/* ---- student passport: the booklet as the main object, a quiet companion column beside it --------- */
+.passport-stage { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 28px; align-items: start; }
+.passport-main {
+  min-width: 0; display: grid; gap: 14px; padding: 18px 18px 22px; border-radius: 14px;
+  background: radial-gradient(ellipse at 50% 30%, #fbfaf7 0%, #ecebe6 75%); border: 1px solid #e2e0da;
+}
+.passport-side { position: sticky; top: 16px; max-height: calc(100vh - 32px); overflow: auto; }
+@media (max-width: 1100px) { .passport-stage { grid-template-columns: 1fr; } .passport-side { position: static; max-height: none; } }
 .viewer { padding: 14px; }
-.viewer-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; }
+.viewer-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .viewer-title { margin: 0 auto 0 0; font: 600 1rem/1.2 var(--display); text-transform: uppercase; letter-spacing: 0.04em; }
 .pdf .pages { display: grid; gap: 14px; }
 .pdf canvas { display: block; border: 1px solid var(--line); border-radius: 3px; background: #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+.pdf-fold { border-top: 1px solid #dcd9d1; padding-top: 12px; }
+.pdf-fold summary { cursor: pointer; font-weight: 600; font-size: 0.92rem; color: var(--muted); width: fit-content; }
+.pdf-fold summary:hover { color: var(--ink); }
+.pdf-fold[open] summary { margin-bottom: 12px; }
+
+.companion { display: grid; gap: 0; font-size: 0.92rem; }
+.cp-section { padding: 18px 0; border-top: 1px solid var(--line); display: grid; gap: 10px; }
+.cp-section:first-child { padding-top: 4px; border-top: 0; }
+.cp-h { margin: 0; font: 600 0.74rem/1.2 var(--display); color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; }
+.cp-facts { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
+.cp-facts .cp-wide { grid-column: 1 / -1; }
+.cp-facts dt { font: 600 0.7rem/1.2 var(--display); color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+.cp-facts dd { margin: 3px 0 0; font-weight: 600; overflow-wrap: anywhere; }
+.cp-chip { font: 600 0.68rem/1 var(--body); padding: 3px 7px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); vertical-align: 1px; }
+.cp-chip.is-current { color: var(--brand-dark); border-color: currentColor; }
+.cp-claims { list-style: none; margin: 0; padding: 0; display: grid; gap: 11px; }
+.cp-claims li { display: grid; grid-template-columns: 20px 1fr; gap: 10px; align-items: start; line-height: 1.4; }
+.cp-claims strong { display: block; font-weight: 600; font-size: 0.88rem; }
+.cp-claim-text { display: block; color: var(--muted); font-size: 0.84rem; }
+.cp-mark { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-size: 0.72rem; font-weight: 700; border: 1.5px solid currentColor; margin-top: 1px; }
+.cp-ok { color: var(--ok); }
+.cp-pending, .cp-partial { color: var(--warn); }
+.cp-failed { color: var(--bad); }
+.cp-none, .cp-unknown { color: #8a8c93; }
+.cp-summary { margin: 2px 0 0; font-size: 0.84rem; line-height: 1.45; padding-left: 10px; border-left: 2px solid var(--line); color: var(--ink); }
+.cp-tone-ok { border-left-color: var(--ok); }
+.cp-tone-warn { border-left-color: var(--warn); }
+.cp-tone-bad { border-left-color: var(--bad); }
+.cp-fine { margin: 0; color: var(--muted); font-size: 0.8rem; line-height: 1.5; overflow-wrap: anywhere; }
+.cp-more summary { cursor: pointer; font-weight: 600; font-size: 0.84rem; color: var(--ink); width: fit-content; }
+.cp-more[open] summary { margin-bottom: 10px; }
+.cp-more .checks { font-size: 0.84rem; }
+.cp-share { display: flex; gap: 12px; align-items: center; margin-top: 8px; }
+.cp-share .qr { width: 96px; height: 96px; }
+.cp-versions { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.cp-versions li { display: grid; grid-template-columns: 34px 1fr; gap: 8px; padding: 5px 8px; border-radius: 4px; align-items: baseline; }
+.cp-versions li[aria-current="page"] { background: #fff; box-shadow: inset 2px 0 0 var(--brand); }
+.cp-versions li > a:first-child { font-weight: 700; text-decoration: none; color: var(--ink); }
+.cp-v-meta { color: var(--muted); font-size: 0.82rem; }
 .facts dl { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 14px 18px; }
 .facts dt { font: 600 0.72rem/1.2 var(--display); color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
 .facts dd { margin: 2px 0 0; font-weight: 600; overflow-wrap: anywhere; }
-.status-block { display: grid; gap: 12px; }
-.skills { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
-.skills li { display: grid; gap: 2px; padding: 0 0 10px 12px; border-left: 3px solid var(--brand); border-bottom: 1px solid var(--line); }
-.skills li:last-child { border-bottom: 0; padding-bottom: 0; }
-.skill-name { font-weight: 600; }
-.skill-desc { font-size: 0.88rem; line-height: 1.45; color: var(--muted); }
-.versions { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
 .qr { width: 120px; height: 120px; background: #fff; padding: 6px; border-radius: 4px; border: 1px solid var(--line); flex: none; }
 .qr svg { width: 100%; height: 100%; display: block; }
 .verifyrow { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
@@ -173,6 +209,7 @@ a:hover { color: var(--brand); }
   .page { padding: 20px 14px 40px; }
   .facts dl { grid-template-columns: 1fr; }
   .viewer { padding: 10px; }
+  .passport-main { padding: 12px 6px 16px; border-radius: 10px; }
 }
 
 /* Subjects (stage 03): syllabus popup, tier labels, marks form */
