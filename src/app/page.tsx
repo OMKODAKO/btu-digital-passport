@@ -48,6 +48,7 @@ export default async function Home() {
   return (
     <>
       <AppHeader area="public" home="/">
+        <a className="appbar-link" href="/passport">Demo passport</a>
         <a className="appbar-link" href="/verify">Verify a passport</a>
         <a className="appbar-link" href={open.href}>{student ? "My passport" : "Student sign-in"}</a>
       </AppHeader>
@@ -65,6 +66,7 @@ export default async function Home() {
             </p>
             <div className="lp-actions">
               <a className="lp-btn lp-btn-primary" href={open.href}>{open.label}</a>
+              <a className="lp-btn" href="/passport" data-testid="open-demo-book">დემო პასპორტის გადაფურცვლა</a>
               <a className="lp-btn" href="/verify">პასპორტის გადამოწმება</a>
             </div>
           </div>
