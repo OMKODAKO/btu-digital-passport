@@ -235,15 +235,15 @@
 .pb-bar span { display: block; height: 100%; background: var(--pb-ink); }
 
 .pb-seal { flex: none; display: block; }
+/* BTU's skill stamps: fit a box of the same height whatever the stamp's shape, slightly turned like a stamp */
+.pb-stamp { flex: none; width: calc(var(--s) * 1.5); height: var(--s); display: grid; place-items: center; }
+.pb-stamp img { max-width: 100%; max-height: 100%; display: block; transform: rotate(-4deg); }
 .pb-seal circle { fill: #8a8a8a; }
 .pb-seal-lines { stroke: #fff; stroke-width: 0.45; opacity: 0.45; }
 .pb-seal text { fill: #fff; font: 800 11px var(--pb-font); }
 .pb-seal-tier-silver circle { fill: #8f969f; }
 .pb-seal-tier-gold circle { fill: #ab8838; }
 .pb-seal-tier-platinum circle { fill: #5a7493; }
-.pb-seal-cat-skill circle { fill: #e23a3a; }
-.pb-seal-cat-applied circle { fill: #5e00ff; }
-.pb-seal-cat-advanced circle { fill: #07207e; }
 
 /* 04 evidence */
 .pb-ev-head { display: flex; align-items: center; gap: 0.6em; margin: 0 0 0.4em; font-size: 0.84em; }

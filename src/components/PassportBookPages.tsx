@@ -37,9 +37,24 @@ function Emblem({ size = 112 }: { size?: number }) {
 
 const categoryClass = (s: string) => (/advanced/i.test(s) ? "advanced" : /applied/i.test(s) ? "applied" : "skill");
 
-/** A small seal: the tier for a scored subject, the stamp colour of the category for a confirmed skill. */
+/** BTU's skill stamps (AI Skill, AI Applied Skill, AI Advanced Skill), one per category of confirmed skill. */
+const STAMP: Record<string, { src: string; alt: string }> = {
+  skill: { src: "/stamps/ai-skill.png", alt: "AI Skill stamp" },
+  applied: { src: "/stamps/ai-applied-skill.png", alt: "AI Applied Skill stamp" },
+  advanced: { src: "/stamps/ai-advanced-skill.png", alt: "AI Advanced Skill stamp" },
+};
+
+/** The mark beside a skill: BTU's stamp for a confirmed skill, a tier seal for a scored subject. */
 function Seal({ tier, category, size = 28 }: { tier: Tier | null; category: string | null; size?: number }) {
-  const tone = tier ? `tier-${tier.toLowerCase()}` : category ? `cat-${categoryClass(category)}` : "none";
+  if (!tier && category) {
+    const stamp = STAMP[categoryClass(category)];
+    return (
+      <span className="pb-stamp" style={{ ["--s" as string]: `${size / 14}em` }}>
+        <img src={stamp.src} alt={stamp.alt} loading="lazy" />
+      </span>
+    );
+  }
+  const tone = tier ? `tier-${tier.toLowerCase()}` : "none";
   return (
     <svg className={`pb-seal pb-seal-${tone}`} width={size} height={size} viewBox="-20 -20 40 40" aria-hidden="true">
       <circle r="18.5" />
@@ -234,7 +249,7 @@ export function SkillsPage({ data, selected, onSelect, single }: {
                 <li key={k.id}>
                   <button type="button" className="pb-skill" aria-pressed={selected === k.id} onClick={() => onSelect(k.id)}
                     data-testid="book-skill">
-                    <Seal tier={k.tier} category={k.category} />
+                    <Seal tier={k.tier} category={k.category} size={k.tier ? 28 : 40} />
                     <span className="pb-skill-text">
                       <span className="pb-skill-name">{k.name}</span>
                       <span className="pb-skill-meta">{k.meta}</span>
@@ -271,7 +286,7 @@ export function EvidencePage({ data, skill }: { data: BookData; skill: BookSkill
       {skill ? (
         <div className="pb-ev" aria-live="polite" data-testid="book-evidence" data-skill={skill.id}>
           <p className="pb-ev-head">
-            <Seal tier={skill.tier} category={skill.category} size={22} />
+            <Seal tier={skill.tier} category={skill.category} size={skill.tier ? 22 : 44} />
             <span>
               <strong>{skill.name}</strong> · {skill.level}
               {skill.score && <> · <span className="pb-mono">{skill.score}</span> / 100</>}
