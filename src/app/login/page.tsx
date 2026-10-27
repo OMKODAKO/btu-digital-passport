@@ -14,7 +14,7 @@ const ERRORS: Record<string, string> = {
   google_failed: "Google sign-in didn't complete. Try again.",
   google_unverified: "Google hasn't verified this account's email address.",
   google_domain: "Sign in with your BTU Google account.",
-  google_unknown: "No student record uses this Google account's email address.",
+  google_unknown: "No passport for this account at this stage: no BTU student record uses this Google account's email address.",
   google_linked: "This student record is already linked to a different Google account.",
   demo_unknown: "That student isn't in the demo any more.",
 };

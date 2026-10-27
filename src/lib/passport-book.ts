@@ -5,7 +5,7 @@
  * read from the passport-data.json the worker embedded in that version's stored PDF (worker/pdf/model.py
  * canonical_payload, checked against the certified data before issue). The caller passes the bytes only after
  * readVersionPdf checked them against the recorded SHA-256, so the booklet and the PDF download are always the
- * same version with the same data. The verification claims come from the dashboard's live check (verifyVersion);
+ * same version with the same data. The verification claims (claimsFor, shown beside the booklet) come from the dashboard's live check (verifyVersion);
  * nothing here turns a missing or failed check into a pass.
  */
 import { inflateSync } from "node:zlib";
@@ -69,7 +69,6 @@ export type BookData = {
     block: number | null;
     verifyHref: string | null;
   };
-  claims: Claim[];
   versions: BookVersion[];
 };
 
@@ -170,9 +169,8 @@ export function bookForVersion(input: {
   passport: Passport;
   version: PassportVersion;
   pdf: Buffer;
-  claims: Claim[];
 }): BookData | null {
-  const { student, passport, version, pdf, claims } = input;
+  const { student, passport, version, pdf } = input;
   const data = readEmbeddedPayload(pdf, passport.passportId, version.versionNo);
   if (!data) return null;
 
@@ -263,7 +261,6 @@ export function bookForVersion(input: {
       block: version.chainBlockNumber,
       verifyHref: version.chainTxHash ? `/verify/${version.verificationCode}` : null,
     },
-    claims,
     versions: passport.versions.map((x) => ({
       versionNo: x.versionNo,
       issuedOn: fmtDate(x.issuedAt),

@@ -1,12 +1,12 @@
 "use client";
 
 import type { ReactNode } from "react";
-import type { BookData, BookEvidence, BookSkill, ClaimState } from "@/lib/passport-book";
+import type { BookData, BookEvidence, BookSkill } from "@/lib/passport-book";
 import type { Tier } from "@/lib/subjects";
 
 /* The content of each face of the passport booklet. Pure rendering: navigation lives in PassportBook. */
 
-export const SECTIONS = ["Identity", "Academic journey", "Skills", "Evidence", "Verification", "Version record"];
+export const SECTIONS = ["Identity", "Academic journey", "Skills", "Evidence", "Version record"];
 export const TOTAL_PAGES = SECTIONS.length;
 const pad = (n: number) => String(n).padStart(2, "0");
 
@@ -37,9 +37,24 @@ function Emblem({ size = 112 }: { size?: number }) {
 
 const categoryClass = (s: string) => (/advanced/i.test(s) ? "advanced" : /applied/i.test(s) ? "applied" : "skill");
 
-/** A small seal: the tier for a scored subject, the stamp colour of the category for a confirmed skill. */
+/** BTU's skill stamps (AI Skill, AI Applied Skill, AI Advanced Skill), one per category of confirmed skill. */
+const STAMP: Record<string, { src: string; alt: string }> = {
+  skill: { src: "/stamps/ai-skill.png", alt: "AI Skill stamp" },
+  applied: { src: "/stamps/ai-applied-skill.png", alt: "AI Applied Skill stamp" },
+  advanced: { src: "/stamps/ai-advanced-skill.png", alt: "AI Advanced Skill stamp" },
+};
+
+/** The mark beside a skill: BTU's stamp for a confirmed skill, a tier seal for a scored subject. */
 function Seal({ tier, category, size = 28 }: { tier: Tier | null; category: string | null; size?: number }) {
-  const tone = tier ? `tier-${tier.toLowerCase()}` : category ? `cat-${categoryClass(category)}` : "none";
+  if (!tier && category) {
+    const stamp = STAMP[categoryClass(category)];
+    return (
+      <span className="pb-stamp" style={{ ["--s" as string]: `${size / 14}em` }}>
+        <img src={stamp.src} alt={stamp.alt} loading="lazy" />
+      </span>
+    );
+  }
+  const tone = tier ? `tier-${tier.toLowerCase()}` : "none";
   return (
     <svg className={`pb-seal pb-seal-${tone}`} width={size} height={size} viewBox="-20 -20 40 40" aria-hidden="true">
       <circle r="18.5" />
@@ -234,7 +249,7 @@ export function SkillsPage({ data, selected, onSelect, single }: {
                 <li key={k.id}>
                   <button type="button" className="pb-skill" aria-pressed={selected === k.id} onClick={() => onSelect(k.id)}
                     data-testid="book-skill">
-                    <Seal tier={k.tier} category={k.category} />
+                    <Seal tier={k.tier} category={k.category} size={k.tier ? 28 : 40} />
                     <span className="pb-skill-text">
                       <span className="pb-skill-name">{k.name}</span>
                       <span className="pb-skill-meta">{k.meta}</span>
@@ -263,23 +278,15 @@ const EVIDENCE_GROUPS: [BookEvidence["kind"], string][] = [
   ["record", "Skill record"],
 ];
 
-export function EvidencePage({ data, skill, onSelect }: { data: BookData; skill: BookSkill | null; onSelect: (id: string) => void }) {
+/** The evidence for the skill chosen on the Skills page (the first one until another is chosen there). */
+export function EvidencePage({ data, skill }: { data: BookData; skill: BookSkill | null }) {
   return (
     <Sheet n={4} ka="მტკიცებულება" data={data}>
-      {data.skills.length > 0 && (
-        <label className="pb-ev-pick">
-          <span>Skill</span>
-          <select value={skill?.id ?? ""} onChange={(e) => onSelect(e.target.value)} data-testid="book-evidence-select">
-            {data.skills.map((k) => (
-              <option key={k.id} value={k.id}>{k.name}</option>
-            ))}
-          </select>
-        </label>
-      )}
+      {skill && <p className="pb-lead">For the skill selected on page 03.</p>}
       {skill ? (
         <div className="pb-ev" aria-live="polite" data-testid="book-evidence" data-skill={skill.id}>
           <p className="pb-ev-head">
-            <Seal tier={skill.tier} category={skill.category} size={22} />
+            <Seal tier={skill.tier} category={skill.category} size={skill.tier ? 22 : 44} />
             <span>
               <strong>{skill.name}</strong> · {skill.level}
               {skill.score && <> · <span className="pb-mono">{skill.score}</span> / 100</>}
@@ -312,43 +319,9 @@ export function EvidencePage({ data, skill, onSelect }: { data: BookData; skill:
   );
 }
 
-const CLAIM_MARK: Record<ClaimState, string> = { ok: "✓", pending: "◷", partial: "◐", failed: "✕", none: "–", unknown: "?" };
-
-export function VerificationPage({ data }: { data: BookData }) {
-  const i = data.issue;
-  return (
-    <Sheet n={5} ka="ვერიფიკაცია" data={data}>
-      <p className={`pb-status ${i.current ? "" : "pb-status-old"}`} data-testid="book-status">
-        {i.current ? "Current version" : "Superseded version"}
-      </p>
-      <dl className="pb-fields pb-fields-row">
-        <div><dt>Version</dt><dd>V{i.versionNo}</dd></div>
-        <div><dt>Issued</dt><dd>{i.issuedOn}</dd></div>
-        <div className="pb-wide"><dt>Verification code</dt><dd className="pb-mono" data-testid="book-code">{i.verificationCode}</dd></div>
-      </dl>
-      <ul className="pb-claims" data-testid="book-claims">
-        {data.claims.map((c) => (
-          <li key={c.key} data-claim={c.key} data-state={c.state}>
-            <span className={`pb-claim-mark pb-claim-${c.state}`} aria-hidden="true">{CLAIM_MARK[c.state]}</span>
-            <span>
-              <strong>{c.label}</strong>
-              <span>{c.text}</span>
-            </span>
-          </li>
-        ))}
-      </ul>
-      {i.verifyHref && (
-        <p className="pb-note">
-          Anyone can repeat these checks on the <a href={i.verifyHref} data-testid="book-verify-link">public verification page</a>.
-        </p>
-      )}
-    </Sheet>
-  );
-}
-
 export function RecordPage({ data }: { data: BookData }) {
   return (
-    <Sheet n={6} ka="ვერსიები" data={data}>
+    <Sheet n={5} ka="ვერსიები" data={data}>
       <ol className="pb-versions" data-testid="book-versions">
         {data.versions.map((v) => (
           <li key={v.versionNo} aria-current={v.selected ? "true" : undefined}>
@@ -369,6 +342,15 @@ export function RecordPage({ data }: { data: BookData }) {
         <li>The PDF of this version holds exactly the data shown in this booklet.</li>
       </ul>
     </Sheet>
+  );
+}
+
+/** The plain inside of the back cover, opposite the last page. */
+export function EndPaper() {
+  return (
+    <div className="pb-endpaper" aria-hidden="true">
+      <svg viewBox="-60 -60 120 120"><Rosette r={50} petals={24} /></svg>
+    </div>
   );
 }
 

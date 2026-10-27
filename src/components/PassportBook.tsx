@@ -4,8 +4,8 @@ import "./passport-book.css";
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import type { BookData } from "@/lib/passport-book";
 import {
-  BackCoverFace, BlankBack, CoverFace, EvidencePage, IdentityPage, JourneyPage, RecordPage, SECTIONS, SkillsPage,
-  TOTAL_PAGES, VerificationPage,
+  BackCoverFace, BlankBack, CoverFace, EndPaper, EvidencePage, IdentityPage, JourneyPage, RecordPage, SECTIONS, SkillsPage,
+  TOTAL_PAGES,
 } from "./PassportBookPages";
 
 /**
@@ -14,7 +14,7 @@ import {
  *
  * Every leaf has two faces (front = a right-hand page, back = the left-hand page that follows it), so the reverse
  * of a turning leaf is the next page, never a mirrored copy. A wide booklet shows two-page spreads (4 leaves:
- * cover|01, 02|03, 04|05, 06|back cover); a narrow one shows one page at a time (one leaf per page, plain paper on
+ * cover|01, 02|03, 04|05, end paper|back cover); a narrow one shows one page at a time (one leaf per page, plain paper on
  * the reverse). `step` = how many leaves have been turned. Only the page edges turn pages on click; the controls
  * sit outside the pages, so choosing a skill or following a link never turns one.
  */
@@ -41,8 +41,10 @@ function useReducedMotion() {
 }
 
 /** spread step <-> single-page step, so switching layout keeps the reader on the same page */
-const spreadToSingle = (s: number) => (s >= 4 ? 7 : Math.max(0, 2 * s - 1));
-const singleToSpread = (s: number) => Math.ceil(s / 2);
+const SPREAD_MAX = 4; // leaves in the spread layout; the last one turns to the back cover
+const SINGLE_MAX = TOTAL_PAGES + 1; // cover, the pages, then the back cover
+const spreadToSingle = (s: number) => (s >= SPREAD_MAX ? SINGLE_MAX : Math.max(0, 2 * s - 1));
+const singleToSpread = (s: number) => (s >= SINGLE_MAX ? SPREAD_MAX : Math.ceil(s / 2));
 
 export default function PassportBook({ data }: { data: BookData }) {
   const root = useRef<HTMLDivElement>(null);
@@ -70,7 +72,7 @@ export default function PassportBook({ data }: { data: BookData }) {
   const go = useCallback(
     (target: number) => {
       const from = stepRef.current;
-      const max = spread ? 4 : 7;
+      const max = spread ? SPREAD_MAX : SINGLE_MAX;
       const to = Math.max(0, Math.min(max, target));
       if (to === from) return;
       const changed = to > from ? range(from, to) : range(to, from).reverse();
@@ -116,9 +118,9 @@ export default function PassportBook({ data }: { data: BookData }) {
       p1: f(<IdentityPage data={data} />, SECTIONS[0], [1]),
       p2: f(<JourneyPage data={data} />, SECTIONS[1], [2]),
       p3: f(<SkillsPage data={data} selected={selected} onSelect={setSelected} single={!spread} />, SECTIONS[2], [3]),
-      p4: f(<EvidencePage data={data} skill={skill} onSelect={setSelected} />, SECTIONS[3], [4]),
-      p5: f(<VerificationPage data={data} />, SECTIONS[4], [5]),
-      p6: f(<RecordPage data={data} />, SECTIONS[5], [6]),
+      p4: f(<EvidencePage data={data} skill={skill} />, SECTIONS[3], [4]),
+      p5: f(<RecordPage data={data} />, SECTIONS[4], [5]),
+      endpaper: f(<EndPaper />, ""),
       back: f(<BackCoverFace data={data} />, "Back cover"),
     };
   }, [data, closed, open, selected, skill, spread]);
@@ -129,11 +131,11 @@ export default function PassportBook({ data }: { data: BookData }) {
         { front: faces.cover, back: faces.p1 },
         { front: faces.p2, back: faces.p3 },
         { front: faces.p4, back: faces.p5 },
-        { front: faces.p6, back: faces.back },
+        { front: faces.endpaper, back: faces.back },
       ];
     }
     const blank = { node: <BlankBack />, label: "", pages: [] };
-    return [faces.cover, faces.p1, faces.p2, faces.p3, faces.p4, faces.p5, faces.p6, faces.back].map((front) => ({ front, back: blank }));
+    return [faces.cover, faces.p1, faces.p2, faces.p3, faces.p4, faces.p5, faces.back].map((front) => ({ front, back: blank }));
   }, [faces, spread]);
 
   // spreads: every leaf can turn (the last shows the back cover); single pages: the back cover is the last page
