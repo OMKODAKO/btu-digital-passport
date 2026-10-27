@@ -73,12 +73,14 @@ test("the dashboard shows the current version as a closed booklet with every pag
   const html = await flat(await get("/dashboard"));
   const book = booklet(html);
   assert.ok(book.includes('data-state="closed-front"') && book.includes('data-testid="book-cover"'), "starts closed");
-  for (const page of ["Identity", "Academic journey", "Skills", "Evidence", "Verification", "Version record"]) assert.ok(book.includes(page), page);
-  assert.ok(book.includes(`V${cur.version_no}`) && book.includes(cur.verification_code));
+  for (const page of ["Identity", "Academic journey", "Skills", "Evidence", "Version record"]) assert.ok(book.includes(page), page);
+  assert.ok(book.includes(`V${cur.version_no}`) && html.includes(cur.verification_code));
   // the subject badge, its score and the marks that make it, kept apart from the confirmed skill records
   assert.ok(book.includes("Vibe Coding and AI-Agentic Engineering"), "subject"); assert.ok(book.includes("91.00"), "score"); assert.ok(book.includes("Platinum"), "tier");
   assert.ok(book.includes("14 / 15") && book.includes('data-testid="book-evidence-project"'), "marks are the evidence");
   assert.ok(book.includes("Confirmed skills · BTU skill records"));
+  // verification lives beside the booklet only, and skills are chosen on the Skills page (no picker)
+  assert.ok(!book.includes('data-testid="book-claims"') && !book.includes("<select"), "no verification page or skill picker");
   assert.ok(!book.includes(S1.email) && !book.includes(S1.id), "no email or student number in the booklet");
   // the actions still serve exactly this version, and the PDF itself is still on the page
   assert.ok(html.includes('href="/api/passport/pdf"') && html.includes('href="/api/passport/pdf?download=1"'));
@@ -96,11 +98,27 @@ test("an unregistered version claims nothing it can't show: four separate claims
   assert.match(html, /data-testid="authenticity" data-overall="NOT_REGISTERED"/);
 });
 
+test("a student with nothing awarded yet is told there is no passport at this stage", async () => {
+  const form = new FormData();
+  form.set("student", "BTU-T-0099");
+  run("python3", ["-c", `
+import sqlite3, os
+d = sqlite3.connect(os.path.join(os.environ["DATA_DIR"], "portal.db"))
+d.execute("INSERT INTO students (student_id, first_name, last_name, email, source) VALUES ('BTU-T-0099', 'Nino', 'Empty', 'btu-t-0099@example.org', 'SEED_SYNTHETIC')")
+d.commit()`]);
+  const res = await fetch(`${BASE}/api/auth/demo`, { method: "POST", body: form, redirect: "manual" });
+  const other = res.headers.getSetCookie().map((c) => c.split(";")[0]).join("; ");
+  const html = await flat(await fetch(`${BASE}/dashboard`, { headers: { cookie: other } }));
+  assert.ok(html.includes('data-testid="no-passport"') && html.includes("ამ ეტაპზე პასპორტი არ გაქვს"));
+  assert.ok(!html.includes('data-testid="passport-book"'));
+  assert.equal((await fetch(`${BASE}/api/passport/pdf`, { headers: { cookie: other } })).status, 404);
+});
+
 test("an older version shows that version's own data, not the current one", async () => {
   const v1 = versions()[0];
   const html = await flat(await get("/dashboard?v=1"));
   const book = booklet(html);
-  assert.ok(book.includes("Superseded version") && book.includes(v1.verification_code));
+  assert.ok(book.includes("V1") && book.includes("superseded") && html.includes(v1.verification_code));
   assert.ok(!book.includes("91.00"), "V1 was issued before the subject badge");
   assert.ok(html.includes('href="/api/passport/pdf?v=1&amp;download=1"'));
   const pdf = Buffer.from(await (await get("/api/passport/pdf?v=1&download=1")).arrayBuffer());

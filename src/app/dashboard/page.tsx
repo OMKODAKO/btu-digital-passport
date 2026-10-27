@@ -61,7 +61,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
   // The booklet shows the data embedded in this version's PDF, read from the bytes that just passed the
   // integrity check, so it can't show anything the download doesn't contain.
   const claims = selected ? claimsFor(selected, !!pdf?.ok, verification) : null;
-  const book = passport && selected && pdf?.ok && claims ? bookForVersion({ student, passport, version: selected, pdf: pdf.bytes, claims }) : null;
+  const book = passport && selected && pdf?.ok ? bookForVersion({ student, passport, version: selected, pdf: pdf.bytes }) : null;
   const demo = student.source === "BTU_TEST_DATA" || student.source === "SEED_SYNTHETIC";
 
   return (
@@ -95,24 +95,43 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
       </header>
 
       {!passport && (
-        <section className="card notice" data-testid="no-passport">
-          <h2>Your passport has not been generated yet</h2>
-          {pending && pending.awards > 0 ? (
-            <p className="muted" data-testid="pending-awards">
-              Pending: BTU has recorded {pending.awards} confirmed AI skill{pending.awards === 1 ? "" : "s"} for you,
-              and your passport is waiting to be issued. Check back later.
-            </p>
-          ) : (
-            <p className="muted">
-              BTU creates your Digital Passport once at least one confirmed AI skill is recorded for you. Check back
-              later.
-            </p>
-          )}
-          {pending && pending.held > 0 && (
-            <p className="fine">
-              {pending.held} skill record{pending.held === 1 ? " is" : "s are"} on hold until BTU completes them.
-            </p>
-          )}
+        <section className="card no-passport" data-testid="no-passport">
+          <div className="np-book" aria-hidden="true">
+            <span className="np-emblem">AI</span>
+            <span className="np-title">Digital Skills Passport</span>
+          </div>
+          <div className="np-text">
+            <p className="eyebrow" lang="ka">ამ ეტაპზე პასპორტი არ გაქვს</p>
+            <h2>Your passport has not been generated yet</h2>
+            {pending && pending.awards > 0 ? (
+              <>
+                <p lang="ka">
+                  BTU-მ შენთვის უკვე ჩაწერა {pending.awards} დადასტურებული უნარი და პასპორტი გაცემას ელოდება. შეამოწმე
+                  მოგვიანებით.
+                </p>
+                <p className="muted" data-testid="pending-awards">
+                  Pending: BTU has recorded {pending.awards} confirmed AI skill{pending.awards === 1 ? "" : "s"} for you,
+                  and your passport is waiting to be issued. Check back later.
+                </p>
+              </>
+            ) : (
+              <>
+                <p lang="ka">
+                  შენთვის ჯერ არც ერთი დადასტურებული უნარი ან საგნის ბეჯი არ არის მინიჭებული, ამიტომ პასპორტი ჯერ არ
+                  შექმნილა. როგორც კი BTU პირველს ჩაწერს, პასპორტი აქ გამოჩნდება.
+                </p>
+                <p className="muted">
+                  Nothing has been awarded to you yet. BTU creates your Digital Passport once at least one confirmed AI skill
+                  or subject badge is recorded for you. Check back later.
+                </p>
+              </>
+            )}
+            {pending && pending.held > 0 && (
+              <p className="fine">
+                {pending.held} skill record{pending.held === 1 ? " is" : "s are"} on hold until BTU completes them.
+              </p>
+            )}
+          </div>
         </section>
       )}
 

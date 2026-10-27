@@ -1,12 +1,12 @@
 "use client";
 
 import type { ReactNode } from "react";
-import type { BookData, BookEvidence, BookSkill, ClaimState } from "@/lib/passport-book";
+import type { BookData, BookEvidence, BookSkill } from "@/lib/passport-book";
 import type { Tier } from "@/lib/subjects";
 
 /* The content of each face of the passport booklet. Pure rendering: navigation lives in PassportBook. */
 
-export const SECTIONS = ["Identity", "Academic journey", "Skills", "Evidence", "Verification", "Version record"];
+export const SECTIONS = ["Identity", "Academic journey", "Skills", "Evidence", "Version record"];
 export const TOTAL_PAGES = SECTIONS.length;
 const pad = (n: number) => String(n).padStart(2, "0");
 
@@ -263,19 +263,11 @@ const EVIDENCE_GROUPS: [BookEvidence["kind"], string][] = [
   ["record", "Skill record"],
 ];
 
-export function EvidencePage({ data, skill, onSelect }: { data: BookData; skill: BookSkill | null; onSelect: (id: string) => void }) {
+/** The evidence for the skill chosen on the Skills page (the first one until another is chosen there). */
+export function EvidencePage({ data, skill }: { data: BookData; skill: BookSkill | null }) {
   return (
     <Sheet n={4} ka="მტკიცებულება" data={data}>
-      {data.skills.length > 0 && (
-        <label className="pb-ev-pick">
-          <span>Skill</span>
-          <select value={skill?.id ?? ""} onChange={(e) => onSelect(e.target.value)} data-testid="book-evidence-select">
-            {data.skills.map((k) => (
-              <option key={k.id} value={k.id}>{k.name}</option>
-            ))}
-          </select>
-        </label>
-      )}
+      {skill && <p className="pb-lead">For the skill selected on page 03.</p>}
       {skill ? (
         <div className="pb-ev" aria-live="polite" data-testid="book-evidence" data-skill={skill.id}>
           <p className="pb-ev-head">
@@ -312,43 +304,9 @@ export function EvidencePage({ data, skill, onSelect }: { data: BookData; skill:
   );
 }
 
-const CLAIM_MARK: Record<ClaimState, string> = { ok: "✓", pending: "◷", partial: "◐", failed: "✕", none: "–", unknown: "?" };
-
-export function VerificationPage({ data }: { data: BookData }) {
-  const i = data.issue;
-  return (
-    <Sheet n={5} ka="ვერიფიკაცია" data={data}>
-      <p className={`pb-status ${i.current ? "" : "pb-status-old"}`} data-testid="book-status">
-        {i.current ? "Current version" : "Superseded version"}
-      </p>
-      <dl className="pb-fields pb-fields-row">
-        <div><dt>Version</dt><dd>V{i.versionNo}</dd></div>
-        <div><dt>Issued</dt><dd>{i.issuedOn}</dd></div>
-        <div className="pb-wide"><dt>Verification code</dt><dd className="pb-mono" data-testid="book-code">{i.verificationCode}</dd></div>
-      </dl>
-      <ul className="pb-claims" data-testid="book-claims">
-        {data.claims.map((c) => (
-          <li key={c.key} data-claim={c.key} data-state={c.state}>
-            <span className={`pb-claim-mark pb-claim-${c.state}`} aria-hidden="true">{CLAIM_MARK[c.state]}</span>
-            <span>
-              <strong>{c.label}</strong>
-              <span>{c.text}</span>
-            </span>
-          </li>
-        ))}
-      </ul>
-      {i.verifyHref && (
-        <p className="pb-note">
-          Anyone can repeat these checks on the <a href={i.verifyHref} data-testid="book-verify-link">public verification page</a>.
-        </p>
-      )}
-    </Sheet>
-  );
-}
-
 export function RecordPage({ data }: { data: BookData }) {
   return (
-    <Sheet n={6} ka="ვერსიები" data={data}>
+    <Sheet n={5} ka="ვერსიები" data={data}>
       <ol className="pb-versions" data-testid="book-versions">
         {data.versions.map((v) => (
           <li key={v.versionNo} aria-current={v.selected ? "true" : undefined}>
@@ -369,6 +327,15 @@ export function RecordPage({ data }: { data: BookData }) {
         <li>The PDF of this version holds exactly the data shown in this booklet.</li>
       </ul>
     </Sheet>
+  );
+}
+
+/** The plain inside of the back cover, opposite the last page. */
+export function EndPaper() {
+  return (
+    <div className="pb-endpaper" aria-hidden="true">
+      <svg viewBox="-60 -60 120 120"><Rosette r={50} petals={24} /></svg>
+    </div>
   );
 }
 
