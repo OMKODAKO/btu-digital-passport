@@ -45,9 +45,9 @@ export type BookSkill = {
   group: "subject" | "skill";
   meta: string; // "Subject badge · 6 ECTS", "AI Applied Skill · BDG-AI-002"
   level: string; // "Gold", "AI Applied Skill"
-  score: string | null; // only for scored subjects ("84.50" of 100)
-  tier: Tier | null;
-  category: string | null; // sheet skill category, picks the stamp colour
+  score: string | null; // only for scored subjects and skills ("84.50" of 100)
+  tier: Tier | null; // a scored skill's stamp is printed in its tier's ink
+  category: string | null; // sheet skill category, picks the stamp
   evidence: BookEvidence[];
   evidenceNote: string | null;
 };
@@ -178,18 +178,30 @@ export function bookForVersion(input: {
   const results = new Map(studentResults(student.id).map((r) => [r.subject.code, r]));
   const subjects = data.subject_badges ?? [];
 
-  const subjectSkills: BookSkill[] = subjects.map((b) => {
+  const marksFor = (b: (typeof subjects)[number]) => {
     const r = results.get(b.code);
-    const same = r && r.syllabusVersion === b.syllabus_version && r.score === b.score;
+    const same = !!r && r.syllabusVersion === b.syllabus_version && r.score === b.score;
     const evidence: BookEvidence[] = same
       ? r.subject.components.map((c) => ({
           kind: c.kind === "PROJECT" ? "project" : "assessment",
           title: c.label,
           result: `${pts(r.marks[c.label])} / ${pts(c.maxPoints)}`,
-          explanation: `${c.kind === "PROJECT" ? "Project work" : `Graded ${c.kind.toLowerCase()}`}, worth ${pts(c.weight)} of the subject's 100 points.`,
+          explanation: `${c.kind === "PROJECT" ? "Project work" : `Graded ${c.kind.toLowerCase()}`}, worth ${pts(c.weight)} of the course's 100 points.`,
           source: `Grade record · ${b.code} · syllabus v${b.syllabus_version}${r.subject.simulated ? " (simulated syllabus)" : ""}`,
         }))
       : [];
+    const evidenceNote = same
+      ? null
+      : `Certified score ${b.score} / 100 under syllabus v${b.syllabus_version}. The marks on record have changed since this version was issued, so they are not listed here.`;
+    return { evidence, evidenceNote };
+  };
+
+  // A sheet skill whose course is marked is shown once, as the skill with its score and tier, not again as a badge.
+  const sheetIds = new Set(data.skills.map((k) => k.skill_id));
+  const scoreOf = new Map(subjects.filter((b) => isSheetSkill(b.code)).map((b) => [b.code, b]));
+
+  const subjectSkills: BookSkill[] = subjects.filter((b) => !sheetIds.has(b.code)).map((b) => {
+    const { evidence, evidenceNote } = marksFor(b);
     return {
       id: b.code,
       name: b.name_en,
@@ -200,32 +212,35 @@ export function bookForVersion(input: {
       tier: b.tier,
       category: null,
       evidence,
-      evidenceNote: same
-        ? null
-        : `Certified score ${b.score} / 100 under syllabus v${b.syllabus_version}. The marks on record have changed since this version was issued, so they are not listed here.`,
+      evidenceNote,
     };
   });
 
-  const sheetSkills: BookSkill[] = data.skills.map((k) => ({
-    id: k.record_id,
-    name: k.name,
-    group: "skill",
-    meta: `${k.category} · ${k.badge_code}`,
-    level: k.category,
-    score: null, // the skill records confirm a skill; they carry no score
-    tier: null,
-    category: k.category,
-    evidence: [
-      {
-        kind: "record",
-        title: k.earned_through || "Confirmed skill",
-        result: fmtDate(k.date_earned),
-        explanation: k.description || "Confirmed in BTU's skill records.",
-        source: `Skill record ${k.record_id} · ${k.skill_id} · badge ${k.badge_code}`,
-      },
-    ],
-    evidenceNote: null,
-  }));
+  const sheetSkills: BookSkill[] = data.skills.map((k) => {
+    const b = scoreOf.get(k.skill_id);
+    const marks = b ? marksFor(b) : { evidence: [], evidenceNote: null };
+    return {
+      id: k.record_id,
+      name: k.name,
+      group: "skill",
+      meta: `${k.category} · ${k.badge_code}`,
+      level: b ? TIER_LABEL[b.tier] : k.category,
+      score: b ? b.score : null, // only once the skill's course is marked
+      tier: b ? b.tier : null,
+      category: k.category,
+      evidence: [
+        ...marks.evidence,
+        {
+          kind: "record",
+          title: k.earned_through || "Confirmed skill",
+          result: fmtDate(k.date_earned),
+          explanation: k.description || "Confirmed in BTU's skill records.",
+          source: `Skill record ${k.record_id} · ${k.skill_id} · badge ${k.badge_code}`,
+        },
+      ],
+      evidenceNote: marks.evidenceNote,
+    };
+  });
 
   const ects = subjects.filter((b) => !isSheetSkill(b.code)).reduce((n, b) => n + b.credits, 0);
   const summary = subjects.length
