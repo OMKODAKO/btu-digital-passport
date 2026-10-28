@@ -42,15 +42,15 @@ def random_marks(components, rng: random.Random) -> dict[str, float]:
     tops = {c["label"]: float(c["max_points"]) for c in components}
     total_max = sum(tops.values())
     marks = {k: round(min(1.0, max(0.0, target + rng.gauss(0, 0.07))) * top * 2) / 2 for k, top in tops.items()}
-    low_pts, high_pts = low * total_max / 100, high * total_max / 100
+    want = target * total_max   # inside the drawn tier
     labels = list(tops)
-    # nudge half a point at a time until the score sits inside the drawn tier
+    # nudge half a point at a time towards the drawn score (not just to the tier's edge, which piles scores on 60.00)
     for _ in range(1000):
         s = sum(marks.values())
-        if s < low_pts:
+        if s < want - 0.25:
             k = rng.choice([k for k in labels if marks[k] < tops[k]])
             marks[k] += 0.5
-        elif s > high_pts:
+        elif s > want + 0.25:
             k = rng.choice([k for k in labels if marks[k] > 0])
             marks[k] -= 0.5
         else:

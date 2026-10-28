@@ -165,6 +165,8 @@ class BadgesTest(unittest.TestCase):
         tiers = {tier_for(x["score"]) for x in first}
         self.assertNotIn(None, tiers, "every skill earns a badge")
         self.assertEqual(tiers, {"SILVER", "GOLD", "PLATINUM"}, "the three tiers are spread over the test data")
+        edges = sum(x["score"] in (60, 70, 90) for x in first)
+        self.assertLess(edges, len(first) / 10, "scores spread inside their tier, not piled on its lower edge")
         for x in first:
             self.assertTrue(all(v * 2 == int(v * 2) for v in x["marks"].values()), "half points")
         res = {r.subject_code: r for r in subject_results(self.conn, ST1)}
