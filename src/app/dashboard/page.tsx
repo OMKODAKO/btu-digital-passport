@@ -13,6 +13,7 @@ import {
   getWaitingVersion,
   readVersionPdf,
 } from "@/lib/passports";
+import { sharePath, shareTokenFor } from "@/lib/share";
 import { verifyVersion } from "@/lib/verify";
 import CompanionPanel from "./CompanionPanel";
 import PdfDocument from "./PdfDocument";
@@ -46,13 +47,16 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
   // on this version's code and the exact stored bytes. Unregistered versions are not checked at all.
   const verification = selected?.chainTxHash ? await verifyVersion(selected.verificationCode, pdf?.ok ? pdf.bytes : null) : null;
   const verifyPath = selected ? `/verify/${selected.verificationCode}` : null;
+  const h = await headers();
+  const host = h.get("x-forwarded-host") ?? h.get("host");
+  const base = (process.env.PUBLIC_BASE_URL ?? (host ? `${h.get("x-forwarded-proto") ?? "http"}://${host}` : "")).replace(/\/$/, "");
   let qr: string | null = null;
-  if (verifyPath && selected?.chainTxHash) {
-    const h = await headers();
-    const host = h.get("x-forwarded-host") ?? h.get("host");
-    const base = process.env.PUBLIC_BASE_URL ?? (host ? `${h.get("x-forwarded-proto") ?? "http"}://${host}` : null);
-    if (base) qr = await QRCode.toString(`${base.replace(/\/$/, "")}${verifyPath}`, { type: "svg", margin: 0, errorCorrectionLevel: "M" });
+  if (verifyPath && selected?.chainTxHash && base) {
+    qr = await QRCode.toString(`${base}${verifyPath}`, { type: "svg", margin: 0, errorCorrectionLevel: "M" });
   }
+  // the student's permanent public link for a CV (always the current version, no sign-in)
+  const token = passport?.current ? shareTokenFor(student.id) : null;
+  const shareUrl = token ? `${base}${sharePath(token)}` : null;
   // The student's own QR to this version's registration transaction on the public explorer. It can't be
   // printed in the PDF itself: the transaction records the PDF's hash, so it only exists after the PDF.
   const chainUrl = selected ? txUrl(selected.chainId, selected.chainTxHash) : null;
@@ -225,6 +229,7 @@ export default async function Dashboard({ searchParams }: { searchParams: Promis
               qr={qr}
               chainUrl={chainUrl}
               chainQr={chainQr}
+              shareUrl={shareUrl}
             />
           </aside>
         </div>

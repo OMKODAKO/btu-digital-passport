@@ -66,7 +66,7 @@ class MigrationTests(unittest.TestCase):
             config.MIGRATIONS_DIR = real
         conn = connect()  # same data folder, all migrations: applies 006 onward
         self.assertEqual({t: dump(conn, t) for t in EXISTING}, before)
-        self.assertEqual(conn.execute("SELECT MAX(version) FROM schema_migrations").fetchone()[0], "009")
+        self.assertEqual(conn.execute("SELECT MAX(version) FROM schema_migrations").fetchone()[0], "010")
         for t in ("subjects", "syllabi", "syllabus_components", "grade_entries", "candidate_subjects", "version_subjects"):
             self.assertEqual(conn.execute(f"SELECT COUNT(*) FROM {t}").fetchone()[0], 0)
 

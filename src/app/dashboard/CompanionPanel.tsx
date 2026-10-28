@@ -2,6 +2,7 @@ import { txUrl } from "@/lib/explorer";
 import type { Claim } from "@/lib/passport-book";
 import type { Passport, PassportVersion } from "@/lib/passports";
 import type { VerificationResult } from "@/lib/verify";
+import ShareLink from "./ShareLink";
 
 const formatDate = (iso: string) =>
   new Date(iso).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" });
@@ -23,8 +24,9 @@ export default function CompanionPanel(props: {
   qr: string | null;
   chainUrl: string | null;
   chainQr: string | null;
+  shareUrl: string | null;
 }) {
-  const { passport, selected, verification, claims, verifyPath, qr, chainUrl, chainQr } = props;
+  const { passport, selected, verification, claims, verifyPath, qr, chainUrl, chainQr, shareUrl } = props;
   const current = selected.status === "CURRENT";
   const lastUpdated = passport.current?.issuedAt ?? null;
 
@@ -110,6 +112,8 @@ export default function CompanionPanel(props: {
           </details>
         )}
       </section>
+
+      {shareUrl && <ShareLink url={shareUrl} />}
 
       <section className="cp-section" aria-labelledby="cp-versions">
         <h2 id="cp-versions" className="cp-h">Versions</h2>
