@@ -27,10 +27,10 @@ STAMPS = {
     "ai-applied-skill": ((86, 70, 112), (348, 150), 5),  # faded violet, wide rectangle
     "ai-advanced-skill": ((50, 62, 92), (252, 252), 7),   # faded blue-black, circle
 }
-TIER_INKS = {
-    "silver": (104, 110, 120),   # cool grey
-    "gold": (158, 116, 28),      # old gold
-    "platinum": (44, 92, 138),   # blue steel
+TIER_INKS = {   # kept apart in lightness as well as hue (same inks as worker/pdf/subject_badges.py TIER_INKS)
+    "silver": (138, 145, 154),   # light cool silver
+    "gold": (201, 138, 14),      # bright amber gold
+    "platinum": (26, 52, 112),   # deep navy
 }
 
 

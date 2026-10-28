@@ -1,8 +1,10 @@
 """Subject badge artwork and how subject badges are placed on the passport (subject stage 05).
 
-The badges are drawn here in vector form, in the style of BTU's skill stamps: a slightly tilted
-rectangle with a dashed inner border, with the subject's icon on the left and the tier on the right.
-Each tier has its own colour (Silver, Gold, Platinum), so every subject has three variants.
+The badges are drawn here in vector form as rubber-stamp impressions, like the skill stamps
+(scripts/make-stamps.py): a slightly tilted rectangle in one ink, a heavy rim with a dashed inner border,
+the subject's icon on the left and the tier on the right, bare paper inside and worn specks where the ink
+did not take. Each tier has its own ink (Silver, Gold, Platinum, the same inks as the skill stamps) and
+Platinum a third, thin rim, so every subject has three variants.
 render.py prints them after the sheet skills: a card on the Verified AI Skillset page and a row in the
 AI Skill Supplement table, like a skill.
 """
@@ -14,14 +16,17 @@ import pymupdf as fitz
 
 from .model import TIER_LABEL, SubjectBadge
 
+import random
+
 WHITE = (1, 1, 1)
 GREY = (0.42, 0.42, 0.45)
 
-# tier -> (stamp fill, darker edge)
-TIER_COLORS = {
-    "SILVER": ((0.56, 0.60, 0.65), (0.40, 0.43, 0.48)),
-    "GOLD": ((0.84, 0.60, 0.10), (0.64, 0.43, 0.04)),
-    "PLATINUM": ((0.17, 0.27, 0.40), (0.08, 0.14, 0.24)),
+# tier -> ink, kept apart in lightness as well as hue so the three read differently even side by side or in
+# greyscale: a light cool silver, a bright amber gold, a deep navy platinum (same as TIER_INKS in make-stamps.py)
+TIER_INKS = {
+    "SILVER": (138 / 255, 145 / 255, 154 / 255),
+    "GOLD": (201 / 255, 138 / 255, 14 / 255),
+    "PLATINUM": (26 / 255, 52 / 255, 112 / 255),
 }
 STAMP_W, STAMP_H = 150.0, 56.0
 TILTS = [-6.0, 4.0, -4.0, 6.0, -3.0]          # per card column, like the hand-placed skill stamps
@@ -30,7 +35,7 @@ DEMO_NOTE = "DEMO: SIMULATED SYLLABI AND HAND-ENTERED MARKS (BTU GRADES NOT CONN
 
 # ---------------------------------------------------------------- icons (white line art in a square)
 
-def _icon(shape: fitz.Shape, key: str, r: fitz.Rect):
+def _icon(shape: fitz.Shape, key: str, r: fitz.Rect, color=WHITE):
     x0, y0, s = r.x0, r.y0, r.width
     P = lambda fx, fy: fitz.Point(x0 + fx * s, y0 + fy * s)  # noqa: E731
 
@@ -99,7 +104,7 @@ def _icon(shape: fitz.Shape, key: str, r: fitz.Rect):
             line((t, 0.25), (t, 0.1)); line((t, 0.75), (t, 0.9)); line((0.25, t), (0.1, t)); line((0.75, t), (0.9, t))
     else:                                                # unknown subject: a book
         shape.draw_rect(fitz.Rect(P(0.15, 0.15), P(0.85, 0.85))); line((0.5, 0.15), (0.5, 0.85))
-    shape.finish(color=WHITE, width=max(1.1, s * 0.055), fill=None, closePath=False, lineCap=1, lineJoin=1)
+    shape.finish(color=color, width=max(1.1, s * 0.055), fill=None, closePath=False, lineCap=1, lineJoin=1)
 
 
 SUBJECT_ICONS = ("agent", "neural", "spark", "layers", "code", "brackets", "tree", "database", "distribution",
@@ -111,32 +116,40 @@ SUBJECT_ICONS = ("agent", "neural", "spark", "layers", "code", "brackets", "tree
 def stamp_doc(fonts, logo_key: str, tier: str, subtitle: str = "SUBJECT BADGE") -> fitz.Document:
     """One badge as a one-page PDF (STAMP_W x STAMP_H), to be placed tilted with show_pdf_page. A skill from the
     skill sheet shows its category (e.g. AI APPLIED SKILL) where a BTU course says SUBJECT BADGE."""
-    fill, edge = TIER_COLORS[tier]
+    ink = TIER_INKS[tier]
     doc = fitz.open()
     page = doc.new_page(width=STAMP_W, height=STAMP_H)
     sh = page.new_shape()
-    sh.draw_rect(fitz.Rect(2, 2, STAMP_W - 2, STAMP_H - 2))
-    sh.finish(color=edge, fill=fill, width=1.6)
-    sh.draw_rect(fitz.Rect(6, 6, STAMP_W - 6, STAMP_H - 6))
-    sh.finish(color=WHITE, width=0.9, dashes="[3 2] 0")
-    if tier == "PLATINUM":   # a thin inner rule sets platinum apart beyond its colour
-        sh.draw_rect(fitz.Rect(9, 9, STAMP_W - 9, STAMP_H - 9))
-        sh.finish(color=(0.75, 0.82, 0.92), width=0.4)
+    sh.draw_rect(fitz.Rect(2.5, 2.5, STAMP_W - 2.5, STAMP_H - 2.5))
+    sh.finish(color=ink, width=3.2, fill=None)
+    sh.draw_rect(fitz.Rect(7, 7, STAMP_W - 7, STAMP_H - 7))
+    sh.finish(color=ink, width=0.9, dashes="[3 2] 0")
+    if tier == "PLATINUM":   # a third, thin rim sets platinum apart beyond its colour
+        sh.draw_rect(fitz.Rect(10, 10, STAMP_W - 10, STAMP_H - 10))
+        sh.finish(color=ink, width=0.5)
     sh.commit()
     icon = page.new_shape()
-    _icon(icon, logo_key, fitz.Rect(13, 13, 43, 43))
+    _icon(icon, logo_key, fitz.Rect(14, 14, 42, 42), ink)
     icon.commit()
-    page.draw_line(fitz.Point(50, 14), fitz.Point(50, 42), color=WHITE, width=0.6)
+    page.draw_line(fitz.Point(50, 15), fitz.Point(50, 41), color=ink, width=0.7)
     label = TIER_LABEL[tier].upper()
     size = 17.0
     while fonts.width(label, "bold", size) > STAMP_W - 72 and size > 9:
         size -= 0.5
-    page.insert_text((57, 31), label, fontname="stampbold", fontfile=str(fonts.files["bold"]), fontsize=size, color=WHITE)
+    page.insert_text((57, 31), label, fontname="stampbold", fontfile=str(fonts.files["bold"]), fontsize=size, color=ink)
     sub = 7.6
     while fonts.width(subtitle, "light", sub) > STAMP_W - 66 and sub > 5:
         sub -= 0.2
     page.insert_text((57, 42), subtitle, fontname="stamplight", fontfile=str(fonts.files["light"]), fontsize=sub,
-                     color=WHITE)
+                     color=ink)
+    # worn specks where the ink did not take (paper-white over the ink), the same for the same badge every time
+    rng = random.Random(f"{logo_key}:{tier}:{subtitle}")
+    wear = page.new_shape()
+    for _ in range(70):
+        x, y = rng.uniform(1, STAMP_W - 1), rng.uniform(1, STAMP_H - 1)
+        wear.draw_circle(fitz.Point(x, y), rng.uniform(0.25, 0.9))
+    wear.finish(color=None, fill=WHITE, fill_opacity=0.85)
+    wear.commit()
     return doc
 
 
@@ -165,7 +178,7 @@ def draw_subject_card(d, page, page_idx, b: SubjectBadge, slot: int, cx, cy, car
                       placed_cls):
     """One skillset-page card for a subject badge: stamp, course name, score, tier and ECTS."""
     mid = cx + card_w / 2
-    place_subject_stamp(page, d.f, cache, b, mid, cy + 46, 118.0, TILTS[slot % 5])
+    place_subject_stamp(page, d.f, cache, b, mid, cy + 46, 106.0, TILTS[slot % 5])
     name = b.name_en.upper()
     fitted = d.fit(name, "bold", [9.5, 9.0, 8.5, 8.0, 7.5, 7.0], card_w - 14, 34, 1.1)
     if fitted:
