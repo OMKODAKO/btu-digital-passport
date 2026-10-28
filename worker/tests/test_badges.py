@@ -175,6 +175,14 @@ class BadgesTest(unittest.TestCase):
         self.assertEqual(source, {"SYNTHETIC"})
         again = demo_marks(self.conn)
         self.assertEqual({x["result"] for x in again}, {"already marked"}, "a marked skill is left alone")
+        record_marks(self.conn, ST1, first[0]["skill"], {"Quizzes": 0.25}, entered_by="teacher")   # a real mark (demo marks are half points)
+        redo = demo_marks(self.conn, redraw=True)
+        self.assertEqual([x["result"] for x in redo if x["skill"] == first[0]["skill"] and x["student"] == ST1],
+                         ["already marked"], "a skill with someone else's mark is never re-drawn")
+        self.assertEqual(sum(x["result"] == "redrawn" for x in redo), held - 1)
+        self.assertNotEqual([x["marks"] for x in redo if x["result"] == "redrawn"],
+                            [x["marks"] for x in first[1:]], "a re-draw gives new marks")
+        self.assertTrue(all(tier_for(x["score"]) for x in redo if x["result"] == "redrawn"))
         r = self.publish()
         self.assertTrue(r and all(x["generation"] == "generated" for x in r))
 
