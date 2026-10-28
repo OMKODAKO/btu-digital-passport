@@ -226,9 +226,9 @@
 .pb-table td .pb-tier { display: block; margin-top: 0.15em; }
 .pb-table tbody tr { border-bottom: 1px dotted var(--pb-line); }
 .pb-tier { font-family: var(--pb-display); font-size: 0.78em; font-weight: 400; letter-spacing: 0.08em; }
-.pb-tier-silver { color: #6d747e; }
-.pb-tier-gold { color: #93702a; }
-.pb-tier-platinum { color: #4b6585; }
+.pb-tier-silver { color: #6b7179; }
+.pb-tier-gold { color: #9a6a0a; }
+.pb-tier-platinum { color: #243a78; }
 
 /* 03 skills */
 .pb-skills { list-style: none; margin: 0; padding: 0; display: grid; }
@@ -263,9 +263,9 @@
 .pb-seal circle { fill: none; stroke: var(--ink); stroke-width: 2.2; }
 .pb-seal-lines { stroke: var(--ink); stroke-width: 0.5; opacity: 0.55; }
 .pb-seal text { fill: var(--ink); font: 400 13px var(--pb-display); }
-.pb-seal-tier-silver { --ink: #6a6f76; }
-.pb-seal-tier-gold { --ink: #8c6a24; }
-.pb-seal-tier-platinum { --ink: #3f5674; }
+.pb-seal-tier-silver { --ink: #80868e; }
+.pb-seal-tier-gold { --ink: #be8410; }
+.pb-seal-tier-platinum { --ink: #243a78; }
 .pb-seal { -webkit-mask-image: var(--pb-wear); mask-image: var(--pb-wear); -webkit-mask-size: 60px; mask-size: 60px; }
 .pb { --pb-wear: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -2.2 2.1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)'/%3E%3C/svg%3E"); }
 
