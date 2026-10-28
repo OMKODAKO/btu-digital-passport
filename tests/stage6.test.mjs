@@ -140,9 +140,9 @@ test("a student lands on their passport page with every required item", async ()
 
   // authenticity comes from the real check: on-chain, file matches, but a TEST issuer, so not "Authentic"
   assert.match(html, /data-testid="authenticity" data-overall="TEST_ISSUER_ONLY"/);
-  assert.match(html, /data-check="File integrity" data-state="MATCH"/);
-  assert.match(html, /data-check="BTU issuer identity" data-state="TEST_ISSUER"/);
-  assert.match(html, /data-check="Version status" data-state="CURRENT"/);
+  assert.match(html, /data-claim="integrity" data-state="ok"/);
+  assert.match(html, /data-claim="official" data-state="pending"/);
+  assert.ok(!html.includes('data-check="'), "each check is said once, as one of the four claims");
   assert.ok(!html.includes("Authentic: this is the current BTU passport"));
   assert.ok(html.includes(`href="/verify/${v3.verification_code}"`), "link to public verification");
   assert.ok(html.includes('data-testid="verify-qr"') && html.includes("<svg"), "QR code");

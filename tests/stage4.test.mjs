@@ -98,8 +98,8 @@ test("a new version is registered on-chain, confirmed, read back, then shown as 
   const cookie = await login("btu-t-0001@example.org");
   const html = (await (await fetch(`${BASE}/dashboard`, { headers: { cookie } })).text()).replaceAll("<!-- -->", "");
   assert.ok(html.includes('data-testid="chain-record"'));
-  assert.ok(html.includes("Registered on local Hardhat devnet"));
-  assert.ok(html.includes("test issuer: official BTU issuer verification is still pending"));
+  assert.ok(html.includes('data-claim="chain"') && html.includes('data-testid="chain-record">Transaction'));
+  assert.ok(html.includes('data-claim="official" data-state="pending"'), "test issuer: official BTU issuance is pending");
   const code = html.match(/BTU-[0-9A-Z]{4}-[0-9A-Z]{4}-[0-9A-Z]{4}/)[0];
   const pdf = path.join(dataDir, "downloaded.pdf");
   fs.writeFileSync(pdf, Buffer.from(await (await fetch(`${BASE}/api/passport/pdf`, { headers: { cookie } })).arrayBuffer()));
