@@ -16,11 +16,12 @@
     "test": "node --test --test-concurrency=1 tests/*.test.mjs",
     "test:worker": "python3 -m unittest discover -s worker/tests -t . -v",
     "create-staff": "tsx scripts/create-staff.ts",
+    "google:setup": "bash -c 'DATA_DIR=\"${DATA_DIR:-data-demo}\" exec tsx scripts/google-setup.ts'",
     "retry": "python3 -m worker retry",
     "badges": "python3 -m worker subjects publish",
     "test:e2e": "node --test tests/e2e.test.mjs",
     "demo:setup": "bash scripts/demo-setup.sh",
-    "demo:start": "bash -c 'set -a; . \"${DEMO_DIR:-data-demo}/demo.env\"; set +a; export PASSPORT_DEMO_LOGIN=1; exec next start -H 127.0.0.1'",
+    "demo:start": "bash -c 'set -a; . \"${DEMO_DIR:-data-demo}/demo.env\"; G=\"${DEMO_DIR:-data-demo}/google.env\"; [ -f \"$G\" ] && . \"$G\"; set +a; export PASSPORT_DEMO_LOGIN=1; exec next start -H 127.0.0.1'",
     "demo:add-skill": "bash scripts/demo-add-skill.sh",
     "quickstart": "bash scripts/quickstart.sh"
   },

@@ -80,6 +80,11 @@ export default async function LoginPage({
             </select>
             <button type="submit" className="button">Open as this student</button>
             <p className="fine">Local demo only. A real deployment signs students in with Google.</p>
+            {!GOOGLE_LOGIN && (
+              <p className="fine" data-testid="google-setup-hint">
+                Google sign-in is off on this copy. To switch it on, run <code>npm run google:setup</code> and restart.
+              </p>
+            )}
           </form>
         )}
 

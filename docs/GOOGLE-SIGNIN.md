@@ -33,8 +33,21 @@ Students and staff sign in with Google. Nobody has a password. The local demo al
 3. Open **APIs & Services → Credentials → Create credentials → OAuth client ID** and choose **Web application**.
 4. Under **Authorised redirect URIs**, add the address of the portal followed by `/api/auth/google/callback`.
    For a local test copy on port 3100, that is `http://localhost:3100/api/auth/google/callback`.
-5. Put the client ID and secret in `data-demo/google.env` for the demo. That folder is ignored by git. On a server,
-   use its secret settings instead. Never commit them.
+5. In the portal folder, run `npm run google:setup` and answer its questions:
+   - the **client ID** and **client secret** from step 3 (the secret isn't shown while you type, and is never printed);
+   - **your Google address**, e.g. `you@gmail.com`. Students with that address's domain may then sign in;
+   - **which demo student** opens when you sign in with Google. That student's email becomes your Google address.
+     Enter picks the first one, `none` skips it;
+   - whether your address should also be a **demo staff member** (OPERATOR) for `/admin/login`. Only asked when the
+     address isn't a student's, because one address can't be both. Run the script again with another address for that.
+
+   It saves everything in `data-demo/google.env`, readable only by you. That folder is ignored by git. On a server,
+   use its secret settings instead. Never commit them. Running it again keeps the stored client when you press Enter.
+   For another data folder, set it first: `DATA_DIR=data-testnet npm run google:setup`. A folder that follows a
+   Google Sheet keeps the sheet's addresses: add a row with your Google address to the sheet, or use **Add student**
+   in the admin area, and answer `none`.
+
+   The file looks like this, if you'd rather write it by hand:
 
 ```
 GOOGLE_CLIENT_ID=1234567890-abc.apps.googleusercontent.com
@@ -45,12 +58,10 @@ STUDENT_EMAIL_DOMAINS=example.org,gmail.com
 # GOOGLE_HOSTED_DOMAIN=btu.edu.ge
 ```
 
-6. Restart with `PORT=3100 npm run quickstart`. Open the portal at **localhost**, not 127.0.0.1, so that the
-   address matches the redirect URI.
-7. Give a student or staff member your Google email:
-   - **Student:** in the admin area, use **Add student** with your Google email. You can also use a student whose
-     email you can receive.
-   - **Staff:** run `npm run create-staff -- you@gmail.com "Your Name" OPERATOR` against the same `DATA_DIR`.
+6. Restart with `PORT=3100 npm run quickstart` (or `DEMO_DIR=data-testnet npm run demo:start`; both read
+   `google.env`). Open the portal at **localhost**, not 127.0.0.1, so that the address matches the redirect URI.
+   **Sign in with Google** now appears on `/login` and `/admin/login`. Until then, the demo login page says that
+   Google sign-in is off.
 
 ## The one-click demo sign-in
 
