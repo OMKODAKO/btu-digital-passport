@@ -40,9 +40,19 @@ function run(cmd, args, extraEnv = {}) {
   assert.equal(r.status, 0, `${cmd} ${args.join(" ")}\n${r.stdout}\n${r.stderr}`);
   return r.stdout;
 }
-const rpc = async (method, params = []) =>
+// Hardhat closes a kept-alive socket after 5 s idle; a request that lands on one just as it closes fails with
+// "fetch failed" before reaching the node (seen in step 16 after two slow imports), so that one case is sent again.
+const rpcOnce = async (method, params) =>
   (await (await fetch(RPC, { method: "POST", headers: { "content-type": "application/json" },
     body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }) })).json()).result;
+const rpc = async (method, params = []) => {
+  try {
+    return await rpcOnce(method, params);
+  } catch (e) {
+    if (!(e instanceof TypeError && e.message === "fetch failed")) throw e;
+    return rpcOnce(method, params);
+  }
+};
 const address = (k) =>
   run("python3", ["-c", "import sys; from eth_account import Account; print(Account.from_key(sys.argv[1]).address)", k]).trim();
 const db = () => new Database(path.join(dataDir, "portal.db"), { readonly: true });
@@ -321,4 +331,15 @@ test("extra: on the local devnet the transaction links open the portal's page, r
   const unknown = clean(await (await fetch(`${BASE}/chain/tx/0x${"ab".repeat(32)}`)).text());
   assert.ok(unknown.includes('data-testid="local-tx-error"'));
   assert.equal((await fetch(`${BASE}/chain/tx/not-a-hash`)).status, 404);
+  // the devnet's block explorer: all blocks, newest first, each linking to its block and transactions
+  const block = page.match(/href="\/chain\/block\/(\d+)"/)?.[1];
+  assert.ok(block && page.includes('href="/chain"'), "the transaction page links its block and all blocks");
+  const all = clean(await (await fetch(`${BASE}/chain`)).text());
+  assert.ok(all.includes('data-testid="chain-blocks"') && all.includes(`/chain/tx/${v2.chain_tx_hash}`), "the explorer lists the V2 transaction");
+  assert.ok(all.includes("passport registration"));
+  const blk = clean(await (await fetch(`${BASE}/chain/block/${block}`)).text());
+  assert.ok(blk.includes('data-testid="local-block"') && blk.includes(`/chain/tx/${v2.chain_tx_hash}`));
+  const future = clean(await (await fetch(`${BASE}/chain/block/999999`)).text());
+  assert.ok(future.includes('data-testid="block-error"'));
+  assert.equal((await fetch(`${BASE}/chain/block/abc`)).status, 404);
 });

@@ -72,6 +72,7 @@ export default async function LocalTransaction({ params }: { params: Promise<{ h
           this computer, but not a public one, so Etherscan can&apos;t show it. On Sepolia the same link opens Etherscan.
         </p>
       </header>
+      <p className="muted"><a href="/chain" data-testid="local-tx-all-blocks">All blocks</a></p>
       <p className="mono" data-testid="local-tx-hash" style={{ overflowWrap: "anywhere" }}>{hash}</p>
 
       {error && <p className="alert error" role="alert" data-testid="local-tx-error">{error}</p>}
@@ -82,7 +83,7 @@ export default async function LocalTransaction({ params }: { params: Promise<{ h
             <dl>
               <div><dt>Status</dt><dd>{data.receipt.status === "success" ? <span className="pill ok">success</span> : <span className="pill">reverted</span>}</dd></div>
               <div><dt>Confirmations</dt><dd>{data.confirmations}</dd></div>
-              <div><dt>Block</dt><dd>{data.receipt.blockNumber.toString()}</dd></div>
+              <div><dt>Block</dt><dd><a href={`/chain/block/${data.receipt.blockNumber}`} data-testid="local-tx-block">{data.receipt.blockNumber.toString()}</a></dd></div>
               <div><dt>Time</dt><dd>{new Date(Number(data.block.timestamp) * 1000).toISOString().replace("T", " ").slice(0, 19)} UTC</dd></div>
               <div><dt>From (issuer)</dt><dd className="mono">{data.tx.from}</dd></div>
               <div><dt>Issuer entry</dt><dd>{data.issuer ? `${data.issuer.label || "no label"}${data.issuer.testOnly && !/test/i.test(data.issuer.label) ? " · TEST issuer" : ""}${data.issuer.active ? "" : " · not active"}` : "unknown"}</dd></div>
