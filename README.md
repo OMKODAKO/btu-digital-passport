@@ -33,6 +33,18 @@ fictional demo data that `npm run quickstart` creates.
 | **Verification / ვერიფიკაცია** | **Phone / ტელეფონი** |
 | ![Verification and version record spread](docs/booklet/3-verification.jpg) | <img src="docs/booklet/4-mobile.jpg" alt="Booklet on a phone" width="260"> |
 
+### Public link for a CV / საჯარო ლინკი CV-სთვის
+
+Each passport gets one permanent public link, `/p/<token>`, shown on the student's dashboard with a Copy button. The
+token is 128 random bits, not the Passport ID (which is sequential and guessable). Anyone with the link sees the
+current issued version (booklet, AI skills with their Silver/Gold/Platinum tier, live verification claims) and a
+button to the public verification page, without signing in. No email, student number, PDF download or older versions
+are shown, and the page asks search engines not to index it. Links are stored in `passport_share_links`
+(migration 010, append-only) and never change, so a CV keeps working as new versions are issued.
+
+ყველა პასპორტს აქვს ერთი მუდმივი ლინკი (`/p/<token>`), რომელიც სტუდენტის გვერდზე ჩანს Copy ღილაკით. ლინკზე
+გადასული ადამიანი რეგისტრაციის გარეშე ხედავს პასპორტის უახლეს ვერსიას, AI უნარებს და შეუძლია მისი ვერიფიკაცია.
+
 ## Quick start / სწრაფი დაწყება
 
 ### ქართულად
