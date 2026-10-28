@@ -241,8 +241,8 @@ test("steps 6-12: a new CONFIRMED skill in the source sheet becomes V2, register
   assert.ok(html.includes(`data-testid="verification-code">${v2.verification_code}<`));
   assert.match(html, /data-testid="history"/);
   assert.ok(html.includes("V1") && html.includes("V2"));
-  assert.ok(html.includes("Document authentic and current (unchanged since issue); issued by BTU&#x27;s hackathon TEST issuer"),
-    "the headline says the document is authentic and current, and that the issuer is a TEST issuer");
+  assert.ok(html.includes('data-claim="integrity" data-state="ok"') && html.includes('data-claim="official" data-state="pending"'),
+    "the document is shown as unchanged since issue, and official BTU issuance as pending (TEST issuer)");
   const dl = await fetch(`${BASE}/api/passport/pdf?download=1`, { headers: { cookie } });
   v2Pdf = Buffer.from(await dl.arrayBuffer());
   assert.equal(sha256(v2Pdf), v2.pdf_sha256);

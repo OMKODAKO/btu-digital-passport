@@ -219,7 +219,7 @@ export function bookForVersion(input: {
       {
         kind: "record",
         title: k.earned_through || "Confirmed skill",
-        result: `Confirmed ${fmtDate(k.date_earned)}`,
+        result: fmtDate(k.date_earned),
         explanation: k.description || "Confirmed in BTU's skill records.",
         source: `Skill record ${k.record_id} · ${k.skill_id} · badge ${k.badge_code}`,
       },

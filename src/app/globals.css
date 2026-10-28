@@ -152,14 +152,9 @@ a:hover { color: var(--brand); }
 .cp-pending, .cp-partial { color: var(--warn); }
 .cp-failed { color: var(--bad); }
 .cp-none, .cp-unknown { color: #8a8c93; }
-.cp-summary { margin: 2px 0 0; font-size: 0.84rem; line-height: 1.45; padding-left: 10px; border-left: 2px solid var(--line); color: var(--ink); }
-.cp-tone-ok { border-left-color: var(--ok); }
-.cp-tone-warn { border-left-color: var(--warn); }
-.cp-tone-bad { border-left-color: var(--bad); }
 .cp-fine { margin: 0; color: var(--muted); font-size: 0.8rem; line-height: 1.5; overflow-wrap: anywhere; }
 .cp-more summary { cursor: pointer; font-weight: 600; font-size: 0.84rem; color: var(--ink); width: fit-content; }
 .cp-more[open] summary { margin-bottom: 10px; }
-.cp-more .checks { font-size: 0.84rem; }
 .cp-share { display: flex; gap: 12px; align-items: center; margin-top: 8px; }
 .cp-share .qr { width: 96px; height: 96px; }
 .cp-versions { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }

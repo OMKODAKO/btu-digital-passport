@@ -1,4 +1,3 @@
-import Checks, { headline } from "@/components/Checks";
 import { txUrl } from "@/lib/explorer";
 import type { Claim } from "@/lib/passport-book";
 import type { Passport, PassportVersion } from "@/lib/passports";
@@ -12,8 +11,8 @@ const MARK: Record<Claim["state"], string> = { ok: "✓", pending: "◷", partia
 
 /**
  * The quiet column beside the booklet: the record's facts, then the four verification claims as separate lines
- * (record found, document unchanged, transaction confirmed, official BTU issuer), each from the live check, then
- * the versions. Detail that only some readers need (every check, QR codes) is folded away rather than removed.
+ * (record found, document unchanged, transaction confirmed, official BTU issuer), each from the live check and each
+ * said once, then the versions. The QR codes for sharing are folded away.
  */
 export default function CompanionPanel(props: {
   passport: Passport;
@@ -28,7 +27,6 @@ export default function CompanionPanel(props: {
   const { passport, selected, verification, claims, verifyPath, qr, chainUrl, chainQr } = props;
   const current = selected.status === "CURRENT";
   const lastUpdated = passport.current?.issuedAt ?? null;
-  const tone = verification ? headline(verification).tone : "none";
 
   return (
     <div className="companion">
@@ -75,36 +73,20 @@ export default function CompanionPanel(props: {
               <span>
                 <strong>{c.label}</strong>
                 <span className="cp-claim-text">{c.text}</span>
+                {c.key === "chain" && selected.chainTxHash && (
+                  <span className="cp-claim-text" data-testid="chain-record">
+                    Transaction{" "}
+                    {chainUrl ? (
+                      <a className="mono" href={chainUrl} target="_blank" rel="noopener" data-testid="tx-link">{short(selected.chainTxHash)}</a>
+                    ) : (
+                      <span className="mono">{short(selected.chainTxHash)}</span>
+                    )}
+                  </span>
+                )}
               </span>
             </li>
           ))}
         </ul>
-        {verification ? (
-          <p className={`cp-summary cp-tone-${tone}`}>{headline(verification).title}</p>
-        ) : (
-          <p className="cp-summary">
-            Not registered on a blockchain, so this version can&apos;t be verified. It is not shown as authentic.
-          </p>
-        )}
-        {selected.chainTxHash && (
-          <p className="cp-fine" data-testid="chain-record">
-            Registered on {selected.chainNetwork ?? "a blockchain"}, block {selected.chainBlockNumber}, transaction{" "}
-            {chainUrl ? (
-              <a className="mono" href={chainUrl} target="_blank" rel="noopener" data-testid="tx-link">{short(selected.chainTxHash)}</a>
-            ) : (
-              <span className="mono">{short(selected.chainTxHash)}</span>
-            )}
-            .
-            {selected.chainIssuerTestOnly !== 0 && " Issued by a test issuer: official BTU issuer verification is still pending."}
-          </p>
-        )}
-        {verification && (
-          <details className="cp-more">
-            <summary>All checks</summary>
-            <Checks result={verification} stored />
-            <p className="cp-fine">Checked just now against the blockchain record and BTU&apos;s issuer statement.</p>
-          </details>
-        )}
         {verification && (
           <details className="cp-more">
             <summary>Share and verify</summary>
