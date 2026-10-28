@@ -63,12 +63,6 @@ export default async function LoginPage({
           </p>
         )}
 
-        {GOOGLE_LOGIN && (
-          <a className="button primary google" href="/api/auth/google?as=student" data-testid="google-login">
-            Sign in with Google
-          </a>
-        )}
-
         {DEMO_LOGIN && (
           <form method="post" action="/api/auth/demo" className="form" data-testid="demo-login">
             <label htmlFor="student">Demo: open any student&apos;s passport, no password</label>
@@ -80,7 +74,18 @@ export default async function LoginPage({
             </select>
             <button type="submit" className="button">Open as this student</button>
             <p className="fine">Local demo only. A real deployment signs students in with Google.</p>
+            {!GOOGLE_LOGIN && (
+              <p className="fine" data-testid="google-setup-hint">
+                Google sign-in is off on this copy. To switch it on, run <code>npm run google:setup</code> and restart.
+              </p>
+            )}
           </form>
+        )}
+
+        {GOOGLE_LOGIN && (
+          <a className="button primary google" href="/api/auth/google?as=student" data-testid="google-login">
+            Sign in with Google
+          </a>
         )}
 
         {PASSWORD_LOGIN && (

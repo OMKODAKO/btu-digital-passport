@@ -55,7 +55,7 @@ npm run quickstart
 | ადმინის პანელი | http://localhost:3000/admin/login | ერთი დაჭერა: Demo Operator (ან Google) |
 | საჯარო ვერიფიკაცია | http://localhost:3000/verify | ლოგინი არ სჭირდება: კოდი სტუდენტის დაფიდან + PDF |
 
-Google-ით შესვლის ჩართვა: [docs/GOOGLE-SIGNIN.md](docs/GOOGLE-SIGNIN.md). ახალი უნარის დამატება (V2 ბლოკჩეინზე): მეორე ტერმინალში
+Google-ით შესვლის ჩართვა: Google Cloud-ში შექმენი OAuth client, შემდეგ `npm run google:setup` ([docs/GOOGLE-SIGNIN.md](docs/GOOGLE-SIGNIN.md)). ახალი უნარის დამატება (V2 ბლოკჩეინზე): მეორე ტერმინალში
 `npm run demo:add-skill`. გაჩერება: Ctrl+C. ხელახლა გაშვება: ისევ `npm run quickstart`. ნულიდან დაწყება: წაშალე
 `data-demo/` და გაუშვი `npm run quickstart`. კომპიუტერის გადატვირთვის შემდეგ ლოკალური ბლოკჩეინი ცარიელდება, ამიტომ
 `quickstart` ძველ დემოს გადაიტანს `data-demo-old-…`-ში და ახალს შექმნის.
@@ -85,8 +85,8 @@ serves **http://localhost:3000**.
 | Staff admin area | http://localhost:3000/admin/login | one click on Demo Operator (or Google) |
 | Public verification | http://localhost:3000/verify | no sign-in: a code from a student dashboard + the PDF |
 
-The one-click sign-in exists only in this local demo (the app listens on 127.0.0.1 only). Google sign-in:
-[docs/GOOGLE-SIGNIN.md](docs/GOOGLE-SIGNIN.md). More:
+The one-click sign-in exists only in this local demo (the app listens on 127.0.0.1 only). Google sign-in: create an OAuth client, then run
+`npm run google:setup` ([docs/GOOGLE-SIGNIN.md](docs/GOOGLE-SIGNIN.md)). More:
 
 - `npm run demo:add-skill` (second terminal): adds a CONFIRMED skill for BTU-T-0001, V2 is registered and becomes current.
 - Stop with Ctrl+C; run `npm run quickstart` again to restart. To start from zero, delete `data-demo/`.
