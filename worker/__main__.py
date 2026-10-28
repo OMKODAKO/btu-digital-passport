@@ -11,7 +11,7 @@
                                                                        new passport versions with the current subject badges
   python3 -m worker grades add --student BTU-T-0001 --subject SUBJ-VIBE-CODING "Quizzes=12" "Final exam=23" ...
   python3 -m worker grades show --student BTU-T-0001                   a student's subject scores and badge tiers
-  python3 -m worker grades demo [--dry-run]                            random demo marks for students' existing skills
+  python3 -m worker grades demo [--dry-run] [--redraw]                 random demo marks for students' existing skills
 """
 from __future__ import annotations
 
@@ -181,17 +181,19 @@ def _grades(argv) -> int:
     demo = sub.add_parser("demo", help="random SYNTHETIC marks for every unmarked skill students already have (test data only)")
     demo.add_argument("--seed", default="btu-demo", help="same seed, same marks (default: btu-demo)")
     demo.add_argument("--dry-run", action="store_true", help="print the marks without recording them")
+    demo.add_argument("--redraw", action="store_true",
+                      help="also re-draw skills that only have this command's marks (entered as corrections)")
     args = ap.parse_args(argv)
     conn = connect()
     try:
         if args.action == "demo":
             from .subjects.demo_marks import demo_marks
             from .subjects.scoring import tier_for
-            lines = demo_marks(conn, seed=args.seed, dry_run=args.dry_run)
+            lines = demo_marks(conn, seed=args.seed, dry_run=args.dry_run, redraw=args.redraw)
             for x in lines:
-                if x["result"] == "marked":
+                if x["result"] in ("marked", "redrawn"):
                     print(f"{x['student']:12} {x['skill']:8} {x['score']:6.2f}  {tier_for(x['score'])}")
-            done = sum(x["result"] == "marked" for x in lines)
+            done = sum(x["result"] in ("marked", "redrawn") for x in lines)
             print(f"{'would mark' if args.dry_run else 'marked'} {done} skill(s), {len(lines) - done} already marked"
                   + ("" if args.dry_run else "; run `python3 -m worker subjects publish` to issue the new versions"))
             return 0

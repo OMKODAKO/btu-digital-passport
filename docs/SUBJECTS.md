@@ -139,7 +139,8 @@ BTU's grades are not connected, so `python3 -m worker grades demo` gives every s
 (SKL-001 … SKL-016) a random SYNTHETIC mark for each syllabus component. The tier is drawn first (Silver 35 %,
 Gold 45 %, Platinum 20 %), then a score inside it, split over the components in half points. The marks are seeded
 per student and skill (same marks on every run) and a skill that already has any mark is left alone. `--dry-run`
-prints them without recording. `python3 -m worker subjects publish` then issues the new passport versions.
+prints them without recording. `--redraw` also gives a fresh draw to skills whose current marks are all from this
+command (entered as corrections, so the old marks stay on record; a skill with any other mark is never touched). `python3 -m worker subjects publish` then issues the new passport versions.
 `npm run quickstart` runs both for the demo. On a database whose versions go to a public test chain (Sepolia),
 every changed passport becomes a new on-chain version, so run it there only on purpose.
 
