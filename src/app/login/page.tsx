@@ -63,12 +63,6 @@ export default async function LoginPage({
           </p>
         )}
 
-        {GOOGLE_LOGIN && (
-          <a className="button primary google" href="/api/auth/google?as=student" data-testid="google-login">
-            Sign in with Google
-          </a>
-        )}
-
         {DEMO_LOGIN && (
           <form method="post" action="/api/auth/demo" className="form" data-testid="demo-login">
             <label htmlFor="student">Demo: open any student&apos;s passport, no password</label>
@@ -86,6 +80,12 @@ export default async function LoginPage({
               </p>
             )}
           </form>
+        )}
+
+        {GOOGLE_LOGIN && (
+          <a className="button primary google" href="/api/auth/google?as=student" data-testid="google-login">
+            Sign in with Google
+          </a>
         )}
 
         {PASSWORD_LOGIN && (
