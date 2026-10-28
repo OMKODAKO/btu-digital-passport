@@ -126,7 +126,22 @@ next to the BTU subjects, each with its own badge.
 - **ECTS:** the sheet gives no ECTS, so none is shown. The stored `credits` value 1 is only a placeholder that the
   database requires.
 - **No overlap with sheet records:** the sheet's own skill records are unchanged and still come only from the sheet.
-  A student can hold both, for example the AI Literacy skill from the sheet and the AI Literacy course badge.
+- **A held skill with a score is shown once (2026-10-28):** when a student holds a sheet skill and its course is
+  marked, the passport shows that skill with its score and tier, not a second badge card. Its stamp is BTU's
+  category stamp printed in the tier's ink (Silver grey, Gold, Platinum blue steel with a third rim), on the PDF's
+  Verified AI Skillset and Supplement pages and in the dashboard booklet. The ink stamps are made by
+  `scripts/make-stamps.py` (`public/stamps/*-silver|gold|platinum.png` and `worker/pdf/assets/tier-stamps/`).
+  A course the student does not hold as a sheet skill is still printed as its own badge after the skills.
+
+## Demo marks for the skills students already have
+
+BTU's grades are not connected, so `python3 -m worker grades demo` gives every skill a student already holds
+(SKL-001 … SKL-016) a random SYNTHETIC mark for each syllabus component. The tier is drawn first (Silver 35 %,
+Gold 45 %, Platinum 20 %), then a score inside it, split over the components in half points. The marks are seeded
+per student and skill (same marks on every run) and a skill that already has any mark is left alone. `--dry-run`
+prints them without recording. `python3 -m worker subjects publish` then issues the new passport versions.
+`npm run quickstart` runs both for the demo. On a database whose versions go to a public test chain (Sepolia),
+every changed passport becomes a new on-chain version, so run it there only on purpose.
 
 ## Next stages
 

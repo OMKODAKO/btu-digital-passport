@@ -5,6 +5,11 @@ rim along its outline are inked, and the coloured fill is left as bare paper. Un
 a slightly heavier rim) is added from a fixed seed, so the output is the same on every run. All three are drawn on
 the same canvas at a similar visual weight, so they line up whatever their shape.
 
+A skill with a score also has a badge tier (worker/subjects/scoring.py: Silver 60-70, Gold 70-90, Platinum 90-100),
+so every stamp is also made in the three tier inks, <name>-silver|gold|platinum.png; a platinum stamp has a third,
+thin rim (between the other two) so the rarest tier stands out beyond its colour. The tier stamps are written twice: for the booklet
+(public/stamps) and for the official PDF (worker/pdf/assets/tier-stamps).
+
     .venv/bin/python scripts/make-stamps.py
 """
 from pathlib import Path
@@ -14,12 +19,18 @@ from PIL import Image, ImageFilter
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC, OUT = ROOT / "assets" / "stamps-src", ROOT / "public" / "stamps"
+PDF_OUT = ROOT / "worker" / "pdf" / "assets" / "tier-stamps"
 CANVAS = (360, 280)  # every stamp shares this box (9:7)
 # name: (ink colour, fit inside this width x height on the canvas, noise seed)
 STAMPS = {
     "ai-skill": ((139, 58, 50), (300, 262), 3),          # faded red-brown ink, triangle
     "ai-applied-skill": ((86, 70, 112), (348, 150), 5),  # faded violet, wide rectangle
     "ai-advanced-skill": ((50, 62, 92), (252, 252), 7),   # faded blue-black, circle
+}
+TIER_INKS = {
+    "silver": (104, 110, 120),   # cool grey
+    "gold": (158, 116, 28),      # old gold
+    "platinum": (44, 92, 138),   # blue steel
 }
 
 
@@ -37,7 +48,7 @@ def rim(shape, inset, width):
     return np.clip((np.asarray(outer, dtype=np.float32) - np.asarray(inner, dtype=np.float32)) / 255, 0, 1)
 
 
-def stamp(name, ink, fit, seed):
+def stamp(name, ink, fit, seed, out_name=None, extra_rim=False, outs=(OUT,)):
     src = Image.open(SRC / f"{name}.png").convert("RGBA")
     scale = min(fit[0] / src.width, fit[1] / src.height)
     src = src.resize((round(src.width * scale), round(src.height * scale)), Image.LANCZOS)
@@ -49,6 +60,8 @@ def stamp(name, ink, fit, seed):
     shape = rgba[..., 3] > 0.5
     lettering = rgba[..., 3] * np.clip((whiteness - 0.35) / 0.5, 0, 1)
     coverage = np.maximum(lettering * shape, rim(shape, 0, 7) + rim(shape, 12, 3))
+    if extra_rim:
+        coverage = np.maximum(coverage, rim(shape, 9, 2))
 
     rng = np.random.default_rng(seed)
     h, w = coverage.shape
@@ -65,11 +78,14 @@ def stamp(name, ink, fit, seed):
     out = np.zeros((h, w, 4), dtype=np.uint8)
     out[..., :3] = ink
     out[..., 3] = (alpha * 255).astype(np.uint8)
-    OUT.mkdir(parents=True, exist_ok=True)
-    Image.fromarray(out).save(OUT / f"{name}.png", optimize=True)
+    for d in outs:
+        d.mkdir(parents=True, exist_ok=True)
+        Image.fromarray(out).save(d / f"{out_name or name}.png", optimize=True)
+        print("wrote", d / f"{out_name or name}.png")
 
 
 if __name__ == "__main__":
     for name, (ink, fit, seed) in STAMPS.items():
         stamp(name, ink, fit, seed)
-        print("wrote", OUT / f"{name}.png")
+        for tier, tier_ink in TIER_INKS.items():
+            stamp(name, tier_ink, fit, seed, f"{name}-{tier}", extra_rim=tier == "platinum", outs=(OUT, PDF_OUT))

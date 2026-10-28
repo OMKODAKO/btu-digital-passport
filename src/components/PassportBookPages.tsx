@@ -37,23 +37,28 @@ function Emblem({ size = 112 }: { size?: number }) {
 
 const categoryClass = (s: string) => (/advanced/i.test(s) ? "advanced" : /applied/i.test(s) ? "applied" : "skill");
 
-/** BTU's skill stamps (AI Skill, AI Applied Skill, AI Advanced Skill), one per category of confirmed skill. */
+/** BTU's skill stamps (AI Skill, AI Applied Skill, AI Advanced Skill), one per category of confirmed skill;
+ * a scored skill's stamp is inked in its tier's colour (scripts/make-stamps.py). */
 const STAMP: Record<string, { src: string; alt: string }> = {
-  skill: { src: "/stamps/ai-skill.png", alt: "AI Skill stamp" },
-  applied: { src: "/stamps/ai-applied-skill.png", alt: "AI Applied Skill stamp" },
-  advanced: { src: "/stamps/ai-advanced-skill.png", alt: "AI Advanced Skill stamp" },
+  skill: { src: "/stamps/ai-skill", alt: "AI Skill stamp" },
+  applied: { src: "/stamps/ai-applied-skill", alt: "AI Applied Skill stamp" },
+  advanced: { src: "/stamps/ai-advanced-skill", alt: "AI Advanced Skill stamp" },
 };
 
 /** A hand-stamped look: each mark turned a few degrees, the same way every time for the same skill. */
 const tiltFor = (id: string) => `${([...id].reduce((n, c) => n + c.charCodeAt(0), 0) % 11) - 7}deg`;
 
-/** The mark beside a skill: BTU's stamp for a confirmed skill, a tier seal for a scored subject. */
+/** The mark beside a skill: BTU's stamp for a confirmed skill (in its tier's ink once scored), a tier seal for a
+ * scored subject. */
 function Seal({ id, tier, category, size = 28 }: { id: string; tier: Tier | null; category: string | null; size?: number }) {
-  if (!tier && category) {
+  if (category) {
     const stamp = STAMP[categoryClass(category)];
+    const src = `${stamp.src}${tier ? `-${tier.toLowerCase()}` : ""}.png`;
+    const alt = tier ? `${stamp.alt}, ${tier[0]}${tier.slice(1).toLowerCase()}` : stamp.alt;
     return (
-      <span className="pb-stamp" style={{ ["--s" as string]: `${size / 14}em`, ["--tilt" as string]: tiltFor(id) }}>
-        <img src={stamp.src} alt={stamp.alt} loading="lazy" />
+      <span className="pb-stamp" style={{ ["--s" as string]: `${size / 14}em`, ["--tilt" as string]: tiltFor(id) }}
+        data-tier={tier ?? undefined}>
+        <img src={src} alt={alt} loading="lazy" />
       </span>
     );
   }
@@ -238,7 +243,8 @@ export function SkillsPage({ data, selected, onSelect, single }: {
 }) {
   const groups: [string, BookSkill[]][] = [
     ["Subject badges · calculated score", data.skills.filter((k) => k.group === "subject")],
-    ["Confirmed skills · BTU skill records", data.skills.filter((k) => k.group === "skill")],
+    [data.skills.some((k) => k.group === "skill" && k.tier) ? "Confirmed skills · score and badge tier" : "Confirmed skills · BTU skill records",
+      data.skills.filter((k) => k.group === "skill")],
   ];
   return (
     <Sheet n={3} ka="უნარები" data={data}>
@@ -252,13 +258,14 @@ export function SkillsPage({ data, selected, onSelect, single }: {
                 <li key={k.id}>
                   <button type="button" className="pb-skill" aria-pressed={selected === k.id} onClick={() => onSelect(k.id)}
                     data-testid="book-skill">
-                    <Seal id={k.id} tier={k.tier} category={k.category} size={k.tier ? 30 : 52} />
+                    <Seal id={k.id} tier={k.tier} category={k.category} size={k.category ? 52 : 30} />
                     <span className="pb-skill-text">
                       <span className="pb-skill-name">{k.name}</span>
                       <span className="pb-skill-meta">{k.meta}</span>
                     </span>
                     {k.score ? (
-                      <span className="pb-score" aria-label={`${k.level}, score ${k.score} of 100`}>
+                      <span className={`pb-score${k.tier ? ` pb-tier-${k.tier.toLowerCase()}` : ""}`}
+                        aria-label={`${k.level}, score ${k.score} of 100`} data-testid="book-score">
                         <span><span className="pb-mono">{k.score}</span> <span className="pb-level">{k.level}</span></span>
                         <span className="pb-bar" aria-hidden="true"><span style={{ width: `${Math.min(100, Number(k.score))}%` }} /></span>
                       </span>
@@ -289,7 +296,7 @@ export function EvidencePage({ data, skill }: { data: BookData; skill: BookSkill
       {skill ? (
         <div className="pb-ev" aria-live="polite" data-testid="book-evidence" data-skill={skill.id}>
           <p className="pb-ev-head">
-            <Seal id={skill.id} tier={skill.tier} category={skill.category} size={skill.tier ? 26 : 64} />
+            <Seal id={skill.id} tier={skill.tier} category={skill.category} size={skill.category ? 64 : 26} />
             <span>
               <strong>{skill.name}</strong> · {skill.level}
               {skill.score && <> · <span className="pb-mono">{skill.score}</span> / 100</>}

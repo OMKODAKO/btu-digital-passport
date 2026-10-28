@@ -3,7 +3,9 @@
 Pages, in order:
   1  cover: name, surname, first-issue date, Passport ID, version, issue date, verification code
   2  about (static BTU text) + Passport ID
-  3+ Verified AI Skillset: one stamp card per skill, 10 per page, page repeated as needed
+  3+ Verified AI Skillset: one stamp card per skill, 10 per page, page repeated as needed. A skill with a score
+     (its course marked, see worker/subjects) shows the score and its badge tier, and its stamp is printed in
+     the tier's ink (Silver, Gold, Platinum; assets/tier-stamps, made by scripts/make-stamps.py),
      followed by the subject badges (completed BTU subjects scoring 60+), one card each (subject_badges.py)
   .. AI Skill Supplement: one table row per skill, then per subject badge (with its short course
      description), 5 per page, repeated; QR + code on its last page
@@ -197,6 +199,38 @@ def qr_png(data: str) -> bytes:
     return buf.getvalue()
 
 
+class _ScoredSkill:
+    """A sheet skill whose course is marked: the skill's own record, with the score and badge tier of the matching
+    subject badge (same code, e.g. SKL-003), so the passport shows it once instead of as a skill and a badge."""
+
+    def __init__(self, sk: Skill, b: SubjectBadge):
+        self.skill, self.badge = sk, b
+        self.record_id, self.skill_id, self.name, self.category = sk.record_id, sk.skill_id, sk.name, sk.category
+        self.badge_code, self.description, self.date_earned = sk.badge_code, sk.description, sk.date_earned
+        self.earned_through = (f"{sk.earned_through or LEARNING_FORMAT[sk.category]}  ·  "
+                               f"{TIER_LABEL[b.tier]}  ·  score {b.score} / 100")
+
+
+def merge_scored(holder: Holder) -> list:
+    """The skillset entries in print order: the sheet skills (scored where their course is marked), then the
+    subject badges that are not one of those skills."""
+    scored = {b.code: b for b in holder.subjects if b.category}   # a sheet skill offered as a course
+    skills = [_ScoredSkill(sk, scored[sk.skill_id]) if sk.skill_id in scored else sk for sk in holder.skills]
+    shown = {sk.skill_id for sk in holder.skills}
+    return skills + [_SubjectRow(b) for b in holder.subjects if b.code not in shown]
+
+
+def tier_stamp_path(category: str, tier: str) -> Path:
+    slug = {"AI Skill": "ai-skill", "AI Applied Skill": "ai-applied-skill", "AI Advanced Skill": "ai-advanced-skill"}[category]
+    return assets_dir() / "tier-stamps" / f"{slug}-{tier.lower()}.png"
+
+
+def place_tier_stamp(page, category, tier, center_x, center_y, width, height):
+    """The skill's stamp in its tier's ink, fitted into width x height (the artwork's box is 9:7)."""
+    page.insert_image(fitz.Rect(center_x - width / 2, center_y - height / 2, center_x + width / 2, center_y + height / 2),
+                      filename=str(tier_stamp_path(category, tier)), keep_proportion=True)
+
+
 class _SubjectRow:
     """A subject badge in the shape of a Skill, so the supplement table and continuation pages treat it alike."""
 
@@ -350,24 +384,34 @@ def draw_skillset(d: _Doc, page, page_idx, stamps, cache, h: Holder, skills: lis
         if isinstance(sk, _SubjectRow):
             draw_subject_card(d, page, page_idx, sk.badge, i, cx, cy, CARD_W, cache, layout, Placed)
             continue
-        place_stamp(page, stamps, sk.category, mid, cy + 46)
+        scored = isinstance(sk, _ScoredSkill)
+        if scored:
+            place_tier_stamp(page, sk.category, sk.badge.tier, mid, cy + 41, 96, 64)
+        else:
+            place_stamp(page, stamps, sk.category, mid, cy + 46)
 
         # The card is a summary: the name shrinks to fit 4 lines; the supplement row holds the full text.
-        fitted = d.fit(_caps(sk.name), "bold", CARD_NAME_SIZES, CARD_W - 14, 46, 1.1)
+        # (3 lines on a scored card, which also carries its tier and score)
+        fitted = d.fit(_caps(sk.name), "bold", CARD_NAME_SIZES, CARD_W - 14, 36 if scored else 46, 1.1)
         if fitted:
             size, lines, lh = fitted
         else:
             size, lh = CARD_NAME_SIZES[-1], CARD_NAME_SIZES[-1] * 1.1
-            lines = d.wrap(_caps(sk.name), "bold", size, CARD_W - 14)[:4]
+            lines = d.wrap(_caps(sk.name), "bold", size, CARD_W - 14)[:3 if scored else 4]
             lines[-1] = lines[-1].rsplit(" ", 1)[0] + " …"
-        block_h = len(lines) * lh + 22
-        y = cy + 118 - block_h / 2 + size * 0.85
+        block_h = len(lines) * lh + (31 if scored else 22)
+        y = cy + (115 if scored else 118) - block_h / 2 + size * 0.85
         for ln in lines:
             d.text(page, mid, y, ln, "bold", size, align="center")
             y += lh
         d.text(page, mid, y + 1, _caps(sk.category), "light", 10, align="center")
+        if scored:
+            score = f"{TIER_LABEL[sk.badge.tier].upper()}  ·  SCORE {sk.badge.score} / 100"
+            d.text(page, mid, y + 12, score, "bold", 7.4, align="center")
+            layout.placed.append(Placed(page_idx, (cx + 4, y + 3, cx + CARD_W - 4, y + 14.5), score, f"{sk.record_id} score"))
+            y += 9
         d.text(page, mid, y + 12, f"EARNED {fmt_date(sk.date_earned)}", "light", 7, GREY, align="center")
-    if any(isinstance(sk, _SubjectRow) for sk in skills):
+    if any(isinstance(sk, (_SubjectRow, _ScoredSkill)) for sk in skills):
         draw_demo_note(d, page)
     d.text(page, 761, 511, h.passport_id, "bold", 12, align="right")
     if page_count > 1:
@@ -389,6 +433,8 @@ def draw_supplement(d: _Doc, page, page_idx, stamps, cache, h: Holder, rows, pag
         white_out(page, fitz.Rect(129, ym - 12, 153, ym + 12))  # empty-row circle
         if isinstance(sk, _SubjectRow):
             place_subject_stamp(page, d.f, cache, sk.badge, (COL_X[0] + COL_X[1]) / 2, ym, 84.0, -4.0)
+        elif isinstance(sk, _ScoredSkill):
+            place_tier_stamp(page, sk.category, sk.badge.tier, (COL_X[0] + COL_X[1]) / 2, ym, 72, 50)
         else:
             place_stamp(page, stamps, sk.category, (COL_X[0] + COL_X[1]) / 2, ym, scale=0.66)
         for key, sizes in (("name", NAME_SIZES), ("description", DESC_SIZES), ("earned_through", EARNED_SIZES)):
@@ -401,6 +447,7 @@ def draw_supplement(d: _Doc, page, page_idx, stamps, cache, h: Holder, rows, pag
         badge = (f"BADGE {sk.badge.badge_code}  ·  {TIER_LABEL[sk.badge.tier].upper()}  ·  {sk.record_id}"
                  if isinstance(sk, _SubjectRow) and sk.badge.badge_code
                  else f"{TIER_LABEL[sk.badge.tier].upper()} SUBJECT BADGE  ·  {sk.record_id}" if isinstance(sk, _SubjectRow)
+                 else f"BADGE {sk.badge_code}  ·  {TIER_LABEL[sk.badge.tier].upper()}  ·  {sk.record_id}" if isinstance(sk, _ScoredSkill)
                  else f"BADGE {sk.badge_code}  ·  {sk.record_id}")
         d.text(page, (COL_X[3] + COL_X[4]) / 2, y1 - 6, badge, "light", 5.8, GREY, align="center")
         layout.placed.append(Placed(page_idx, (COL_X[3] + 4, y1 - 12, COL_X[4] - 4, y1 - 2), badge, f"{sk.record_id} badge"))
@@ -449,7 +496,10 @@ def render_passport(holder: Holder, version: int, issued_at: str, code: str, ver
     for b in holder.subjects:  # a passport never prints a tier its score doesn't earn
         if tier_for(b.score) != b.tier:
             raise ValueError(f"{b.code}: score {b.score} earns {tier_for(b.score)}, not {b.tier}")
-    entries = list(holder.skills) + [_SubjectRow(b) for b in holder.subjects]   # subject badges after the skills
+    entries = merge_scored(holder)   # sheet skills (with their score where marked), then the other subject badges
+    for sk in entries:
+        if isinstance(sk, _ScoredSkill) and not tier_stamp_path(sk.category, sk.badge.tier).exists():
+            raise RenderError(f"tier stamp artwork missing: {tier_stamp_path(sk.category, sk.badge.tier)}")
     rows = _plan_rows(d, entries)
     overflowing = [(sk, [k for k, c in cells.items() if not c.fitted]) for sk, cells in rows
                    if any(not c.fitted for c in cells.values())]

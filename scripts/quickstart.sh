@@ -6,7 +6,8 @@
 #   4. sets up the demo in data-demo/ (local Hardhat devnet, TEST issuer, 18 demo students, V1 on-chain)
 #      If data-demo/ exists but its devnet is gone (after a reboot, the devnet keeps nothing), the old demo is
 #      moved to data-demo-old-<time>/ and a fresh one is made, with new passwords.
-#   5. starts the app on http://localhost:3000 with one-click demo sign-in (no passwords; Google sign-in when
+#   5. gives every skill the students hold random demo marks, so each shows a score and a Silver/Gold/Platinum tier
+#   6. starts the app on http://localhost:3000 with one-click demo sign-in (no passwords; Google sign-in when
 #      data-demo/google.env holds an OAuth client, see docs/GOOGLE-SIGNIN.md)
 #
 # Nothing here needs a key, a wallet or a Google account. Every key and password is generated fresh for a
@@ -68,6 +69,9 @@ fi
 
 # the subject catalog with its simulated syllabi (adds only what is missing; never changes a stored subject)
 DATA_DIR="$DEMO_DIR" python3 -m worker subjects load >/dev/null
+# random demo marks for the skills the students already have (BTU grades are not connected); a skill that already
+# has a mark is left alone. The badge publisher below then issues each student a version with scores and tiers.
+DATA_DIR="$DEMO_DIR" python3 -m worker grades demo | tail -1
 
 say "Signing in: no passwords"
 echo "Students:  http://localhost:$PORT/login        pick any student from the list"

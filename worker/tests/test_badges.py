@@ -125,6 +125,57 @@ class BadgesTest(unittest.TestCase):
         self.assertIn("BADGE BDG-AI-002", supplement)
         self.assertIn("GENERATING, EDITING, AND ASSESSING MARKETING CONTENT", supplement.replace("\n", " "))
 
+    def held_skill(self):
+        """ST1's first sheet skill: (record_id, skill_id, category)."""
+        return self.conn.execute("SELECT record_id, skill_id, skill_category FROM skill_awards WHERE student_fk = ? "
+                                 "ORDER BY record_id LIMIT 1", (self.sfk,)).fetchone()
+
+    def test_a_held_skill_with_a_score_is_printed_once_with_its_tier(self):
+        rec, skill, category = self.held_skill()
+        n_skills = self.conn.execute("SELECT COUNT(*) FROM skill_awards WHERE student_fk = ?", (self.sfk,)).fetchone()[0]
+        record_marks(self.conn, ST1, skill, {"Quizzes": 12, "Assignments": 15, "Project": 8, "Midterm exam": 19,
+                                             "Final exam": 23}, entered_by="t")   # 77.00, Gold
+        self.publish()
+        doc = self.pdf(self.current())
+        data = json.loads(doc.embfile_get("passport-data.json"))
+        self.assertEqual([(b["code"], b["tier"]) for b in data["subject_badges"]], [(skill, "GOLD")])
+        skillset = "".join(doc[i].get_text() for i in range(2, doc.page_count) if "SKILLSET" in doc[i].get_text().upper()
+                           or i == 2)
+        self.assertIn("GOLD  ·  SCORE 77.00 / 100", skillset)
+        self.assertNotIn("SUBJECT BADGE", skillset)
+        cards = [ln for ln in doc[2].get_text().splitlines() if ln.startswith("EARNED ")]
+        self.assertEqual(len(cards), min(n_skills, 10), "one card per held skill, no extra badge card")
+        self.assertGreaterEqual(len(doc[2].get_images()), 1, "the skill's stamp is the Gold-ink image")
+        supplement = "".join(doc[i].get_text() for i in range(3, doc.page_count))
+        self.assertIn(f"BADGE {self.conn.execute('SELECT badge_code FROM skill_awards WHERE record_id = ?', (rec,)).fetchone()[0]}"
+                      f"  ·  GOLD  ·  {rec}", supplement)
+        self.assertIn("SCORE 77.00 / 100", supplement)
+
+    def test_demo_marks_score_every_held_skill_once(self):
+        from worker.subjects.demo_marks import demo_marks
+        from worker.subjects.grades import subject_results
+        from worker.subjects.scoring import tier_for
+        held = self.conn.execute("SELECT COUNT(*) FROM skill_awards WHERE skill_id IN (SELECT code FROM subjects)").fetchone()[0]
+        self.assertGreater(held, 0)
+        dry = demo_marks(self.conn, dry_run=True)
+        self.assertEqual(self.conn.execute("SELECT COUNT(*) FROM grade_entries").fetchone()[0], 0)
+        first = demo_marks(self.conn)
+        self.assertEqual([x["marks"] for x in dry], [x["marks"] for x in first], "seeded: the same marks every time")
+        self.assertEqual(sum(x["result"] == "marked" for x in first), held)
+        tiers = {tier_for(x["score"]) for x in first}
+        self.assertNotIn(None, tiers, "every skill earns a badge")
+        self.assertEqual(tiers, {"SILVER", "GOLD", "PLATINUM"}, "the three tiers are spread over the test data")
+        for x in first:
+            self.assertTrue(all(v * 2 == int(v * 2) for v in x["marks"].values()), "half points")
+        res = {r.subject_code: r for r in subject_results(self.conn, ST1)}
+        self.assertTrue(res and all(r.status == "COMPLETE" for r in res.values()))
+        source = {r[0] for r in self.conn.execute("SELECT DISTINCT source FROM grade_entries")}
+        self.assertEqual(source, {"SYNTHETIC"})
+        again = demo_marks(self.conn)
+        self.assertEqual({x["result"] for x in again}, {"already marked"}, "a marked skill is left alone")
+        r = self.publish()
+        self.assertTrue(r and all(x["generation"] == "generated" for x in r))
+
     def test_publishing_again_changes_nothing(self):
         record_marks(self.conn, ST1, VIBE, GOLD, entered_by="t")
         self.publish()

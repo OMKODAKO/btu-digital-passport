@@ -247,6 +247,10 @@
 .pb-level { font-weight: 600; font-size: 0.82em; color: var(--pb-muted); }
 .pb-bar { display: block; width: 4.4em; height: 3px; background: var(--pb-line); border-radius: 2px; overflow: hidden; }
 .pb-bar span { display: block; height: 100%; background: var(--pb-ink); opacity: 0.8; }
+/* a scored skill: its tier word and score bar in the tier's ink, like its stamp */
+.pb-score[class*="pb-tier-"] .pb-level { color: inherit; font-family: var(--pb-display); letter-spacing: 0.06em; }
+.pb-score[class*="pb-tier-"] .pb-mono { color: var(--pb-ink); }
+.pb-score[class*="pb-tier-"] .pb-bar span { background: currentColor; }
 
 .pb-seal { flex: none; display: block; }
 /* BTU's skill badges as rubber-stamp impressions (scripts/make-stamps.py): every stamp image shares one 9:7 box, so
