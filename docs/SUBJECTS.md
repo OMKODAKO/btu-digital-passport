@@ -128,10 +128,13 @@ next to the BTU subjects, each with its own badge.
 - **No overlap with sheet records:** the sheet's own skill records are unchanged and still come only from the sheet.
 - **A held skill with a score is shown once (2026-10-28):** when a student holds a sheet skill and its course is
   marked, the passport shows that skill with its score and tier, not a second badge card. Its stamp is BTU's
-  category stamp printed in the tier's ink (Silver grey, Gold, Platinum blue steel with a third rim), on the PDF's
+  category stamp printed in the tier's ink (Silver light grey, Gold amber, Platinum deep indigo with a third rim), on the PDF's
   Verified AI Skillset and Supplement pages and in the dashboard booklet. The ink stamps are made by
   `scripts/make-stamps.py` (`public/stamps/*-silver|gold|platinum.png` and `worker/pdf/assets/tier-stamps/`).
   A course the student does not hold as a sheet skill is still printed as its own badge after the skills.
+- **Subject badges are stamps too (2026-10-28):** the badge of a course (icon, tier, SUBJECT BADGE) is drawn in
+  `worker/pdf/subject_badges.py` and inked like the skill stamps, in the same three tier inks
+  (`worker/pdf/rubber_stamp.py`, shared with `scripts/make-stamps.py`); platinum gets the third rim here as well.
 
 ## Demo marks for the skills students already have
 

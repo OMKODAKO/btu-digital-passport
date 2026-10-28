@@ -281,7 +281,7 @@ class ArtworkTest(unittest.TestCase):
                 with self.subTest(key=key, tier=tier):
                     page = stamp_doc(fonts, key, tier)[0]
                     self.assertIn(tier, page.get_text())
-                    self.assertGreater(len(page.get_drawings()), 3)
+                    self.assertEqual(len(page.get_images()), 1, "the badge is printed as an inked stamp")
 
     def test_a_tier_that_the_score_does_not_earn_is_never_printed(self):
         from datetime import date
